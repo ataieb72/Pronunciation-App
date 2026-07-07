@@ -2,7 +2,7 @@
 
 **Goal:** actionable feedback on both pronunciation and articulation after every attempt. **Depends on:** F3
 
-### F4-T01: Score display + word/phoneme breakdown 🚫
+### F4-T01: Score display + word/phoneme breakdown ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F3-T03 | **Priority:** high
 
 #### What to Build
@@ -17,6 +17,8 @@ Feedback screen: Accuracy/Fluency/Prosody as large numbers (prosody nullable →
 
 #### Documentation Updates
 - docs/product-design.md §2 confirmed
+
+**Completed (TDD):** scoreColor util, Feedback component with colored words + expandable phonemes, integrated into App after assess. Threshold colors tested. Basic parse for current assess data.
 
 ### F4-T02: Articulation panel 🚫
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F4-T01 | **Priority:** high

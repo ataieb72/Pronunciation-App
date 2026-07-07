@@ -10,11 +10,11 @@
 - Buttons: "Next exercise", "Drill my weak sounds" (builds a session from the weak-phoneme engine), "Pick exercise" (→ Picker).
 
 ## 2. Feedback screen (after each attempt)
-- Top: three large numbers — Accuracy, Fluency, Prosody (0–100).
+- Top: three large numbers — Accuracy, Fluency, Prosody (0–100). Prosody hidden if null.
 - Sentence rendered word by word, colored by score: green ≥85, amber 60–84, red <60. Tapping a word expands its phonemes: each with score + expected IPA symbol.
-- Articulation panel: speaking rate vs. TTS reference duration (e.g. "12% faster than reference"), unexpected pauses/breaks with position, word-stress feedback where Azure provides it. For speed-ladder attempts: tier result and whether the tier advanced.
-- Side-by-side replay: "Play reference" | "Play my attempt".
-- Actions: "Retry" · "Next" · (if a level threshold was crossed) "Level up → sentences/passages" callout.
+- (F4-T02 and later for articulation panel)
+- Side-by-side replay implemented.
+- Actions: "Retry" · "Next".
 
 ## 3. Exercise picker
 - Filters: track (phoneme/articulation/prosody), difficulty (1–3), focus (phoneme/cluster/feature dropdown populated from the language pack), level (word/sentence/passage).

@@ -294,3 +294,61 @@ footer {
   color: #999;
   text-align: center;
 }
+
+.feedback {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.scores-large {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.score-item {
+  text-align: center;
+}
+
+.score-item .label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.score-item .value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.score-item .value.green { color: #16a34a; }
+.score-item .value.amber { color: #ca8a04; }
+.score-item .value.red { color: #dc2626; }
+
+.sentence {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.word {
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.word.green { background: #dcfce7; }
+.word.amber { background: #fef9c3; }
+.word.red { background: #fee2e2; }
+
+.phonemes {
+  font-size: 0.75rem;
+  color: #444;
+  margin-left: 4px;
+}
+
+.actions button {
+  margin-right: 8px;
+}

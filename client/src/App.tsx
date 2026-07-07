@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useRecorder } from './hooks/useRecorder';
 import { assessPronunciation, getTtsUrl } from './lib/api';
+import { Feedback } from './components/Feedback';
+import { parseAssessmentWords } from './lib/parseAssessment';
 import './App.css';
 
 // Hardcoded exercises for F2-T02 shell (will be replaced by language packs later)
@@ -28,7 +30,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentExercise = exercises[currentIndex];
 
-  const [scores, setScores] = useState<any>(null);
+  const [assessment, setAssessment] = useState<any>(null);
 
   const {
     state,
@@ -42,7 +44,7 @@ function App() {
   } = useRecorder({
     onWavReady: async (blob) => {
       console.log('[F2-T03] WAV ready, size:', blob.size, 'bytes - auto uploading...');
-      setScores(null);
+      setAssessment(null);
       try {
         const form = new FormData();
         form.append('language', language);
@@ -63,7 +65,7 @@ function App() {
         // F3-T03: call assess, store in state
         const assessData = await assessPronunciation(uploadData.id, currentExercise.text, language);
         console.log('[F3] Assessment scores:', assessData);
-        setScores(assessData);
+        setAssessment(assessData);
       } catch (e) {
         console.error('[F2-T03] Upload/assess error', e);
       }
@@ -75,13 +77,13 @@ function App() {
     setLanguage(next);
     localStorage.setItem('language', next);
     setCurrentIndex(0);
-    setScores(null);
+    setAssessment(null);
     reset();
   };
 
   const nextExercise = () => {
     setCurrentIndex((i) => (i + 1) % exercises.length);
-    setScores(null);
+    setAssessment(null);
     reset();
   };
 
@@ -129,11 +131,13 @@ function App() {
           <button onClick={nextExercise} className="secondary">Next Exercise →</button>
         </div>
 
-        {scores && (
-          <div className="scores">
-            <h3>Scores (raw from assess)</h3>
-            <pre>{JSON.stringify(scores, null, 2)}</pre>
-          </div>
+        {assessment && (
+          <Feedback
+            scores={assessment.scores || assessment}
+            words={parseAssessmentWords(assessment)}
+            onRetry={() => setAssessment(null)}
+            onNext={nextExercise}
+          />
         )}
 
         {state === 'recording' && (
