@@ -1,11 +1,11 @@
 # Pronunciation Coach — Backlog Dashboard
 
 **Updated:** 2026-07-07 · **Build order:** F1 → F2 → F3 → {F4, F5} → F6
-**F1-T01 + T02:** ✅ Complete (monorepo + SQLite migrations with TDD)
+**F1 Scaffold:** ✅ Fully complete (T01 monorepo + T02 SQLite migrations + T03 Health) — TDD throughout
 
 | Epic | Tasks | ⬚ Ready | 🚫 Blocked | 🔄 In progress | ✅ Done |
 |------|-------|---------|-----------|----------------|---------|
-| F1 Scaffold | 3 | 0 | 0 | 0 | 2 |
+| F1 Scaffold | 3 | 0 | 0 | 0 | 3 |
 | F2 Recording | 3 | 0 | 3 | 0 | 0 |
 | F3 Azure integration | 3 | 0 | 3 | 0 | 0 |
 | F4 Feedback UI | 3 | 0 | 3 | 0 | 0 |
@@ -13,7 +13,7 @@
 | F6 Drills + progress | 4 | 0 | 4 | 0 | 0 |
 | **Total** | **20** | **2** | **18** | **0** | **0** |
 
-**Ready now:** F1-T03 (Health endpoint with real DB check). All F1 scaffold complete.
+**F1 Complete ✅** Ready for F2 (Recording).
 
 **Per-epic acceptance tests** (run after an epic completes):
 - F1: `npm run dev` serves both; /api/health ok

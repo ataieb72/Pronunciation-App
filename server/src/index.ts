@@ -1,6 +1,6 @@
 import express from 'express';
 import { loadConfig, MissingEnvError } from './config.js';
-import { applyMigrations } from './db/index.js';
+import { applyMigrations, checkDbHealth } from './db/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,7 +23,12 @@ try {
 }
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'pronunciation-coach-server' });
+  const dbOk = checkDbHealth();
+  const statusCode = dbOk ? 200 : 500;
+  res.status(statusCode).json({
+    status: 'ok',
+    db: dbOk,
+  });
 });
 
 app.listen(PORT, () => {

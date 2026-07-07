@@ -45,7 +45,7 @@ better-sqlite3 wrapper; migration runner applying numbered SQL files from server
 - Verified: fresh DB creates tables + version=1; re-apply is no-op
 - Wired into server startup (logs applied count)
 
-### F1-T03: Health endpoint 🚫
+### F1-T03: Health endpoint ✅
 **Type:** backend | **Effort:** S(2) | **Depends on:** F1-T02 | **Priority:** medium
 
 #### What to Build
@@ -59,3 +59,5 @@ GET /api/health returning { status: "ok", db: true } with a real SELECT 1 agains
 
 #### Documentation Updates
 - docs/api-reference.md confirmed
+
+**Completed:** Enhanced /api/health to return { status: 'ok', db: boolean } with real SELECT 1 check. Unit tests for up/down cases.

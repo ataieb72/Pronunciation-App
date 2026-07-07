@@ -1,4 +1,5 @@
 import { MigrationRunner } from './migrationRunner.js';
+import Database from 'better-sqlite3';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -24,3 +25,19 @@ export function applyMigrations(dbPath = DEFAULT_DB_PATH): { applied: number; cu
  * For now migrations are the focus of T02.
  */
 export const DB_PATH = DEFAULT_DB_PATH;
+
+/**
+ * Simple DB health check used by /api/health.
+ * Returns true if we can run a basic query.
+ */
+export function checkDbHealth(dbPath = DEFAULT_DB_PATH): boolean {
+  try {
+    const db = new Database(dbPath, { readonly: true });
+    db.prepare('SELECT 1').get();
+    db.close();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
