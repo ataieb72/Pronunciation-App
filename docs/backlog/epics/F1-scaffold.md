@@ -2,7 +2,7 @@
 
 **Goal:** runnable monorepo skeleton with database and health check. **Depends on:** —
 
-### F1-T01: Create monorepo with client and server workspaces ⬚
+### F1-T01: Create monorepo with client and server workspaces ✅
 **Type:** infra | **Effort:** S(2) | **Depends on:** — | **Priority:** high
 
 #### What to Build
@@ -17,6 +17,8 @@ Root package.json with npm workspaces `client` and `server`. `/client`: Vite + R
 
 #### Documentation Updates
 - README quickstart section
+
+**Completed (TDD):** Root + client (Vite React TS) + server (Express + TS) workspaces. `npm run dev` / `build` / `test` / `lint` wired. Config loader with strict MissingEnvError (tests written first, then implemented). Server fails fast with actionable message. Health endpoint stub present.
 
 ### F1-T02: SQLite setup with migrations ⬚
 **Type:** backend | **Effort:** M(5) | **Depends on:** F1-T01 | **Priority:** high
