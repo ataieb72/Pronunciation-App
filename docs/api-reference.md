@@ -6,8 +6,9 @@ Base URL: http://localhost:3001 (Express). All endpoints unauthenticated (localh
 → 200 `{ "status": "ok", "db": true }`
 
 ## POST /api/attempts
-multipart/form-data: `audio` (WAV 16 kHz mono), `language`, `exercise_id`, optional `tempo_tier`.
-Saves file to server/audio/, inserts attempts row. → 201 `{ "attemptId": 42, "audioPath": "..." }`
+multipart/form-data: `audio` (WAV file), `language` (e.g. "en-US"), `exercise_id`.
+Saves WAV to server/audio/{yyyy-mm}/, inserts attempts row (scores null until F3).
+→ 201 `{ "id": 42, "language": "en-US", "exercise_id": "en-001", "audio_path": "server/audio/2026-07/..." }`
 
 ## POST /api/assess
 JSON: `{ "attemptId": 42, "referenceText": "...", "language": "fr-FR" }`.

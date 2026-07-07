@@ -37,7 +37,7 @@ useRecorder hook (getUserMedia, MediaRecorder, stop → WAV via encoder, playbac
 
 **Completed:** useRecorder hook (state machine, MediaRecorder + wavEncoder integration). Basic Practice screen shell in App.tsx with language toggle, hardcoded exercises, record/playback. TDD tests for hook.
 
-### F2-T03: Attempt upload endpoint + wiring 🚫
+### F2-T03: Attempt upload endpoint + wiring ✅
 **Type:** backend | **Effort:** M(5) | **Depends on:** F1-T02, F2-T02 | **Priority:** high
 
 #### What to Build
@@ -51,3 +51,10 @@ POST /api/attempts (multer multipart) storing WAV under server/audio/{yyyy-mm}/,
 
 #### Documentation Updates
 - docs/api-reference.md confirmed
+
+**Completed (TDD):** 
+- Multer multipart POST /api/attempts stores file + inserts row (201)
+- GET /api/attempts/:id/audio serves the WAV (404 on unknown)
+- Tests: Upload_ValidWav_Creates201AndRow, Upload_MissingFields_400, GetAudio_UnknownId_404
+- Client: auto POST on wav ready (with Vite proxy)
+- DB layer extended with insert/getAttemptAudioPath
