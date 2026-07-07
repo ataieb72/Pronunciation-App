@@ -1,0 +1,47 @@
+{
+  "Id": "fixture-123",
+  "RecognitionStatus": "Success",
+  "Offset": 0,
+  "Duration": 24500000,
+  "DisplayText": "The quick brown fox.",
+  "NBest": [
+    {
+      "Confidence": 0.92,
+      "Lexical": "the quick brown fox",
+      "ITN": "the quick brown fox",
+      "MaskedITN": "the quick brown fox",
+      "Display": "The quick brown fox.",
+      "AccuracyScore": 82,
+      "FluencyScore": 88,
+      "CompletenessScore": 95,
+      "PronScore": 85,
+      "ProsodyScore": 78,
+      "Words": [
+        {
+          "Word": "the",
+          "Offset": 0,
+          "Duration": 3000000,
+          "Confidence": 0.95,
+          "AccuracyScore": 90,
+          "Phonemes": [
+            { "Phoneme": "ð", "AccuracyScore": 88, "Duration": 1500000 },
+            { "Phoneme": "ə", "AccuracyScore": 92, "Duration": 1500000 }
+          ]
+        },
+        {
+          "Word": "quick",
+          "Offset": 3000000,
+          "Duration": 4500000,
+          "Confidence": 0.9,
+          "AccuracyScore": 78,
+          "Phonemes": [
+            { "Phoneme": "k", "AccuracyScore": 85, "Duration": 1200000 },
+            { "Phoneme": "w", "AccuracyScore": 70, "Duration": 800000 },
+            { "Phoneme": "ɪ", "AccuracyScore": 80, "Duration": 1500000 },
+            { "Phoneme": "k", "AccuracyScore": 75, "Duration": 1000000 }
+          ]
+        }
+      ]
+    }
+  ]
+}

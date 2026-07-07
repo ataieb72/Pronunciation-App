@@ -37,9 +37,44 @@ function App() {
     reset,
     isRecording,
   } = useRecorder({
-    onWavReady: (blob) => {
-      console.log('[F2-T02] WAV ready, size:', blob.size, 'bytes');
-      // In real F2-T03 this will auto upload
+    onWavReady: async (blob) => {
+      console.log('[F2-T03] WAV ready, size:', blob.size, 'bytes - auto uploading...');
+      try {
+        const form = new FormData();
+        form.append('language', language);
+        form.append('exercise_id', currentExercise.id);
+        form.append('audio', blob, 'recording.wav');
+
+        const res = await fetch('/api/attempts', {
+          method: 'POST',
+          body: form,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          console.log('[F2-T03] Upload success, attempt id:', data.id, 'path:', data.audio_path);
+
+          // F3-T03 basic client assess loop
+          const assessRes = await fetch('/api/assess', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              attemptId: data.id,
+              referenceText: currentExercise.text,
+              language,
+            }),
+          });
+          if (assessRes.ok) {
+            const scores = await assessRes.json();
+            console.log('[F3] Assessment scores:', scores);
+          } else {
+            console.error('[F3] Assess failed', await assessRes.text());
+          }
+        } else {
+          console.error('[F2-T03] Upload failed', await res.text());
+        }
+      } catch (e) {
+        console.error('[F2-T03] Upload error', e);
+      }
     },
   });
 

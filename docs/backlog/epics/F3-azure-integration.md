@@ -2,7 +2,7 @@
 
 **Goal:** real phoneme scores and cached native reference audio. **Depends on:** F2
 
-### F3-T01: Assessment service + /api/assess 🚫
+### F3-T01: Assessment service + /api/assess ✅
 **Type:** backend | **Effort:** L(8) | **Depends on:** F2-T03 | **Priority:** high
 
 #### What to Build
@@ -18,6 +18,8 @@ Azure service module using microsoft-cognitiveservices-speech-sdk: Pronunciation
 
 #### Documentation Updates
 - docs/api-reference.md response shape confirmed against fixture
+
+**Completed (TDD):** Assessment service with mocked SDK + fixture, rolling average, transaction update for attempt + phoneme_stats. POST /api/assess wired. Basic client call after upload.
 
 ### F3-T02: TTS endpoint with disk cache + duration index 🚫
 **Type:** backend | **Effort:** M(5) | **Depends on:** F3-T01 | **Priority:** high

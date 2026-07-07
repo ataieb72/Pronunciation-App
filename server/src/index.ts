@@ -3,7 +3,8 @@ import multer from 'multer';
 import fs from 'node:fs';
 import path from 'node:path';
 import { loadConfig, MissingEnvError } from './config.js';
-import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath } from './db/index.js';
+import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
+import { assessPronunciation } from './services/assess.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -118,6 +119,70 @@ app.get('/api/attempts/:id/audio', (req, res) => {
   }
 
   res.sendFile(fullPath);
+});
+
+// F3-T01: Assess pronunciation (called after upload)
+app.post('/api/assess', express.json(), async (req, res) => {
+  const { attemptId, referenceText, language } = req.body;
+
+  if (!attemptId || !referenceText || !language) {
+    return res.status(400).json({ error: 'attemptId, referenceText and language required' });
+  }
+
+  const audioPath = getAttemptAudioPath(attemptId);
+  if (!audioPath) {
+    return res.status(404).json({ error: 'attempt not found' });
+  }
+
+  const fullPath = path.resolve(process.cwd(), audioPath);
+
+  try {
+    const assessment = await assessPronunciation({
+      audioPath: fullPath,
+      referenceText,
+      language,
+    });
+
+    if (assessment.status !== 200 || !assessment.scores || !assessment.phonemeJson) {
+      // Keep the attempt but mark as error
+      return res.status(assessment.status).json({ error: assessment.error || 'assessment failed' });
+    }
+
+    // Extract phoneme scores for stats update (simplified from fixture shape)
+    const phonemeUpdates: Array<{ language: string; phoneme: string; score: number }> = [];
+    try {
+      const parsed = JSON.parse(assessment.phonemeJson);
+      const words = parsed.NBest?.[0]?.Words || [];
+      for (const word of words) {
+        for (const ph of word.Phonemes || []) {
+          if (ph.Phoneme && typeof ph.AccuracyScore === 'number') {
+            phonemeUpdates.push({
+              language,
+              phoneme: ph.Phoneme,
+              score: ph.AccuracyScore,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Could not parse phonemes for stats');
+    }
+
+    // Update in transaction
+    updateAttemptAndStats(
+      attemptId,
+      assessment.scores,
+      assessment.phonemeJson,
+      phonemeUpdates
+    );
+
+    res.json({
+      scores: assessment.scores,
+      phonemeJson: assessment.phonemeJson,
+    });
+  } catch (err: any) {
+    res.status(502).json({ error: 'Azure assessment failed: ' + err.message });
+  }
 });
 
 // Export app for testing (TDD)
