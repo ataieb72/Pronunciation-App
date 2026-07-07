@@ -4,18 +4,35 @@ Single-user web application to improve **pronunciation** (phoneme-level accuracy
 
 Record your speech → receive detailed Azure-powered feedback (per-phoneme + prosody) → practice targeted drills and speed ladders → track progress over time.
 
-## Quick Start (once scaffolded)
+## Quick Start
 
 ```powershell
 npm install
-copy .env.example .env   # edit with your Azure Speech key
+
+# 1. Set up environment (required for server)
+copy .env.example .env
+# Edit .env and provide your Azure Speech key + region
+
 npm run dev
 ```
 
-- Client: http://localhost:5173
-- Server: http://localhost:3001
+- Client (Vite): http://localhost:5173
+- Server (Express): http://localhost:3001
+
+**Important:** The server will exit with a clear error until `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are set.
 
 See `docs/prd.md` for full product requirements.
+
+## Available Commands
+
+| Command       | Description                     |
+|---------------|---------------------------------|
+| `npm run dev` | Start client + server (concurrently) |
+| `npm run build` | Build both workspaces         |
+| `npm test`    | Run all tests (client + server) |
+| `npm run lint` | Lint / type-check             |
+
+See `scripts/session-bootstrap.ps1` for session start.
 
 ## Project Structure (planned)
 
