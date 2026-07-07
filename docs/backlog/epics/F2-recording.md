@@ -2,7 +2,7 @@
 
 **Goal:** mic → 16 kHz mono WAV → uploaded, stored attempt. Riskiest epic — do first after scaffold. **Depends on:** F1
 
-### F2-T01: WAV encoder utility 🚫
+### F2-T01: WAV encoder utility ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F1-T01 | **Priority:** high
 
 #### What to Build
@@ -16,6 +16,8 @@ client/src/audio/wavEncoder: AudioBuffer → 16 kHz 16-bit mono PCM WAV (resampl
 
 #### Documentation Updates
 - docs/technical-design.md §2 confirmed
+
+**Completed (TDD):** client/src/audio/wavEncoder.ts with pcmToWav + encodeToWav (resample via Offline or linear fallback). Golden header + size tests written and passing. Pure 16kHz mono 16-bit WAV output.
 
 ### F2-T02: Recorder hook + Practice screen shell 🚫
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F2-T01 | **Priority:** high
