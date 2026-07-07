@@ -1,5 +1,6 @@
 import express from 'express';
 import { loadConfig, MissingEnvError } from './config.js';
+import { applyMigrations } from './db/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -8,6 +9,10 @@ try {
   const config = loadConfig();
   console.log(`[config] Loaded. Region: ${config.azureSpeechRegion}`);
   console.log(`[config] Azure key present (length=${config.azureSpeechKey.length})`);
+
+  // Apply SQLite migrations (idempotent)
+  const migrationResult = applyMigrations();
+  console.log(`[db] Migrations applied: ${migrationResult.applied}, version: ${migrationResult.currentVersion}`);
 } catch (err) {
   if (err instanceof MissingEnvError) {
     console.error(`\n[ERROR] ${err.message}\n`);

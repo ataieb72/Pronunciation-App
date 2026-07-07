@@ -20,7 +20,7 @@ Root package.json with npm workspaces `client` and `server`. `/client`: Vite + R
 
 **Completed (TDD):** Root + client (Vite React TS) + server (Express + TS) workspaces. `npm run dev` / `build` / `test` / `lint` wired. Config loader with strict MissingEnvError (tests written first, then implemented). Server fails fast with actionable message. Health endpoint stub present.
 
-### F1-T02: SQLite setup with migrations ⬚
+### F1-T02: SQLite setup with migrations ✅
 **Type:** backend | **Effort:** M(5) | **Depends on:** F1-T01 | **Priority:** high
 
 #### What to Build
@@ -36,6 +36,14 @@ better-sqlite3 wrapper; migration runner applying numbered SQL files from server
 
 #### Documentation Updates
 - docs/database-schema.md if schema deviates
+
+**Completed (TDD):** 
+- Added better-sqlite3
+- `server/migrations/001_init.sql`
+- `MigrationRunner` + wrapper in `server/src/db/`
+- Tests written first: `MigrationRunner_FreshDb_AppliesAllMigrations`, `MigrationRunner_UpToDateDb_AppliesNothing`
+- Verified: fresh DB creates tables + version=1; re-apply is no-op
+- Wired into server startup (logs applied count)
 
 ### F1-T03: Health endpoint 🚫
 **Type:** backend | **Effort:** S(2) | **Depends on:** F1-T02 | **Priority:** medium
