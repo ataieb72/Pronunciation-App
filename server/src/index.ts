@@ -5,6 +5,7 @@ import path from 'node:path';
 import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
+import { synthesizeTts } from './services/tts.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -182,6 +183,37 @@ app.post('/api/assess', express.json(), async (req, res) => {
     });
   } catch (err: any) {
     res.status(502).json({ error: 'Azure assessment failed: ' + err.message });
+  }
+});
+
+// F3-T02: TTS with cache
+app.get('/api/tts', async (req, res) => {
+  const text = req.query.text as string;
+  const lang = (req.query.lang as string) || 'en-US';
+  const rate = parseFloat((req.query.rate as string) || '1.0');
+
+  if (!text) {
+    return res.status(400).json({ error: 'text parameter is required' });
+  }
+
+  if (![0.75, 1.0, 1.25].includes(rate)) {
+    return res.status(400).json({ error: 'rate must be 0.75, 1.0 or 1.25' });
+  }
+
+  try {
+    const result = await synthesizeTts({ text, lang, rate });
+
+    if (result.status !== 200 || !result.audio) {
+      return res.status(result.status).json({ error: 'TTS failed' });
+    }
+
+    res.setHeader('Content-Type', result.contentType);
+    res.setHeader('X-Reference-Duration', result.duration.toString());
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+
+    res.send(result.audio);
+  } catch (err: any) {
+    res.status(502).json({ error: 'TTS error: ' + err.message });
   }
 });
 

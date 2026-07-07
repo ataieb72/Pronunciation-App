@@ -17,7 +17,7 @@ Runs Azure Pronunciation Assessment (granularity Phoneme, prosody enabled) on th
 Errors: 404 unknown attempt · 502 Azure failure (attempt kept, scores null) · 429 quota with readable message.
 
 ## GET /api/tts?text=...&lang=fr-FR&rate=1.0
-Neural TTS reference audio. Voices: fr-FR-DeniseNeural, en-US-JennyNeural. `rate` ∈ {0.75, 1.0, 1.25} maps to SSML prosody rate. Disk cache keyed by sha256(text+voice+rate). → 200 audio/mpeg.
+Neural TTS reference audio. Voices: fr-FR-DeniseNeural, en-US-JennyNeural. `rate` ∈ {0.75, 1.0, 1.25} maps to SSML prosody rate. Disk cache keyed by sha256(text+voice+rate). Returns audio/mpeg with `X-Reference-Duration` header (ms). Second call is cache hit (no Azure call).
 
 ## GET /api/weak-phonemes?lang=fr-FR
 5 lowest avg_score phonemes with attempt_count ≥ 3. → 200 `{ "phonemes": [ { "phoneme": "...", "avgScore": 61, "attempts": 7 } ] }`

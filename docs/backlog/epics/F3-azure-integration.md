@@ -21,7 +21,7 @@ Azure service module using microsoft-cognitiveservices-speech-sdk: Pronunciation
 
 **Completed (TDD):** Assessment service with mocked SDK + fixture, rolling average, transaction update for attempt + phoneme_stats. POST /api/assess wired. Basic client call after upload.
 
-### F3-T02: TTS endpoint with disk cache + duration index 🚫
+### F3-T02: TTS endpoint with disk cache + duration index ✅
 **Type:** backend | **Effort:** M(5) | **Depends on:** F3-T01 | **Priority:** high
 
 #### What to Build
@@ -36,6 +36,12 @@ GET /api/tts?text&lang&rate: SSML prosody rate {0.75,1.0,1.25}; voices fr-FR-Den
 
 #### Documentation Updates
 - docs/api-reference.md confirmed
+
+**Completed (TDD):** 
+- TTS service with SSML prosody, sha256 cache (MP3 + index.json for duration)
+- GET /api/tts returns audio + X-Reference-Duration
+- Cache hit skips SDK call
+- Tests: Tts_CacheHit_SkipsSdk, Tts_RateParam_AltersSsml, CacheKey_DiffersByRate
 
 ### F3-T03: Wire client record→assess loop 🚫
 **Type:** frontend | **Effort:** S(2) | **Depends on:** F3-T01, F3-T02 | **Priority:** high
