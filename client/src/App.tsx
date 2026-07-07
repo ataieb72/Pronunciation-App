@@ -42,7 +42,7 @@ function App() {
     reset,
     isRecording,
   } = useRecorder({
-    onWavReady: async (blob) => {
+    onWavReady: async (blob, durationMs) => {
       console.log('[F2-T03] WAV ready, size:', blob.size, 'bytes - auto uploading...');
       setAssessment(null);
       try {
@@ -50,6 +50,7 @@ function App() {
         form.append('language', language);
         form.append('exercise_id', currentExercise.id);
         form.append('audio', blob, 'recording.wav');
+        if (durationMs) form.append('duration', durationMs.toString());
 
         const uploadRes = await fetch('/api/attempts', {
           method: 'POST',
@@ -135,6 +136,9 @@ function App() {
           <Feedback
             scores={assessment.scores || assessment}
             words={parseAssessmentWords(assessment)}
+            attemptDurationMs={assessment.attempt_duration_ms}
+            referenceDurationMs={assessment.reference_duration_ms}
+            pauses={assessment.pauses}
             onRetry={() => setAssessment(null)}
             onNext={nextExercise}
           />

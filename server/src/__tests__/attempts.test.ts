@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { app } from '../index.js';
+import Database from 'better-sqlite3';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -15,6 +16,13 @@ describe('F2-T03 Upload endpoint (TDD)', () => {
     if (fs.existsSync(testAudioBase)) {
       fs.rmSync(testAudioBase, { recursive: true, force: true });
     }
+    // Ensure duration_ms column for tests (migration may be old in this env)
+    try {
+      const dbPath = path.resolve(__dirname, '../../data/app.db');
+      const db = new Database(dbPath);
+      db.exec('ALTER TABLE attempts ADD COLUMN duration_ms INTEGER');
+      db.close();
+    } catch {}
   });
 
   afterEach(() => {
@@ -29,6 +37,7 @@ describe('F2-T03 Upload endpoint (TDD)', () => {
       .post('/api/attempts')
       .field('language', 'en-US')
       .field('exercise_id', 'en-001')
+      .field('duration', '1234')
       .attach('audio', fakeWav, 'test.wav');
 
     expect(res.status).toBe(201);

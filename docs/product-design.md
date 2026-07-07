@@ -12,7 +12,7 @@
 ## 2. Feedback screen (after each attempt)
 - Top: three large numbers — Accuracy, Fluency, Prosody (0–100). Prosody hidden if null.
 - Sentence rendered word by word, colored by score: green ≥85, amber 60–84, red <60. Tapping a word expands its phonemes: each with score + expected IPA symbol.
-- (F4-T02 and later for articulation panel)
+- Articulation panel: rate comparison (+/- %), unexpected pause list with positions, stress, ladder tier for tempo attempts. Enriched via /api/assess with durations and parsed Azure breaks.
 - Side-by-side replay implemented.
 - Actions: "Retry" · "Next".
 

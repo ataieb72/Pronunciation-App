@@ -15,7 +15,7 @@ export interface UseRecorderResult {
 }
 
 interface RecorderOptions {
-  onWavReady?: (wavBlob: Blob) => void;
+  onWavReady?: (wavBlob: Blob, durationMs?: number) => void;
 }
 
 export function useRecorder(options: RecorderOptions = {}): UseRecorderResult {
@@ -112,7 +112,8 @@ export function useRecorder(options: RecorderOptions = {}): UseRecorderResult {
           setAudioUrl(url);
           setState('ready');
 
-          options.onWavReady?.(finalWavBlob);
+          const durationMs = Math.round(audioBuffer.duration * 1000);
+          options.onWavReady?.(finalWavBlob, durationMs);
         } catch (err: any) {
           setError(`Failed to process recording: ${err.message}`);
           setState('error');

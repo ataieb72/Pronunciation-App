@@ -45,15 +45,16 @@ export interface NewAttempt {
   language: string;
   exercise_id: string;
   audio_path: string;
+  duration_ms?: number;
 }
 
 export function insertAttempt(attempt: NewAttempt, dbPath = DEFAULT_DB_PATH): number {
   const db = new Database(dbPath);
   const stmt = db.prepare(`
-    INSERT INTO attempts (language, exercise_id, audio_path, created_at)
-    VALUES (?, ?, ?, datetime('now'))
+    INSERT INTO attempts (language, exercise_id, audio_path, duration_ms, created_at)
+    VALUES (?, ?, ?, ?, datetime('now'))
   `);
-  const info = stmt.run(attempt.language, attempt.exercise_id, attempt.audio_path);
+  const info = stmt.run(attempt.language, attempt.exercise_id, attempt.audio_path, attempt.duration_ms ?? null);
   db.close();
   return Number(info.lastInsertRowid);
 }
@@ -63,6 +64,21 @@ export function getAttemptAudioPath(id: number | string, dbPath = DEFAULT_DB_PAT
   const row = db.prepare('SELECT audio_path FROM attempts WHERE id = ?').get(id) as { audio_path?: string } | undefined;
   db.close();
   return row?.audio_path ?? null;
+}
+
+export interface AttemptInfo {
+  id: number;
+  language: string;
+  exercise_id: string;
+  audio_path: string;
+  duration_ms?: number;
+}
+
+export function getAttempt(id: number | string, dbPath = DEFAULT_DB_PATH): AttemptInfo | null {
+  const db = new Database(dbPath, { readonly: true });
+  const row = db.prepare('SELECT id, language, exercise_id, audio_path, duration_ms FROM attempts WHERE id = ?').get(id) as AttemptInfo | undefined;
+  db.close();
+  return row || null;
 }
 
 export interface PhonemeStat {

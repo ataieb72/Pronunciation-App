@@ -20,7 +20,14 @@ Feedback screen: Accuracy/Fluency/Prosody as large numbers (prosody nullable →
 
 **Completed (TDD):** scoreColor util, Feedback component with colored words + expandable phonemes, integrated into App after assess. Threshold colors tested. Basic parse for current assess data.
 
-### F4-T02: Articulation panel 🚫
+**F4-T02 (TDD):** 
+- Extended /api/assess response to include attempt_duration_ms, reference_duration_ms (from TTS cache), pauses/stress extracted from Azure JSON.
+- rateDelta and extractPauses unit tests (using fixture).
+- Articulation panel: rate % vs ref, unexpected pauses list with positions, stress, ladder support.
+- Upload captures duration_ms from client AudioBuffer, stored in attempts.
+- DB migration updated for duration_ms column.
+
+### F4-T02: Articulation panel ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F4-T01 | **Priority:** high
 
 #### What to Build

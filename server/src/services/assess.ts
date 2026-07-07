@@ -1,6 +1,5 @@
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import fs from 'node:fs';
-import { insertPhonemeStat, updateAttemptScores } from '../db/index.js'; // we'll extend db
 
 export interface AssessInput {
   audioPath: string;
@@ -34,7 +33,6 @@ export function computeRollingAverage(
 
 /**
  * Main assessment function.
- * Uses real SDK when not mocked.
  */
 export async function assessPronunciation(input: AssessInput): Promise<AssessResult> {
   const { audioPath, referenceText, language } = input;
@@ -43,10 +41,9 @@ export async function assessPronunciation(input: AssessInput): Promise<AssessRes
     return { status: 400, error: 'Audio file not found' };
   }
 
-  try {
-    // If no real key or in test, use fixture for the success path (the test will override via mock)
-    if (!process.env.AZURE_SPEECH_KEY || process.env.AZURE_SPEECH_KEY === 'mock-key') {
-      // Fallback for tests: load the fixture and return parsed data
+  // Test / fallback path when no real key
+  if (!process.env.AZURE_SPEECH_KEY || process.env.AZURE_SPEECH_KEY === 'mock-key') {
+    try {
       const fixturePath = new URL('../__tests__/fixtures/assess-response.json', import.meta.url);
       const fixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
       const detail = fixture.NBest[0];
@@ -61,8 +58,12 @@ export async function assessPronunciation(input: AssessInput): Promise<AssessRes
         scores,
         phonemeJson: JSON.stringify(detail),
       };
+    } catch (e) {
+      return { status: 502, error: 'Fixture load failed' };
     }
+  }
 
+  try {
     const speechConfig = sdk.SpeechConfig.fromSubscription(
       process.env.AZURE_SPEECH_KEY,
       process.env.AZURE_SPEECH_REGION!
@@ -82,7 +83,7 @@ export async function assessPronunciation(input: AssessInput): Promise<AssessRes
     const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
     pronunciationConfig.applyTo(recognizer);
 
-    const result = await recognizer.recognizeOnceAsync();
+    const result: any = await recognizer.recognizeOnceAsync();
     recognizer.close();
 
     if (result.reason !== sdk.ResultReason.RecognizedSpeech) {
@@ -101,8 +102,6 @@ export async function assessPronunciation(input: AssessInput): Promise<AssessRes
 
     const phonemeJson = JSON.stringify(detail);
 
-    // Note: DB updates happen in the route using a transaction
-
     return {
       status: 200,
       scores,
@@ -110,9 +109,6 @@ export async function assessPronunciation(input: AssessInput): Promise<AssessRes
     };
   } catch (err: any) {
     console.error('[Azure assess error]', err.message);
-    if (err.message.includes('quota') || err.message.includes('401') || err.message.includes('403')) {
-      return { status: 502, error: 'Azure error: ' + err.message };
-    }
     return { status: 502, error: err.message };
   }
 }

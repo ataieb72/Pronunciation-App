@@ -5,7 +5,8 @@ import path from 'node:path';
 import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
-import { synthesizeTts } from './services/tts.js';
+import { synthesizeTts, getTtsCacheKey } from './services/tts.js';
+import { getAttempt } from './db/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -76,18 +77,20 @@ app.post('/api/attempts', upload.single('audio'), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'audio file is required' });
     }
-    const { language, exercise_id } = req.body;
+    const { language, exercise_id, duration } = req.body;
     if (!language || !exercise_id) {
       return res.status(400).json({ error: 'language and exercise_id are required' });
     }
 
     // audio_path relative to project root for storage
     const relPath = path.relative(process.cwd(), req.file.path).replace(/\\/g, '/');
+    const durationMs = duration ? parseInt(duration, 10) : null;
 
     const id = insertAttempt({
       language,
       exercise_id,
       audio_path: relPath,
+      duration_ms: durationMs ?? undefined,
     });
 
     res.status(201).json({
@@ -95,6 +98,7 @@ app.post('/api/attempts', upload.single('audio'), (req, res) => {
       language,
       exercise_id,
       audio_path: relPath,
+      duration_ms: durationMs,
     });
   } catch (err: any) {
     console.error('[upload error]', err);
@@ -151,9 +155,10 @@ app.post('/api/assess', express.json(), async (req, res) => {
 
     // Extract phoneme scores for stats update (simplified from fixture shape)
     const phonemeUpdates: Array<{ language: string; phoneme: string; score: number }> = [];
+    let detail: any = {};
     try {
-      const parsed = JSON.parse(assessment.phonemeJson);
-      const words = parsed.NBest?.[0]?.Words || [];
+      detail = JSON.parse(assessment.phonemeJson);
+      const words = detail.NBest?.[0]?.Words || [];
       for (const word of words) {
         for (const ph of word.Phonemes || []) {
           if (ph.Phoneme && typeof ph.AccuracyScore === 'number') {
@@ -177,10 +182,57 @@ app.post('/api/assess', express.json(), async (req, res) => {
       phonemeUpdates
     );
 
-    res.json({
+    // Enrich for F4-T02
+    const attemptInfo = getAttempt(attemptId);
+    const attemptDuration = attemptInfo?.duration_ms || null;
+
+    // Reference duration from TTS cache (assume rate 1.0)
+    let referenceDuration: number | null = null;
+    try {
+      const refKey = getTtsCacheKey(referenceText, language, 1.0);
+      const cacheDir = path.resolve('tts-cache');
+      const indexPath = path.join(cacheDir, 'index.json');
+      if (fs.existsSync(indexPath)) {
+        const idx = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+        if (idx[refKey]) referenceDuration = idx[refKey].duration;
+      }
+    } catch {}
+
+    // Extract pauses/stress from detail (word level)
+    const words = detail.NBest?.[0]?.Words || [];
+    const pauses: any[] = [];
+    let prevEnd = 0;
+    for (const w of words) {
+      const start = w.Offset || 0;
+      const dur = w.Duration || 0;
+      const end = start + dur;
+      if (start > prevEnd + 2000000) { // >0.2s gap in 100ns units
+        pauses.push({
+          start: prevEnd / 10000, // to ms approx
+          end: start / 10000,
+          duration: (start - prevEnd) / 10000,
+          word_before: words.find((ww: any) => (ww.Offset + (ww.Duration||0)) === prevEnd)?.Word || '',
+          word_after: w.Word,
+        });
+      }
+      prevEnd = end;
+      // stress if present
+      if (w.Stress) {
+        // attach to word if needed
+      }
+    }
+
+    const enriched = {
       scores: assessment.scores,
       phonemeJson: assessment.phonemeJson,
-    });
+      attempt_duration_ms: attemptDuration,
+      reference_duration_ms: referenceDuration,
+      pauses,
+      words, // include for frontend
+      // stress would be in words if present in Azure result
+    };
+
+    res.json(enriched);
   } catch (err: any) {
     res.status(502).json({ error: 'Azure assessment failed: ' + err.message });
   }

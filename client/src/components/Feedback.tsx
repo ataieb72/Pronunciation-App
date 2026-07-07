@@ -20,11 +20,14 @@ interface FeedbackProps {
     prosody?: number;
   };
   words: Word[];
+  attemptDurationMs?: number;
+  referenceDurationMs?: number;
+  pauses?: Array<{ start: number; end: number; duration: number; word_before?: string; word_after?: string }>;
   onRetry?: () => void;
   onNext?: () => void;
 }
 
-export function Feedback({ scores, words, onRetry, onNext }: FeedbackProps) {
+export function Feedback({ scores, words, attemptDurationMs, referenceDurationMs, pauses, onRetry, onNext }: FeedbackProps) {
   const [expandedWord, setExpandedWord] = useState<number | null>(null);
 
   const getColorClass = (score: number): ScoreColor => scoreColor(score);
@@ -84,6 +87,38 @@ export function Feedback({ scores, words, onRetry, onNext }: FeedbackProps) {
         {onRetry && <button onClick={onRetry}>Retry</button>}
         {onNext && <button onClick={onNext}>Next</button>}
       </div>
+
+      {/* F4-T02 Articulation panel */}
+      {(attemptDurationMs != null || referenceDurationMs != null || (pauses && pauses.length > 0)) && (
+        <div className="articulation-panel">
+          <h4>Articulation</h4>
+          {attemptDurationMs != null && referenceDurationMs != null && (
+            <div className="rate">
+              Speaking rate: {rateDelta(attemptDurationMs, referenceDurationMs)} vs reference
+            </div>
+          )}
+          {pauses && pauses.length > 0 && (
+            <div className="pauses">
+              <div>Unexpected pauses:</div>
+              <ul>
+                {pauses.map((p, i) => (
+                  <li key={i}>
+                    ~{Math.round(p.start / 1000)}ms: gap of {Math.round(p.duration / 1000)}ms between "{p.word_before}" and "{p.word_after}"
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* stress and ladder would go here if data present */}
+        </div>
+      )}
     </div>
   );
+}
+
+function rateDelta(attemptMs: number, refMs: number): string {
+  const delta = ((attemptMs - refMs) / refMs) * 100;
+  const rounded = Math.round(delta);
+  const sign = rounded >= 0 ? '+' : '';
+  return `${sign}${rounded}%`;
 }

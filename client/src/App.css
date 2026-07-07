@@ -352,3 +352,26 @@ footer {
 .actions button {
   margin-right: 8px;
 }
+
+.articulation-panel {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+}
+
+.articulation-panel h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.rate {
+  font-weight: 500;
+}
+
+.pauses ul {
+  margin: 4px 0;
+  padding-left: 20px;
+  font-size: 0.85rem;
+}

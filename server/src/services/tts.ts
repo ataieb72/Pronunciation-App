@@ -111,8 +111,8 @@ export async function synthesizeTts(input: TtsInput): Promise<TtsResult> {
         (result) => {
           synthesizer.close();
 
-          if (result.reason !== 'SynthesizingAudioCompleted' && result.reason !== sdk.ResultReason?.SynthesizingAudioCompleted) {
-            reject(new Error(`TTS failed: ${result.reason}`));
+          if ((result as any).reason !== 'SynthesizingAudioCompleted') {
+            reject(new Error(`TTS failed: ${(result as any).reason}`));
             return;
           }
 

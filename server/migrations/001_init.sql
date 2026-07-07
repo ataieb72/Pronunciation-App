@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   language TEXT NOT NULL,
   exercise_id TEXT NOT NULL,
   audio_path TEXT NOT NULL,
+  duration_ms INTEGER,
   overall_score REAL,
   accuracy_score REAL,
   fluency_score REAL,
