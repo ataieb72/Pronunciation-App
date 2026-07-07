@@ -43,7 +43,7 @@ GET /api/tts?text&lang&rate: SSML prosody rate {0.75,1.0,1.25}; voices fr-FR-Den
 - Cache hit skips SDK call
 - Tests: Tts_CacheHit_SkipsSdk, Tts_RateParam_AltersSsml, CacheKey_DiffersByRate
 
-### F3-T03: Wire client record→assess loop 🚫
+### F3-T03: Wire client record→assess loop ✅
 **Type:** frontend | **Effort:** S(2) | **Depends on:** F3-T01, F3-T02 | **Priority:** high
 
 #### What to Build
@@ -57,3 +57,10 @@ After upload, client calls /api/assess with the exercise reference text; result 
 
 #### Documentation Updates
 - CHANGELOG entry: end-to-end loop live
+
+**Completed (TDD):** 
+- client/src/lib/api.ts (assessPronunciation, getTtsUrl)
+- API tests with mocked fetch (happy/502/429)
+- App state for scores, wired assess after upload, Play Reference uses api
+- Full loop: record → upload → assess → scores in state → TTS play
+- Basic scores display in UI (raw JSON for now)

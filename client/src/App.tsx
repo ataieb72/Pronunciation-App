@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRecorder } from './hooks/useRecorder';
+import { assessPronunciation, getTtsUrl } from './lib/api';
 import './App.css';
 
 // Hardcoded exercises for F2-T02 shell (will be replaced by language packs later)
@@ -27,6 +28,8 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentExercise = exercises[currentIndex];
 
+  const [scores, setScores] = useState<any>(null);
+
   const {
     state,
     error,
@@ -39,41 +42,30 @@ function App() {
   } = useRecorder({
     onWavReady: async (blob) => {
       console.log('[F2-T03] WAV ready, size:', blob.size, 'bytes - auto uploading...');
+      setScores(null);
       try {
         const form = new FormData();
         form.append('language', language);
         form.append('exercise_id', currentExercise.id);
         form.append('audio', blob, 'recording.wav');
 
-        const res = await fetch('/api/attempts', {
+        const uploadRes = await fetch('/api/attempts', {
           method: 'POST',
           body: form,
         });
-        if (res.ok) {
-          const data = await res.json();
-          console.log('[F2-T03] Upload success, attempt id:', data.id, 'path:', data.audio_path);
-
-          // F3-T03 basic client assess loop
-          const assessRes = await fetch('/api/assess', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              attemptId: data.id,
-              referenceText: currentExercise.text,
-              language,
-            }),
-          });
-          if (assessRes.ok) {
-            const scores = await assessRes.json();
-            console.log('[F3] Assessment scores:', scores);
-          } else {
-            console.error('[F3] Assess failed', await assessRes.text());
-          }
-        } else {
-          console.error('[F2-T03] Upload failed', await res.text());
+        if (!uploadRes.ok) {
+          console.error('[F2-T03] Upload failed', await uploadRes.text());
+          return;
         }
+        const uploadData = await uploadRes.json();
+        console.log('[F2-T03] Upload success, attempt id:', uploadData.id, 'path:', uploadData.audio_path);
+
+        // F3-T03: call assess, store in state
+        const assessData = await assessPronunciation(uploadData.id, currentExercise.text, language);
+        console.log('[F3] Assessment scores:', assessData);
+        setScores(assessData);
       } catch (e) {
-        console.error('[F2-T03] Upload error', e);
+        console.error('[F2-T03] Upload/assess error', e);
       }
     },
   });
@@ -83,12 +75,20 @@ function App() {
     setLanguage(next);
     localStorage.setItem('language', next);
     setCurrentIndex(0);
+    setScores(null);
     reset();
   };
 
   const nextExercise = () => {
     setCurrentIndex((i) => (i + 1) % exercises.length);
+    setScores(null);
     reset();
+  };
+
+  const playReference = () => {
+    const url = getTtsUrl(currentExercise.text, language, 1.0);
+    const audio = new Audio(url);
+    audio.play().catch(console.error);
   };
 
   return (
@@ -110,6 +110,10 @@ function App() {
         </div>
 
         <div className="controls">
+          <button onClick={playReference} className="secondary">
+            ▶ Play Reference (TTS)
+          </button>
+
           <button
             onClick={isRecording ? stop : start}
             disabled={state === 'processing' || state === 'requesting'}
@@ -124,6 +128,13 @@ function App() {
 
           <button onClick={nextExercise} className="secondary">Next Exercise →</button>
         </div>
+
+        {scores && (
+          <div className="scores">
+            <h3>Scores (raw from assess)</h3>
+            <pre>{JSON.stringify(scores, null, 2)}</pre>
+          </div>
+        )}
 
         {state === 'recording' && (
           <div className="waveform">
