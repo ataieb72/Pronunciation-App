@@ -2,7 +2,7 @@
 
 **Goal:** the actual training content, both languages, three tracks. Can run in parallel with F4. **Depends on:** F3
 
-### F5-T01: Pack schema + loader + phoneme inventories 🚫
+### F5-T01: Pack schema + loader + phoneme inventories 🔄
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F3-T03 | **Priority:** high
 
 #### What to Build

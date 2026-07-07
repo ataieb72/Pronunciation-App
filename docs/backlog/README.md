@@ -9,11 +9,11 @@
 | F2 Recording | 3 | 0 | 0 | 0 | 3 |
 | F3 Azure integration | 3 | 0 | 0 | 0 | 3 |
 | F4 Feedback UI | 3 | 0 | 0 | 0 | 3 |
-| F5 Language packs | 4 | 0 | 4 | 0 | 0 |
+| F5 Language packs | 4 | 0 | 3 | 1 | 0 |
 | F6 Drills + progress | 4 | 0 | 4 | 0 | 0 |
 | **Total** | **20** | **2** | **18** | **0** | **0** |
 
-**F4 Complete ✅** (feedback UI + articulation panel) | Ready for F5
+**F4 Complete ✅** (feedback UI + articulation panel) | **F5-T01** 🔄 Pack schema + loader (TDD)
 
 **Per-epic acceptance tests** (run after an epic completes):
 - F1: `npm run dev` serves both; /api/health ok

@@ -3,21 +3,8 @@ import { useRecorder } from './hooks/useRecorder';
 import { assessPronunciation, getTtsUrl } from './lib/api';
 import { Feedback } from './components/Feedback';
 import { parseAssessmentWords } from './lib/parseAssessment';
+import { loadPack } from './lib/languagePacks';
 import './App.css';
-
-// Hardcoded exercises for F2-T02 shell (will be replaced by language packs later)
-const EXERCISES = {
-  'en-US': [
-    { id: 'en-001', text: 'The quick brown fox jumps over the lazy dog.', track: 'Phoneme' },
-    { id: 'en-002', text: 'She sells seashells by the seashore.', track: 'Articulation' },
-    { id: 'en-003', text: 'How much wood would a woodchuck chuck?', track: 'Prosody' },
-  ],
-  'fr-FR': [
-    { id: 'fr-001', text: 'Bonjour, comment allez-vous aujourd\'hui ?', track: 'Phoneme' },
-    { id: 'fr-002', text: 'Les chaussettes de l\'archiduchesse.', track: 'Articulation' },
-    { id: 'fr-003', text: 'Un chasseur sachant chasser sans son chien.', track: 'Prosody' },
-  ],
-};
 
 type Language = 'en-US' | 'fr-FR';
 
@@ -26,7 +13,13 @@ function App() {
     return (localStorage.getItem('language') as Language) || 'en-US';
   });
 
-  const exercises = EXERCISES[language];
+  const pack = loadPack(language);
+  const exercises = pack.exercises.length > 0 ? pack.exercises : [
+    // fallback until F5-T02/T03 content is added
+    { id: 'en-001', track: 'phoneme' as const, text: 'The quick brown fox jumps over the lazy dog.', focus: ['θ'], difficulty: 2, level: 'sentence' as const },
+    { id: 'en-002', track: 'articulation' as const, text: 'She sells seashells by the seashore.', focus: ['s'], difficulty: 2, level: 'sentence' as const },
+    { id: 'en-003', track: 'prosody' as const, text: 'How much wood would a woodchuck chuck?', focus: ['w'], difficulty: 2, level: 'sentence' as const },
+  ];
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentExercise = exercises[currentIndex];
 
