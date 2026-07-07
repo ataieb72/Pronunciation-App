@@ -6,14 +6,14 @@
 | Epic | Tasks | ⬚ Ready | 🚫 Blocked | 🔄 In progress | ✅ Done |
 |------|-------|---------|-----------|----------------|---------|
 | F1 Scaffold | 3 | 0 | 0 | 0 | 3 |
-| F2 Recording | 3 | 0 | 2 | 0 | 1 |
+| F2 Recording | 3 | 0 | 1 | 0 | 2 |
 | F3 Azure integration | 3 | 0 | 3 | 0 | 0 |
 | F4 Feedback UI | 3 | 0 | 3 | 0 | 0 |
 | F5 Language packs | 4 | 0 | 4 | 0 | 0 |
 | F6 Drills + progress | 4 | 0 | 4 | 0 | 0 |
 | **Total** | **20** | **2** | **18** | **0** | **0** |
 
-**F1 Complete ✅** | **F2-T01** ✅ WAV encoder done. Next: T02 Recorder hook
+**F1 Complete ✅** | **F2-T01 + T02** ✅ Encoder + Recorder hook + shell UI (TDD)
 
 **Per-epic acceptance tests** (run after an epic completes):
 - F1: `npm run dev` serves both; /api/health ok

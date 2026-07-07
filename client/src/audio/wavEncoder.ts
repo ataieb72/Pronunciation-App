@@ -20,7 +20,6 @@ export async function encodeToWav(
   options: EncodeWavOptions = {}
 ): Promise<ArrayBuffer> {
   const targetRate = options.targetSampleRate ?? 16000;
-  const targetChannels = options.targetChannels ?? 1;
 
   let samples: Float32Array;
   let sampleRate: number;
@@ -67,12 +66,13 @@ export async function encodeToWav(
 }
 
 async function resampleAudio(
-  samples: Float32Array,
+  samples: Float32Array<ArrayBufferLike>,
   fromRate: number,
   toRate: number
 ): Promise<Float32Array> {
   const offline = new OfflineAudioContext(1, Math.ceil(samples.length * toRate / fromRate), toRate);
   const buffer = offline.createBuffer(1, samples.length, fromRate);
+  // @ts-expect-error - SharedArrayBuffer compatibility in strict TS
   buffer.copyToChannel(samples, 0);
 
   const source = offline.createBufferSource();
@@ -81,7 +81,7 @@ async function resampleAudio(
   source.start(0);
 
   const rendered = await offline.startRendering();
-  return rendered.getChannelData(0);
+  return rendered.getChannelData(0) as Float32Array;
 }
 
 function linearResample(samples: Float32Array, fromRate: number, toRate: number): Float32Array {
@@ -139,8 +139,9 @@ export function pcmToWav(samples: Float32Array, sampleRate: number): ArrayBuffer
 
   // Write samples (Float32 -> Int16)
   let offset = 44;
-  for (let i = 0; i < samples.length; i++) {
-    let s = Math.max(-1, Math.min(1, samples[i]));
+  const safeSamples = samples as unknown as Float32Array<ArrayBuffer>;
+  for (let i = 0; i < safeSamples.length; i++) {
+    let s = Math.max(-1, Math.min(1, safeSamples[i]));
     view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
     offset += 2;
   }

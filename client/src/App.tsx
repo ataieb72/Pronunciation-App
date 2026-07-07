@@ -1,122 +1,127 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import { useRecorder } from './hooks/useRecorder';
+import './App.css';
+
+// Hardcoded exercises for F2-T02 shell (will be replaced by language packs later)
+const EXERCISES = {
+  'en-US': [
+    { id: 'en-001', text: 'The quick brown fox jumps over the lazy dog.', track: 'Phoneme' },
+    { id: 'en-002', text: 'She sells seashells by the seashore.', track: 'Articulation' },
+    { id: 'en-003', text: 'How much wood would a woodchuck chuck?', track: 'Prosody' },
+  ],
+  'fr-FR': [
+    { id: 'fr-001', text: 'Bonjour, comment allez-vous aujourd\'hui ?', track: 'Phoneme' },
+    { id: 'fr-002', text: 'Les chaussettes de l\'archiduchesse.', track: 'Articulation' },
+    { id: 'fr-003', text: 'Un chasseur sachant chasser sans son chien.', track: 'Prosody' },
+  ],
+};
+
+type Language = 'en-US' | 'fr-FR';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [language, setLanguage] = useState<Language>(() => {
+    return (localStorage.getItem('language') as Language) || 'en-US';
+  });
+
+  const exercises = EXERCISES[language];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const currentExercise = exercises[currentIndex];
+
+  const {
+    state,
+    error,
+    start,
+    stop,
+    audioUrl,
+    wavBlob,
+    reset,
+    isRecording,
+  } = useRecorder({
+    onWavReady: (blob) => {
+      console.log('[F2-T02] WAV ready, size:', blob.size, 'bytes');
+      // In real F2-T03 this will auto upload
+    },
+  });
+
+  const toggleLanguage = () => {
+    const next: Language = language === 'en-US' ? 'fr-FR' : 'en-US';
+    setLanguage(next);
+    localStorage.setItem('language', next);
+    setCurrentIndex(0);
+    reset();
+  };
+
+  const nextExercise = () => {
+    setCurrentIndex((i) => (i + 1) % exercises.length);
+    reset();
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
+    <div className="app">
+      <header>
+        <h1>Pronunciation Coach</h1>
+        <button onClick={toggleLanguage} className="lang-toggle">
+          {language === 'en-US' ? '🇺🇸 EN' : '🇫🇷 FR'} — Switch
         </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main>
+        <div className="exercise-card">
+          <div className="meta">
+            <span className="track">{currentExercise.track}</span>
+            <span className="id">{currentExercise.id}</span>
+          </div>
+          <p className="exercise-text">{currentExercise.text}</p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <div className="controls">
+          <button
+            onClick={isRecording ? stop : start}
+            disabled={state === 'processing' || state === 'requesting'}
+            className={`record-btn ${isRecording ? 'recording' : ''}`}
+          >
+            {isRecording ? '⏹ Stop' : '⏺ Record'}
+          </button>
+
+          {audioUrl && (
+            <button onClick={reset} className="secondary">Reset</button>
+          )}
+
+          <button onClick={nextExercise} className="secondary">Next Exercise →</button>
+        </div>
+
+        {state === 'recording' && (
+          <div className="waveform">
+            <canvas id="wave" width="300" height="60" />
+            <p>Recording... Speak clearly</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="error">
+            {error} — <button onClick={reset}>Try again</button>
+          </div>
+        )}
+
+        {audioUrl && wavBlob && (
+          <div className="playback">
+            <p>✅ Recording captured ({Math.round(wavBlob.size / 1024)} KB WAV)</p>
+            <audio controls src={audioUrl} />
+            <small>Local playback only (F2-T02 shell). Will upload in T03.</small>
+          </div>
+        )}
+
+        <div className="status">
+          State: <strong>{state}</strong>
+          {wavBlob && ' • WAV ready for upload'}
+        </div>
+      </main>
+
+      <footer>
+        F2-T02 shell • Uses wavEncoder from T01 • TDD in progress
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;

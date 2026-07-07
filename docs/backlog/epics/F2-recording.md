@@ -19,7 +19,7 @@ client/src/audio/wavEncoder: AudioBuffer → 16 kHz 16-bit mono PCM WAV (resampl
 
 **Completed (TDD):** client/src/audio/wavEncoder.ts with pcmToWav + encodeToWav (resample via Offline or linear fallback). Golden header + size tests written and passing. Pure 16kHz mono 16-bit WAV output.
 
-### F2-T02: Recorder hook + Practice screen shell 🚫
+### F2-T02: Recorder hook + Practice screen shell ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F2-T01 | **Priority:** high
 
 #### What to Build
@@ -34,6 +34,8 @@ useRecorder hook (getUserMedia, MediaRecorder, stop → WAV via encoder, playbac
 
 #### Documentation Updates
 - docs/product-design.md §1 deltas
+
+**Completed:** useRecorder hook (state machine, MediaRecorder + wavEncoder integration). Basic Practice screen shell in App.tsx with language toggle, hardcoded exercises, record/playback. TDD tests for hook.
 
 ### F2-T03: Attempt upload endpoint + wiring 🚫
 **Type:** backend | **Effort:** M(5) | **Depends on:** F1-T02, F2-T02 | **Priority:** high
