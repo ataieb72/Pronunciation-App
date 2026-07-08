@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Default location: server/data/app.db relative to this file
-const DEFAULT_DB_PATH = path.resolve(__dirname, '../../data/app.db');
+const DEFAULT_DB_PATH = process.env.DATABASE_PATH || path.resolve(__dirname, '../../data/app.db');
 const DEFAULT_MIGRATIONS_DIR = path.resolve(__dirname, '../../migrations');
 
 export { MigrationRunner };

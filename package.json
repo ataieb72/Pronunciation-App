@@ -19,7 +19,8 @@
     "test": "npm run test --workspace=client && npm run test --workspace=server",
     "test:client": "npm run test --workspace=client",
     "test:server": "npm run test --workspace=server",
-    "clean": "rimraf client/dist server/dist"
+    "clean": "rimraf client/dist server/dist",
+    "start": "npm run start --workspace=server"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

@@ -1,0 +1,28 @@
+# Render Blueprint for Pronunciation Coach
+# Deploy: Push to GitHub → Render → New > Blueprint > connect repo > select this render.yaml
+
+services:
+  - type: web
+    name: pronunciation-coach
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start --workspace=server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_PATH
+        value: /data/app.db
+      - key: AUDIO_DIR
+        value: /data/audio
+      - key: AZURE_SPEECH_KEY
+        sync: false
+      - key: AZURE_SPEECH_REGION
+        sync: false
+    disk:
+      name: app-data
+      mountPath: /data
+      sizeGB: 1

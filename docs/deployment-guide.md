@@ -1,56 +1,77 @@
 # Pronunciation Coach — Deployment Guide
 
-**Status:** v1 is designed to run locally. Production deployment is a non-goal for the initial version.
+**Status:** Ready for production on platforms like Render.com.
 
-## Local "Production" Run
+## Quick Deploy on Render (Recommended)
 
-After implementing builds:
+1. Push your code to GitHub.
+2. On [Render.com](https://render.com):
+   - New > Blueprint
+   - Connect your repo
+   - It will detect `render.yaml`
+3. Set these **Environment Variables** (in the service settings):
+   - `AZURE_SPEECH_KEY` (your key - **secret**)
+   - `AZURE_SPEECH_REGION` (e.g. `eastus`)
+   - `NODE_ENV=production` (already in blueprint)
+4. Attach a **Disk** (for SQLite + audio files):
+   - Name: `app-data`
+   - Mount Path: `/data`
+   - Size: 1 GB (free tier)
+5. Deploy.
+
+The `render.yaml` configures:
+- Build: `npm install && npm run build`
+- Start: server (which now serves the built React client in production)
+- Health check on `/api/health`
+- Persistent disk mounted at `/data` (we set `DATABASE_PATH=/data/app.db`)
+
+## Environment Variables (Required)
+
+| Variable              | Required | Notes |
+|-----------------------|----------|-------|
+| AZURE_SPEECH_KEY      | Yes      | Never commit. Server only. |
+| AZURE_SPEECH_REGION   | Yes      | e.g. `eastus` |
+| NODE_ENV              | Prod     | Set to `production` |
+| DATABASE_PATH         | Prod     | e.g. `/data/app.db` when using disk |
+| PORT                  | No       | Render sets this |
+
+## How Production Serving Works
+
+- `npm run build` builds client → `client/dist` and server → `server/dist`
+- In production (`NODE_ENV=production`), the Express server:
+  - Serves static files from `client/dist`
+  - Falls back to `index.html` for SPA routes
+  - Keeps all `/api/*` routes working
+
+## Data Persistence
+
+- SQLite DB: `server/data/app.db` (use `DATABASE_PATH` env + disk)
+- Audio recordings: `server/audio/`
+- Use a persistent disk on your platform (Render disk, Railway volume, etc.)
+
+## Azure Free Tier Warning
+
+Free tier = 5 audio hours / month. Monitor usage.
+
+## Alternative Platforms
+
+- **Railway.app**: Easy, good free tier trial.
+- **Fly.io**: Great for global, uses Dockerfile.
+- **Vercel**: Frontend on Vercel + backend on another service (more complex).
+
+## Local Production Test
 
 ```powershell
 npm run build
-# Serve client statically + run server
+npm start
 ```
 
-## Environment
+Then visit the port shown by the server.
 
-All secrets (Azure key) must remain server-side only.
+## Next Steps After Deploy
 
-Recommended for any remote hosting:
-- Use environment variables / secrets manager
-- Never embed keys in client bundles
+- Set up a custom domain
+- Add logging / error monitoring (Sentry, etc.)
+- Consider PostgreSQL if you outgrow SQLite
 
-## Azure Considerations
-
-- Pronunciation Assessment and Neural TTS are the only external services.
-- Monitor usage against F0 free tier (5 audio hours / month).
-- Region must match the Speech resource.
-
-## Potential Deployment Targets (future)
-
-- Render / Railway / Fly.io (easy Node + static)
-- Vercel (client) + separate server function or container
-- Docker (a Dockerfile may be added later)
-
-See `docs/technical-design.md` for architecture constraints (server must proxy Azure calls).
-
-## Data & Privacy
-
-All recordings and scores stay on the user's machine (SQLite + local audio files). No accounts or cloud user data storage planned for v1.
-
-## Monitoring
-
-- Basic health endpoint (`/api/health`)
-- Console / file logging for Azure errors
-- No external APM required for personal use
-
-## Backup
-
-Simply copy `server/data/app.db` and `server/audio/` folder.
-
-## CI / CD (future)
-
-When ready:
-- GitHub Actions for lint + test + build on PRs
-- Deploy on merge to main (if self-hosted)
-
-Current focus: local development and completing F1–F6.
+See also: `docs/technical-design.md` and `render.yaml`.

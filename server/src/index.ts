@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
@@ -12,8 +13,11 @@ import { applyLadderRule } from './services/drills.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Ensure audio storage dir
-const AUDIO_BASE = path.resolve('audio');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Ensure audio storage dir (use env for persistent disk in prod)
+const AUDIO_BASE = process.env.AUDIO_DIR || path.resolve('audio');
 function ensureAudioDir(date = new Date()) {
   const yyyymm = date.toISOString().slice(0, 7); // yyyy-mm
   const dir = path.join(AUDIO_BASE, yyyymm);
@@ -313,6 +317,17 @@ app.get('/api/progress', (req, res) => {
   const weakest = getWeakPhonemes(lang, 5);
   res.json({ daily, heatmap, articulationIndex, weakest });
 });
+
+// Serve React client in production (SPA fallback for client-side routing)
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = path.resolve(__dirname, '../../client/dist');
+  app.use(express.static(clientDist));
+
+  // Must come after all API routes
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // Export app for testing (TDD)
 export { app };
