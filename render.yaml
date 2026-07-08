@@ -15,14 +15,13 @@ services:
       - key: PORT
         value: 10000
       - key: DATABASE_PATH
-        value: /data/app.db
+        value: ./data/app.db
       - key: AUDIO_DIR
-        value: /data/audio
+        value: ./audio
       - key: AZURE_SPEECH_KEY
         sync: false
       - key: AZURE_SPEECH_REGION
         sync: false
-    disk:
-      name: app-data
-      mountPath: /data
-      sizeGB: 1
+    # Note: Removed disk for free tier compatibility.
+    # Data (SQLite DB and audio files) will be ephemeral on free tier.
+    # For persistent storage, upgrade to Starter plan and restore /data paths + disk.
