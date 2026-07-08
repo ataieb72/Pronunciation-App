@@ -195,6 +195,65 @@ export function getWeakPhonemes(language: string, limit = 5, dbPath = DEFAULT_DB
   return rows;
 }
 
+export function getDailyScores(language: string, dbPath = DEFAULT_DB_PATH) {
+  const db = new Database(dbPath, { readonly: true });
+  const rows = db.prepare(`
+    SELECT DATE(created_at) as date, AVG(overall_score) as avg_score
+    FROM attempts
+    WHERE language = ?
+    GROUP BY DATE(created_at)
+    ORDER BY date
+  `).all(language) as Array<{date: string, avg_score: number}>;
+  db.close();
+  return rows.map(r => ({ date: r.date, [language]: r.avg_score }));
+}
+
+export function getPhonemeHeatmap(language: string, dbPath = DEFAULT_DB_PATH) {
+  const db = new Database(dbPath, { readonly: true });
+  // Simple: last 4 weeks, but for demo return all
+  const rows = db.prepare(`
+    SELECT phoneme, strftime('%Y-%W', updated_at) as week, avg_score
+    FROM phoneme_stats
+    WHERE language = ?
+  `).all(language) as Array<{phoneme: string, week: string, avg_score: number}>;
+  db.close();
+  const heatmap: Record<string, Record<string, number>> = {};
+  rows.forEach(r => {
+    if (!heatmap[r.phoneme]) heatmap[r.phoneme] = {};
+    heatmap[r.phoneme][r.week] = r.avg_score;
+  });
+  return heatmap;
+}
+
+export function getArticulationSeries(language: string, dbPath = DEFAULT_DB_PATH) {
+  const db = new Database(dbPath, { readonly: true });
+  const rows = db.prepare(`
+    SELECT DATE(created_at) as date, accuracy_score, tempo_tier
+    FROM attempts
+    WHERE language = ? AND accuracy_score IS NOT NULL
+    ORDER BY date
+  `).all(language) as Array<{date: string, accuracy_score: number, tempo_tier: number}>;
+  db.close();
+  const multipliers = [0.9, 1.0, 1.15];
+  const series: Array<{date: string, index: number}> = [];
+  const byDate: Record<string, Array<{acc: number, tier: number}>> = {};
+  rows.forEach(r => {
+    if (!byDate[r.date]) byDate[r.date] = [];
+    byDate[r.date].push({acc: r.accuracy_score, tier: r.tempo_tier || 0});
+  });
+  Object.keys(byDate).sort().forEach(date => {
+    const items = byDate[date];
+    let sum = 0;
+    items.forEach(i => {
+      const m = multipliers[i.tier] || 1;
+      sum += i.acc * m;
+    });
+    series.push({ date, index: sum / items.length });
+  });
+  return series;
+}
+
+
 export interface LadderProgress {
   exercise_id: string;
   language: string;

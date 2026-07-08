@@ -6,7 +6,7 @@ import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
 import { synthesizeTts, getTtsCacheKey } from './services/tts.js';
-import { getAttempt, getWeakPhonemes, getLadderProgress, updateLadderProgress } from './db/index.js';
+import { getAttempt, getWeakPhonemes, getLadderProgress, updateLadderProgress, getDailyScores, getPhonemeHeatmap, getArticulationSeries } from './db/index.js';
 import { applyLadderRule } from './services/drills.js';
 
 const app = express();
@@ -301,6 +301,17 @@ app.get('/api/weak-phonemes', (req, res) => {
   const lang = (req.query.lang as string) || 'en-US';
   const weak = getWeakPhonemes(lang);
   res.json({ phonemes: weak });
+});
+
+// F6-T04: Progress
+app.get('/api/progress', (req, res) => {
+  const lang = (req.query.lang as string) || 'en-US';
+  const daily = getDailyScores(lang);
+  const heatmap = getPhonemeHeatmap(lang);
+  const articulationIndex = getArticulationSeries(lang);
+  // weakest from weak endpoint logic
+  const weakest = getWeakPhonemes(lang, 5);
+  res.json({ daily, heatmap, articulationIndex, weakest });
 });
 
 // Export app for testing (TDD)

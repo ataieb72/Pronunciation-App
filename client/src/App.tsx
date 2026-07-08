@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRecorder } from './hooks/useRecorder';
 import { assessPronunciation, getTtsUrl } from './lib/api';
 import { Feedback } from './components/Feedback';
+import { Progress } from './components/Progress';
 import { parseAssessmentWords } from './lib/parseAssessment';
 import { loadPack } from './lib/languagePacks';
 import { filterExercises, type ExerciseFilters } from './lib/filterExercises';
@@ -25,6 +26,7 @@ function App() {
   const filteredExercises = filterExercises(allExercises, filters);
   const [bestScores, setBestScores] = useState<Record<string, number>>({});
   const [currentLadderTier, setCurrentLadderTier] = useState(0);
+  const [view, setView] = useState<'practice' | 'progress'>('practice');
 
   const {
     state,
@@ -124,158 +126,167 @@ function App() {
         <button onClick={toggleLanguage} className="lang-toggle">
           {language === 'en-US' ? '🇺🇸 EN' : '🇫🇷 FR'} — Switch
         </button>
+        <button onClick={() => setView(v => v === 'practice' ? 'progress' : 'practice')} className="secondary" style={{marginLeft: 8}}>
+          {view === 'practice' ? 'Show Progress' : 'Back to Practice'}
+        </button>
       </header>
 
       <main>
-        <button onClick={openPicker} className="secondary" style={{marginBottom: '12px'}}>Pick exercise</button>
-
-        {showPicker ? (
-          <div className="picker">
-            <h3>Exercise Picker</h3>
-            <div className="filters">
-              <select value={filters.track || ''} onChange={e => updateFilter('track', e.target.value)}>
-                <option value="">All tracks</option>
-                <option value="phoneme">Phoneme</option>
-                <option value="articulation">Articulation</option>
-                <option value="prosody">Prosody</option>
-              </select>
-              <select value={filters.difficulty || ''} onChange={e => updateFilter('difficulty', e.target.value ? Number(e.target.value) : undefined)}>
-                <option value="">All difficulties</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select>
-              <select value={filters.focus || ''} onChange={e => updateFilter('focus', e.target.value)}>
-                <option value="">All focus</option>
-                {Object.keys(pack.phonemes).map(p => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
-              <select value={filters.level || ''} onChange={e => updateFilter('level', e.target.value)}>
-                <option value="">All levels</option>
-                <option value="word">Word</option>
-                <option value="sentence">Sentence</option>
-                <option value="passage">Passage</option>
-              </select>
-              <button onClick={() => setFilters({})}>Clear filters</button>
-            </div>
-            <ul className="exercise-list">
-              {filteredExercises.map((ex) => {
-                const origIdx = allExercises.findIndex(e => e.id === ex.id);
-                const best = bestScores[ex.id];
-                return (
-                  <li key={ex.id} onClick={() => selectExercise(origIdx)} style={{cursor: 'pointer', padding: '8px', border: '1px solid #ddd', margin: '4px 0'}}>
-                    <strong>{ex.text}</strong>
-                    <div style={{fontSize: '0.8em'}}>
-                      {ex.track} • diff {ex.difficulty} • {ex.level} {best ? `• best: ${best}` : ''}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-            {filteredExercises.length === 0 && <p>No matching exercises.</p>}
-          </div>
+        {view === 'progress' ? (
+          <Progress language={language} />
         ) : (
-          <div className="exercise-card">
-            <div className="meta">
-              <span className="track">{currentExercise.track.charAt(0).toUpperCase() + currentExercise.track.slice(1)}</span>
-              <span className="id">{currentExercise.id}</span>
-            </div>
-            <p className="exercise-text">{currentExercise.text}</p>
-            {currentExercise.speedLadder && (
-              <div className="ladder">
-                <span>Ladder: </span>
-                {['Slow', 'Normal', 'Fast'].map((label, t) => (
-                  <button
-                    key={t}
-                    className={currentLadderTier === t ? 'active' : ''}
-                    onClick={() => setCurrentLadderTier(t)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {!showPicker && (
           <>
-            <div className="controls">
-              <button onClick={async () => {
-                try {
-                  const res = await fetch(`/api/weak-phonemes?lang=${language}`);
-                  const data = await res.json();
-                  if (data.phonemes && data.phonemes.length > 0) {
-                    const weak = data.phonemes[0].phoneme;
-                    const match = allExercises.find(e => e.focus.includes(weak) && e.track === 'phoneme');
-                    if (match) {
-                      const idx = allExercises.findIndex(e => e.id === match.id);
-                      setCurrentIndex(idx);
-                      setAssessment(null);
-                      reset();
-                      console.log('Drilling weak:', weak);
-                    }
-                  }
-                } catch (e) { console.error(e); }
-              }} className="secondary">Drill my weak sounds</button>
-              <button onClick={playReference} className="secondary">
-                ▶ Play Reference (TTS)
-              </button>
+            <button onClick={openPicker} className="secondary" style={{marginBottom: '12px'}}>Pick exercise</button>
 
-              <button
-                onClick={isRecording ? stop : start}
-                disabled={state === 'processing' || state === 'requesting'}
-                className={`record-btn ${isRecording ? 'recording' : ''}`}
-              >
-                {isRecording ? '⏹ Stop' : '⏺ Record'}
-              </button>
-
-              {audioUrl && (
-                <button onClick={reset} className="secondary">Reset</button>
-              )}
-
-              <button onClick={nextExercise} className="secondary">Next Exercise →</button>
-            </div>
-
-            {assessment && (
-              <Feedback
-                scores={assessment.scores || assessment}
-                words={parseAssessmentWords(assessment)}
-                attemptDurationMs={assessment.attempt_duration_ms}
-                referenceDurationMs={assessment.reference_duration_ms}
-                pauses={assessment.pauses}
-                ladder={assessment.ladder}
-                onRetry={() => setAssessment(null)}
-                onNext={nextExercise}
-              />
-            )}
-
-            {state === 'recording' && (
-              <div className="waveform">
-                <canvas id="wave" width="300" height="60" />
-                <p>Recording... Speak clearly</p>
+            {showPicker ? (
+              <div className="picker">
+                <h3>Exercise Picker</h3>
+                <div className="filters">
+                  <select value={filters.track || ''} onChange={e => updateFilter('track', e.target.value)}>
+                    <option value="">All tracks</option>
+                    <option value="phoneme">Phoneme</option>
+                    <option value="articulation">Articulation</option>
+                    <option value="prosody">Prosody</option>
+                  </select>
+                  <select value={filters.difficulty || ''} onChange={e => updateFilter('difficulty', e.target.value ? Number(e.target.value) : undefined)}>
+                    <option value="">All difficulties</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                  <select value={filters.focus || ''} onChange={e => updateFilter('focus', e.target.value)}>
+                    <option value="">All focus</option>
+                    {Object.keys(pack.phonemes).map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                  <select value={filters.level || ''} onChange={e => updateFilter('level', e.target.value)}>
+                    <option value="">All levels</option>
+                    <option value="word">Word</option>
+                    <option value="sentence">Sentence</option>
+                    <option value="passage">Passage</option>
+                  </select>
+                  <button onClick={() => setFilters({})}>Clear filters</button>
+                </div>
+                <ul className="exercise-list">
+                  {filteredExercises.map((ex) => {
+                    const origIdx = allExercises.findIndex(e => e.id === ex.id);
+                    const best = bestScores[ex.id];
+                    return (
+                      <li key={ex.id} onClick={() => selectExercise(origIdx)} style={{cursor: 'pointer', padding: '8px', border: '1px solid #ddd', margin: '4px 0'}}>
+                        <strong>{ex.text}</strong>
+                        <div style={{fontSize: '0.8em'}}>
+                          {ex.track} • diff {ex.difficulty} • {ex.level} {best ? `• best: ${best}` : ''}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+                {filteredExercises.length === 0 && <p>No matching exercises.</p>}
+              </div>
+            ) : (
+              <div className="exercise-card">
+                <div className="meta">
+                  <span className="track">{currentExercise.track.charAt(0).toUpperCase() + currentExercise.track.slice(1)}</span>
+                  <span className="id">{currentExercise.id}</span>
+                </div>
+                <p className="exercise-text">{currentExercise.text}</p>
+                {currentExercise.speedLadder && (
+                  <div className="ladder">
+                    <span>Ladder: </span>
+                    {['Slow', 'Normal', 'Fast'].map((label, t) => (
+                      <button
+                        key={t}
+                        className={currentLadderTier === t ? 'active' : ''}
+                        onClick={() => setCurrentLadderTier(t)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
-            {error && (
-              <div className="error">
-                {error} — <button onClick={reset}>Try again</button>
-              </div>
-            )}
+            {!showPicker && (
+              <>
+                <div className="controls">
+                  <button onClick={async () => {
+                    try {
+                      const res = await fetch(`/api/weak-phonemes?lang=${language}`);
+                      const data = await res.json();
+                      if (data.phonemes && data.phonemes.length > 0) {
+                        const weak = data.phonemes[0].phoneme;
+                        const match = allExercises.find(e => e.focus.includes(weak) && e.track === 'phoneme');
+                        if (match) {
+                          const idx = allExercises.findIndex(e => e.id === match.id);
+                          setCurrentIndex(idx);
+                          setAssessment(null);
+                          reset();
+                          console.log('Drilling weak:', weak);
+                        }
+                      }
+                    } catch (e) { console.error(e); }
+                  }} className="secondary">Drill my weak sounds</button>
+                  <button onClick={playReference} className="secondary">
+                    ▶ Play Reference (TTS)
+                  </button>
 
-            {audioUrl && wavBlob && (
-              <div className="playback">
-                <p>✅ Recording captured ({Math.round(wavBlob.size / 1024)} KB WAV)</p>
-                <audio controls src={audioUrl} />
-                <small>Local playback only (F2-T02 shell). Will upload in T03.</small>
-              </div>
-            )}
+                  <button
+                    onClick={isRecording ? stop : start}
+                    disabled={state === 'processing' || state === 'requesting'}
+                    className={`record-btn ${isRecording ? 'recording' : ''}`}
+                  >
+                    {isRecording ? '⏹ Stop' : '⏺ Record'}
+                  </button>
 
-            <div className="status">
-              State: <strong>{state}</strong>
-              {wavBlob && ' • WAV ready for upload'}
-            </div>
+                  {audioUrl && (
+                    <button onClick={reset} className="secondary">Reset</button>
+                  )}
+
+                  <button onClick={nextExercise} className="secondary">Next Exercise →</button>
+                </div>
+
+                {assessment && (
+                  <Feedback
+                    scores={assessment.scores || assessment}
+                    words={parseAssessmentWords(assessment)}
+                    attemptDurationMs={assessment.attempt_duration_ms}
+                    referenceDurationMs={assessment.reference_duration_ms}
+                    pauses={assessment.pauses}
+                    ladder={assessment.ladder}
+                    onRetry={() => setAssessment(null)}
+                    onNext={nextExercise}
+                  />
+                )}
+
+                {state === 'recording' && (
+                  <div className="waveform">
+                    <canvas id="wave" width="300" height="60" />
+                    <p>Recording... Speak clearly</p>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="error">
+                    {error} — <button onClick={reset}>Try again</button>
+                  </div>
+                )}
+
+                {audioUrl && wavBlob && (
+                  <div className="playback">
+                    <p>✅ Recording captured ({Math.round(wavBlob.size / 1024)} KB WAV)</p>
+                    <audio controls src={audioUrl} />
+                    <small>Local playback only (F2-T02 shell). Will upload in T03.</small>
+                  </div>
+                )}
+
+                <div className="status">
+                  State: <strong>{state}</strong>
+                  {wavBlob && ' • WAV ready for upload'}
+                </div>
+              </>
+            )}
           </>
         )}
       </main>

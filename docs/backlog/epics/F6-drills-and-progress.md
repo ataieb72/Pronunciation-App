@@ -55,7 +55,7 @@ ladder_progress persistence + rule (advance at accuracy ≥85 at current tier, m
 
 **Completed:** "Drill my weak sounds" button fetches /api/weak-phonemes and selects matching exercise.
 
-### F6-T04: Progress screen 🚫
+### F6-T04: Progress screen ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F6-T02 | **Priority:** medium
 
 #### What to Build
@@ -69,3 +69,5 @@ GET /api/progress aggregates + recharts UI: daily score lines per language, phon
 
 #### Documentation Updates
 - docs/product-design.md §4 confirmed
+
+**Completed (TDD):** /api/progress endpoint with daily, heatmap, articulationIndex, weakest. Progress.tsx with recharts. Tab in App. Tests for math.

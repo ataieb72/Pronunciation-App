@@ -26,6 +26,7 @@
 - Phoneme heatmap: phoneme × week, cell color = average score.
 - Articulation index over time: mean(accuracy × tier multiplier) across speed-ladder attempts.
 - "Weakest sounds right now" list (top 5 per language) with a one-tap "drill this" action.
+- (Implemented in F6-T04)
 
 ## Flows
 1. **Quick practice:** open app → last language remembered → exercise served → record → feedback → next.
