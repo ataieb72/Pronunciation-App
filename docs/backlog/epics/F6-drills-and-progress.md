@@ -20,7 +20,7 @@ GET /api/weak-phonemes (5 lowest, attempt_count ≥3). Pure-function session bui
 
 **Completed (TDD):** /api/weak-phonemes endpoint, pure buildDrillSession + levelGate, tests for ordering and gates.
 
-### F6-T02: Speed-ladder mechanic 🚫
+### F6-T02: Speed-ladder mechanic ✅
 **Type:** backend | **Effort:** M(5) | **Depends on:** F6-T01 | **Priority:** high
 
 #### What to Build
@@ -35,6 +35,8 @@ ladder_progress persistence + rule (advance at accuracy ≥85 at current tier, m
 
 #### Documentation Updates
 - docs/database-schema.md ladder_progress confirmed
+
+**Completed (TDD):** ladder DB funcs, applyLadderRule in drills, integrated in /api/assess (if tempo_tier set), client supports passing tier for ladder exercises, shows ladder UI, adjusts TTS rate, shows ladder in feedback.
 
 ### F6-T03: Weak-sound drill UI flow 🚫
 **Type:** frontend | **Effort:** S(2) | **Depends on:** F6-T01 | **Priority:** medium

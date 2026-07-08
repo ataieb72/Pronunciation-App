@@ -46,15 +46,22 @@ export interface NewAttempt {
   exercise_id: string;
   audio_path: string;
   duration_ms?: number;
+  tempo_tier?: number;
 }
 
 export function insertAttempt(attempt: NewAttempt, dbPath = DEFAULT_DB_PATH): number {
   const db = new Database(dbPath);
   const stmt = db.prepare(`
-    INSERT INTO attempts (language, exercise_id, audio_path, duration_ms, created_at)
-    VALUES (?, ?, ?, ?, datetime('now'))
+    INSERT INTO attempts (language, exercise_id, audio_path, duration_ms, tempo_tier, created_at)
+    VALUES (?, ?, ?, ?, ?, datetime('now'))
   `);
-  const info = stmt.run(attempt.language, attempt.exercise_id, attempt.audio_path, attempt.duration_ms ?? null);
+  const info = stmt.run(
+    attempt.language,
+    attempt.exercise_id,
+    attempt.audio_path,
+    attempt.duration_ms ?? null,
+    attempt.tempo_tier ?? null
+  );
   db.close();
   return Number(info.lastInsertRowid);
 }
@@ -72,11 +79,12 @@ export interface AttemptInfo {
   exercise_id: string;
   audio_path: string;
   duration_ms?: number;
+  tempo_tier?: number;
 }
 
 export function getAttempt(id: number | string, dbPath = DEFAULT_DB_PATH): AttemptInfo | null {
   const db = new Database(dbPath, { readonly: true });
-  const row = db.prepare('SELECT id, language, exercise_id, audio_path, duration_ms FROM attempts WHERE id = ?').get(id) as AttemptInfo | undefined;
+  const row = db.prepare('SELECT id, language, exercise_id, audio_path, duration_ms, tempo_tier FROM attempts WHERE id = ?').get(id) as AttemptInfo | undefined;
   db.close();
   return row || null;
 }
@@ -185,6 +193,38 @@ export function getWeakPhonemes(language: string, limit = 5, dbPath = DEFAULT_DB
   `).all(language, limit) as Array<{phoneme: string, avg_score: number, attempt_count: number}>;
   db.close();
   return rows;
+}
+
+export interface LadderProgress {
+  exercise_id: string;
+  language: string;
+  tier: number;
+  best_score_at_tier: number | null;
+  updated_at: string;
+}
+
+export function getLadderProgress(exercise_id: string, language: string, dbPath = DEFAULT_DB_PATH): LadderProgress | null {
+  const db = new Database(dbPath, { readonly: true });
+  const row = db.prepare(`
+    SELECT exercise_id, language, tier, best_score_at_tier, updated_at
+    FROM ladder_progress
+    WHERE exercise_id = ? AND language = ?
+  `).get(exercise_id, language) as LadderProgress | undefined;
+  db.close();
+  return row || { exercise_id, language, tier: 0, best_score_at_tier: null, updated_at: '' };
+}
+
+export function updateLadderProgress(exercise_id: string, language: string, tier: number, best_score: number, dbPath = DEFAULT_DB_PATH) {
+  const db = new Database(dbPath);
+  db.prepare(`
+    INSERT INTO ladder_progress (exercise_id, language, tier, best_score_at_tier, updated_at)
+    VALUES (?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(exercise_id, language) DO UPDATE SET
+      tier = excluded.tier,
+      best_score_at_tier = excluded.best_score_at_tier,
+      updated_at = excluded.updated_at
+  `).run(exercise_id, language, tier, best_score);
+  db.close();
 }
 
 

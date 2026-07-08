@@ -6,7 +6,8 @@ import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
 import { synthesizeTts, getTtsCacheKey } from './services/tts.js';
-import { getAttempt, getWeakPhonemes } from './db/index.js';
+import { getAttempt, getWeakPhonemes, getLadderProgress, updateLadderProgress } from './db/index.js';
+import { applyLadderRule } from './services/drills.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -77,7 +78,7 @@ app.post('/api/attempts', upload.single('audio'), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'audio file is required' });
     }
-    const { language, exercise_id, duration } = req.body;
+    const { language, exercise_id, duration, tempo_tier } = req.body;
     if (!language || !exercise_id) {
       return res.status(400).json({ error: 'language and exercise_id are required' });
     }
@@ -85,12 +86,14 @@ app.post('/api/attempts', upload.single('audio'), (req, res) => {
     // audio_path relative to project root for storage
     const relPath = path.relative(process.cwd(), req.file.path).replace(/\\/g, '/');
     const durationMs = duration ? parseInt(duration, 10) : null;
+    const tier = tempo_tier !== undefined ? parseInt(tempo_tier, 10) : null;
 
     const id = insertAttempt({
       language,
       exercise_id,
       audio_path: relPath,
       duration_ms: durationMs ?? undefined,
+      tempo_tier: tier ?? undefined,
     });
 
     res.status(201).json({
@@ -99,6 +102,7 @@ app.post('/api/attempts', upload.single('audio'), (req, res) => {
       exercise_id,
       audio_path: relPath,
       duration_ms: durationMs,
+      tempo_tier: tier,
     });
   } catch (err: any) {
     console.error('[upload error]', err);
@@ -182,6 +186,28 @@ app.post('/api/assess', express.json(), async (req, res) => {
       phonemeUpdates
     );
 
+    // F6-T02: apply speed ladder if tempo_tier was set on attempt
+    let ladderInfo = null;
+    const attemptInfoForLadder = getAttempt(attemptId);
+    if (attemptInfoForLadder && attemptInfoForLadder.tempo_tier != null) {
+      const currentTier = attemptInfoForLadder.tempo_tier;
+      const accuracy = assessment.scores?.accuracy ?? 0;
+      const ladderRes = applyLadderRule(currentTier, accuracy);
+      if (ladderRes.newTier !== currentTier) {
+        updateLadderProgress(
+          attemptInfoForLadder.exercise_id,
+          language,
+          ladderRes.newTier,
+          accuracy
+        );
+      }
+      const prog = getLadderProgress(attemptInfoForLadder.exercise_id, language);
+      ladderInfo = {
+        tier: prog ? prog.tier : ladderRes.newTier,
+        advanced: ladderRes.advanced,
+      };
+    }
+
     // Enrich for F4-T02
     const attemptInfo = getAttempt(attemptId);
     const attemptDuration = attemptInfo?.duration_ms || null;
@@ -229,6 +255,7 @@ app.post('/api/assess', express.json(), async (req, res) => {
       reference_duration_ms: referenceDuration,
       pauses,
       words, // include for frontend
+      ladder: ladderInfo,
       // stress would be in words if present in Azure result
     };
 

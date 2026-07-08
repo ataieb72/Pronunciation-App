@@ -24,6 +24,7 @@ function App() {
   const [filters, setFilters] = useState<ExerciseFilters>({});
   const filteredExercises = filterExercises(allExercises, filters);
   const [bestScores, setBestScores] = useState<Record<string, number>>({});
+  const [currentLadderTier, setCurrentLadderTier] = useState(0);
 
   const {
     state,
@@ -44,6 +45,9 @@ function App() {
         form.append('exercise_id', currentExercise.id);
         form.append('audio', blob, 'recording.wav');
         if (durationMs) form.append('duration', durationMs.toString());
+        if (currentExercise.speedLadder) {
+          form.append('tempo_tier', currentLadderTier.toString());
+        }
 
         const uploadRes = await fetch('/api/attempts', {
           method: 'POST',
@@ -98,6 +102,7 @@ function App() {
     setCurrentIndex(index);
     setShowPicker(false);
     setAssessment(null);
+    setCurrentLadderTier(0);
     reset();
   };
 
@@ -106,7 +111,8 @@ function App() {
   };
 
   const playReference = () => {
-    const url = getTtsUrl(currentExercise.text, language, 1.0);
+    const rate = currentExercise.speedLadder ? [0.75, 1.0, 1.25][currentLadderTier] || 1.0 : 1.0;
+    const url = getTtsUrl(currentExercise.text, language, rate);
     const audio = new Audio(url);
     audio.play().catch(console.error);
   };
@@ -176,6 +182,20 @@ function App() {
               <span className="id">{currentExercise.id}</span>
             </div>
             <p className="exercise-text">{currentExercise.text}</p>
+            {currentExercise.speedLadder && (
+              <div className="ladder">
+                <span>Ladder: </span>
+                {['Slow', 'Normal', 'Fast'].map((label, t) => (
+                  <button
+                    key={t}
+                    className={currentLadderTier === t ? 'active' : ''}
+                    onClick={() => setCurrentLadderTier(t)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -208,6 +228,7 @@ function App() {
                 attemptDurationMs={assessment.attempt_duration_ms}
                 referenceDurationMs={assessment.reference_duration_ms}
                 pauses={assessment.pauses}
+                ladder={assessment.ladder}
                 onRetry={() => setAssessment(null)}
                 onNext={nextExercise}
               />

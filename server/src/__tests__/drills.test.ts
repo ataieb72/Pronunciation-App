@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDrillSession, levelGate } from '../services/drills';
+import { buildDrillSession, levelGate, applyLadderRule } from '../services/drills';
 
 interface DrillExercise {
   id: string;
@@ -35,5 +35,23 @@ describe('F6-T01 Drills (TDD)', () => {
 
   it('LevelGate_At85_Advances', () => {
     expect(levelGate(85)).toBe(true);
+  });
+
+  it('Ladder_ExactlyThreshold_Advances', () => {
+    const res = applyLadderRule(0, 85);
+    expect(res.newTier).toBe(1);
+    expect(res.advanced).toBe(true);
+  });
+
+  it('Ladder_MaxTier_Stays', () => {
+    const res = applyLadderRule(2, 90);
+    expect(res.newTier).toBe(2);
+    expect(res.advanced).toBe(false);
+  });
+
+  it('Ladder_LowScore_Holds', () => {
+    const res = applyLadderRule(0, 84);
+    expect(res.newTier).toBe(0);
+    expect(res.advanced).toBe(false);
   });
 });
