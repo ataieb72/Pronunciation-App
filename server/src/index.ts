@@ -6,7 +6,7 @@ import { loadConfig, MissingEnvError } from './config.js';
 import { applyMigrations, checkDbHealth, insertAttempt, getAttemptAudioPath, updateAttemptAndStats } from './db/index.js';
 import { assessPronunciation } from './services/assess.js';
 import { synthesizeTts, getTtsCacheKey } from './services/tts.js';
-import { getAttempt } from './db/index.js';
+import { getAttempt, getWeakPhonemes } from './db/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -267,6 +267,13 @@ app.get('/api/tts', async (req, res) => {
   } catch (err: any) {
     res.status(502).json({ error: 'TTS error: ' + err.message });
   }
+});
+
+// F6-T01: Weak phonemes
+app.get('/api/weak-phonemes', (req, res) => {
+  const lang = (req.query.lang as string) || 'en-US';
+  const weak = getWeakPhonemes(lang);
+  res.json({ phonemes: weak });
 });
 
 // Export app for testing (TDD)

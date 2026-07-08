@@ -174,4 +174,17 @@ export function updateAttemptAndStats(
   db.close();
 }
 
+export function getWeakPhonemes(language: string, limit = 5, dbPath = DEFAULT_DB_PATH) {
+  const db = new Database(dbPath, { readonly: true });
+  const rows = db.prepare(`
+    SELECT phoneme, avg_score, attempt_count
+    FROM phoneme_stats
+    WHERE language = ? AND attempt_count >= 3
+    ORDER BY avg_score ASC
+    LIMIT ?
+  `).all(language, limit) as Array<{phoneme: string, avg_score: number, attempt_count: number}>;
+  db.close();
+  return rows;
+}
+
 

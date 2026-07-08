@@ -2,7 +2,7 @@
 
 **Goal:** the coaching brain — weak-sound progressions, speed ladders, progress visibility. **Depends on:** F4, F5
 
-### F6-T01: Weak-phoneme endpoint + progression engine 🚫
+### F6-T01: Weak-phoneme endpoint + progression engine ✅
 **Type:** backend | **Effort:** M(5) | **Depends on:** F4-T02, F5-T04 | **Priority:** high
 
 #### What to Build
@@ -17,6 +17,8 @@ GET /api/weak-phonemes (5 lowest, attempt_count ≥3). Pure-function session bui
 
 #### Documentation Updates
 - docs/api-reference.md confirmed
+
+**Completed (TDD):** /api/weak-phonemes endpoint, pure buildDrillSession + levelGate, tests for ordering and gates.
 
 ### F6-T02: Speed-ladder mechanic 🚫
 **Type:** backend | **Effort:** M(5) | **Depends on:** F6-T01 | **Priority:** high

@@ -10,10 +10,10 @@
 | F3 Azure integration | 3 | 0 | 0 | 0 | 3 |
 | F4 Feedback UI | 3 | 0 | 0 | 0 | 3 |
 | F5 Language packs | 4 | 0 | 0 | 0 | 4 |
-| F6 Drills + progress | 4 | 0 | 4 | 0 | 0 |
+| F6 Drills + progress | 4 | 0 | 3 | 0 | 1 |
 | **Total** | **20** | **2** | **18** | **0** | **0** |
 
-**F5 Complete ✅** (packs + content + picker) | Ready for F6 Drills & progress
+**F6-T01 ✅** (weak engine + endpoint) | Next F6-T02 ladders
 
 **Per-epic acceptance tests** (run after an epic completes):
 - F1: `npm run dev` serves both; /api/health ok
