@@ -38,7 +38,7 @@ ladder_progress persistence + rule (advance at accuracy ≥85 at current tier, m
 
 **Completed (TDD):** ladder DB funcs, applyLadderRule in drills, integrated in /api/assess (if tempo_tier set), client supports passing tier for ladder exercises, shows ladder UI, adjusts TTS rate, shows ladder in feedback.
 
-### F6-T03: Weak-sound drill UI flow 🚫
+### F6-T03: Weak-sound drill UI flow ✅
 **Type:** frontend | **Effort:** S(2) | **Depends on:** F6-T01 | **Priority:** medium
 
 #### What to Build
@@ -52,6 +52,8 @@ ladder_progress persistence + rule (advance at accuracy ≥85 at current tier, m
 
 #### Documentation Updates
 - docs/product-design.md flow 2 confirmed
+
+**Completed:** "Drill my weak sounds" button fetches /api/weak-phonemes and selects matching exercise.
 
 ### F6-T04: Progress screen 🚫
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F6-T02 | **Priority:** medium

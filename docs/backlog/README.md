@@ -13,7 +13,7 @@
 | F6 Drills + progress | 4 | 0 | 2 | 0 | 2 |
 | **Total** | **20** | **2** | **18** | **0** | **0** |
 
-**F6-T01 + T02 ✅** (weak + ladders) | Next F6-T03/T04
+**F6-T01 + T02 + T03 ✅** (weak + ladders + drill flow) | F6 partial, progress screen pending
 
 **Per-epic acceptance tests** (run after an epic completes):
 - F1: `npm run dev` serves both; /api/health ok

@@ -202,6 +202,23 @@ function App() {
         {!showPicker && (
           <>
             <div className="controls">
+              <button onClick={async () => {
+                try {
+                  const res = await fetch(`/api/weak-phonemes?lang=${language}`);
+                  const data = await res.json();
+                  if (data.phonemes && data.phonemes.length > 0) {
+                    const weak = data.phonemes[0].phoneme;
+                    const match = allExercises.find(e => e.focus.includes(weak) && e.track === 'phoneme');
+                    if (match) {
+                      const idx = allExercises.findIndex(e => e.id === match.id);
+                      setCurrentIndex(idx);
+                      setAssessment(null);
+                      reset();
+                      console.log('Drilling weak:', weak);
+                    }
+                  }
+                } catch (e) { console.error(e); }
+              }} className="secondary">Drill my weak sounds</button>
               <button onClick={playReference} className="secondary">
                 ▶ Play Reference (TTS)
               </button>
