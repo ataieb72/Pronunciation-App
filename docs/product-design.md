@@ -19,6 +19,7 @@
 ## 3. Exercise picker
 - Filters: track (phoneme/articulation/prosody), difficulty (1–3), focus (phoneme/cluster/feature dropdown populated from the language pack), level (word/sentence/passage).
 - List rows: exercise text preview, badges, personal best score if attempted.
+- (Implemented in F5-T04 with filter composition and client-side best scores)
 
 ## 4. Progress screen
 - Line chart: average overall score per day, one line per language (recharts).

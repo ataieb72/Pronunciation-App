@@ -375,3 +375,29 @@ footer {
   padding-left: 20px;
   font-size: 0.85rem;
 }
+
+.picker {
+  border: 1px solid #ddd;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filters select, .filters button {
+  padding: 4px;
+}
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+}
+
+.exercise-list li:hover {
+  background: #f0f0f0;
+}

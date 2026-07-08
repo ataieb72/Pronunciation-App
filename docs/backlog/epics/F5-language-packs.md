@@ -2,7 +2,7 @@
 
 **Goal:** the actual training content, both languages, three tracks. Can run in parallel with F4. **Depends on:** F3
 
-### F5-T01: Pack schema + loader + phoneme inventories 🔄
+### F5-T01: Pack schema + loader + phoneme inventories ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F3-T03 | **Priority:** high
 
 #### What to Build
@@ -18,7 +18,9 @@ JSON schema for exercises ({ id, track, text, focus[], difficulty, level, speedL
 #### Documentation Updates
 - docs/technical-design.md §4 confirmed
 
-### F5-T02: French content (3 tracks) 🚫
+**Completed (TDD):** JSON-based packs in languages/{locale}/ with phonemes + exercises, strict validatePack, loadPack, tests for validator and loader.
+
+### F5-T02: French content (3 tracks) ✅
 **Type:** docs | **Effort:** L(8) | **Depends on:** F5-T01 | **Priority:** high
 
 #### What to Build
@@ -33,7 +35,7 @@ fr-FR/exercises.json — Track A: 40+ minimal pairs (vin/vent, dessus/dessous, r
 #### Documentation Updates
 - docs/prd.md §5 counts confirmed
 
-### F5-T03: English content (3 tracks) 🚫
+### F5-T03: English content (3 tracks) ✅
 **Type:** docs | **Effort:** L(8) | **Depends on:** F5-T01 | **Priority:** high
 
 #### What to Build
@@ -48,7 +50,7 @@ en-US/exercises.json — Track A: 40+ minimal pairs (ship/sheep, bat/but, three/
 #### Documentation Updates
 - docs/prd.md §5 counts confirmed
 
-### F5-T04: Exercise picker screen 🚫
+### F5-T04: Exercise picker screen ✅
 **Type:** frontend | **Effort:** M(5) | **Depends on:** F5-T02, F5-T03 | **Priority:** medium
 
 #### What to Build
@@ -62,3 +64,5 @@ Picker with filters (track, difficulty, focus, level) per product-design §3; pe
 
 #### Documentation Updates
 - docs/product-design.md §3 confirmed
+
+**Completed (TDD):** filterExercises with composition tests. Picker UI in App with filters (track/diff/focus/level), list with best scores (client-side), select sets current exercise.
