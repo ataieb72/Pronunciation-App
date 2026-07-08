@@ -1,3 +1,8 @@
+import enPhonemes from '../languages/en-US/phonemes.json' with { type: 'json' };
+import enExercises from '../languages/en-US/exercises.json' with { type: 'json' };
+import frPhonemes from '../languages/fr-FR/phonemes.json' with { type: 'json' };
+import frExercises from '../languages/fr-FR/exercises.json' with { type: 'json' };
+
 export interface PhonemeInfo {
   ipa: string;
   example: string;
@@ -22,33 +27,6 @@ export interface LanguagePack {
   exercises: Exercise[];
 }
 
-const packs: Record<string, LanguagePack> = {
-  'en-US': {
-    locale: 'en-US',
-    phonemes: {
-      'θ': { ipa: 'θ', example: 'three', difficulty: 2, note: 'voiceless dental fricative' },
-      'ð': { ipa: 'ð', example: 'this', difficulty: 2 },
-      'ɪ': { ipa: 'ɪ', example: 'ship', difficulty: 1 },
-      'iː': { ipa: 'iː', example: 'sheep', difficulty: 1 },
-      'æ': { ipa: 'æ', example: 'bat', difficulty: 1 },
-      'ʌ': { ipa: 'ʌ', example: 'but', difficulty: 1 },
-    },
-    exercises: [] // populated in F5-T03
-  },
-  'fr-FR': {
-    locale: 'fr-FR',
-    phonemes: {
-      'ɑ̃': { ipa: 'ɑ̃', example: 'vin', difficulty: 2, note: 'nasal vowel' },
-      'ɛ̃': { ipa: 'ɛ̃', example: 'vent', difficulty: 2 },
-      'ɔ̃': { ipa: 'ɔ̃', example: 'bon', difficulty: 2 },
-      'ʁ': { ipa: 'ʁ', example: 'rue', difficulty: 3, note: 'uvular R' },
-      'y': { ipa: 'y', example: 'rue', difficulty: 2 },
-      'u': { ipa: 'u', example: 'roue', difficulty: 1 },
-    },
-    exercises: [] // populated in F5-T02
-  }
-};
-
 export class PackValidatorError extends Error {
   path?: string;
   constructor(message: string, path?: string) {
@@ -62,23 +40,53 @@ export function validatePack(pack: any): void {
   if (!pack.exercises || !Array.isArray(pack.exercises)) {
     throw new PackValidatorError('exercises must be an array');
   }
+  if (!pack.phonemes || typeof pack.phonemes !== 'object') {
+    throw new PackValidatorError('phonemes must be an object');
+  }
   pack.exercises.forEach((ex: any, i: number) => {
+    const pathPrefix = `exercises[${i}]`;
     if (!ex.track) {
-      throw new PackValidatorError(`Missing track at exercises[${i}].track`, `exercises[${i}].track`);
+      throw new PackValidatorError(`Missing track at ${pathPrefix}.track`, `${pathPrefix}.track`);
     }
     if (!['phoneme', 'articulation', 'prosody'].includes(ex.track)) {
-      throw new PackValidatorError(`Invalid track at exercises[${i}].track`, `exercises[${i}].track`);
+      throw new PackValidatorError(`Invalid track`, `${pathPrefix}.track`);
     }
-    // add more validation as needed
+    if (!ex.text || typeof ex.text !== 'string') {
+      throw new PackValidatorError(`Missing or invalid text`, `${pathPrefix}.text`);
+    }
+    if (!Array.isArray(ex.focus) || ex.focus.length === 0) {
+      throw new PackValidatorError(`Missing or invalid focus`, `${pathPrefix}.focus`);
+    }
+    if (typeof ex.difficulty !== 'number' || ex.difficulty < 1 || ex.difficulty > 3) {
+      throw new PackValidatorError(`Invalid difficulty`, `${pathPrefix}.difficulty`);
+    }
+    if (!['word', 'sentence', 'passage'].includes(ex.level)) {
+      throw new PackValidatorError(`Invalid level`, `${pathPrefix}.level`);
+    }
+    // Validate focus phonemes exist
+    ex.focus.forEach((f: string) => {
+      if (!pack.phonemes[f]) {
+        throw new PackValidatorError(`Unknown focus phoneme "${f}"`, `${pathPrefix}.focus`);
+      }
+    });
   });
 }
 
+const rawPacks: Record<string, { phonemes: any; exercises: any; locale: string }> = {
+  'en-US': { phonemes: enPhonemes, exercises: enExercises, locale: 'en-US' },
+  'fr-FR': { phonemes: frPhonemes, exercises: frExercises, locale: 'fr-FR' },
+};
+
 export function loadPack(locale: string): LanguagePack {
-  const pack = packs[locale];
-  if (!pack) {
+  const raw = rawPacks[locale];
+  if (!raw) {
     throw new Error(`Unknown locale: ${locale}`);
   }
-  // In real, would load from JSON files and validate
+  const pack: LanguagePack = {
+    locale: raw.locale,
+    phonemes: raw.phonemes,
+    exercises: raw.exercises,
+  };
   validatePack(pack);
   return pack;
 }

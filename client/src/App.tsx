@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useRecorder } from './hooks/useRecorder';
 import { assessPronunciation, getTtsUrl } from './lib/api';
 import { Feedback } from './components/Feedback';
-import { Progress } from './components/Progress';
 import { parseAssessmentWords } from './lib/parseAssessment';
 import { loadPack } from './lib/languagePacks';
 import { filterExercises, type ExerciseFilters } from './lib/filterExercises';
 import './App.css';
+
+const Progress = lazy(() => import('./components/Progress').then(module => ({ default: module.Progress })));
 
 type Language = 'en-US' | 'fr-FR';
 
@@ -133,7 +134,9 @@ function App() {
 
       <main>
         {view === 'progress' ? (
-          <Progress language={language} />
+          <Suspense fallback={<div>Loading progress charts...</div>}>
+            <Progress language={language} />
+          </Suspense>
         ) : (
           <>
             <button onClick={openPicker} className="secondary" style={{marginBottom: '12px'}}>Pick exercise</button>

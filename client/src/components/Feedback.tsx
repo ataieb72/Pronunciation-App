@@ -23,11 +23,12 @@ interface FeedbackProps {
   attemptDurationMs?: number;
   referenceDurationMs?: number;
   pauses?: Array<{ start: number; end: number; duration: number; word_before?: string; word_after?: string }>;
+  ladder?: { tier: number; advanced: boolean };
   onRetry?: () => void;
   onNext?: () => void;
 }
 
-export function Feedback({ scores, words, attemptDurationMs, referenceDurationMs, pauses, onRetry, onNext }: FeedbackProps) {
+export function Feedback({ scores, words, attemptDurationMs, referenceDurationMs, pauses, ladder, onRetry, onNext }: FeedbackProps) {
   const [expandedWord, setExpandedWord] = useState<number | null>(null);
 
   const getColorClass = (score: number): ScoreColor => scoreColor(score);
@@ -109,7 +110,9 @@ export function Feedback({ scores, words, attemptDurationMs, referenceDurationMs
               </ul>
             </div>
           )}
-          {/* stress and ladder would go here if data present */}
+          {ladder && (
+            <div>Ladder tier: {ladder.tier} {ladder.advanced ? '(advanced!)' : ''}</div>
+          )}
         </div>
       )}
     </div>

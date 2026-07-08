@@ -1,0 +1,11 @@
+{
+  "θ": { "ipa": "θ", "example": "three", "difficulty": 2, "note": "voiceless dental fricative" },
+  "ð": { "ipa": "ð", "example": "this", "difficulty": 2 },
+  "ɪ": { "ipa": "ɪ", "example": "ship", "difficulty": 1 },
+  "iː": { "ipa": "iː", "example": "sheep", "difficulty": 1 },
+  "æ": { "ipa": "æ", "example": "bat", "difficulty": 1 },
+  "ʌ": { "ipa": "ʌ", "example": "but", "difficulty": 1 },
+  "w": { "ipa": "w", "example": "wood", "difficulty": 1 },
+  "stress": { "ipa": "stress", "example": "I didn't", "difficulty": 2, "note": "prosody feature" },
+  "p": { "ipa": "p", "example": "Peter", "difficulty": 1 }
+}

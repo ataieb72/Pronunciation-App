@@ -1,0 +1,11 @@
+{
+  "ɑ̃": { "ipa": "ɑ̃", "example": "vin", "difficulty": 2, "note": "nasal vowel" },
+  "ɛ̃": { "ipa": "ɛ̃", "example": "vent", "difficulty": 2 },
+  "ɔ̃": { "ipa": "ɔ̃", "example": "bon", "difficulty": 2 },
+  "ʁ": { "ipa": "ʁ", "example": "rue", "difficulty": 3, "note": "uvular R" },
+  "y": { "ipa": "y", "example": "rue", "difficulty": 2 },
+  "u": { "ipa": "u", "example": "roue", "difficulty": 1 },
+  "s": { "ipa": "s", "example": "son", "difficulty": 1 },
+  "ʃ": { "ipa": "ʃ", "example": "chaussettes", "difficulty": 2 },
+  "liaison": { "ipa": "liaison", "example": "les amis", "difficulty": 2, "note": "prosody feature" }
+}
