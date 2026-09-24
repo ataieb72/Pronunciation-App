@@ -37,6 +37,7 @@ All project knowledge lives in `docs/`:
 | `docs/api-reference.md` | API documentation |
 | `docs/database-schema.md` | Data model |
 | `docs/backlog/` | Task tracking (dashboard + epics F1–F6) |
+| `docs/research/` | Evidence base for the redesign (literature review + learner profile) |
 
 ## Pre-Commit Verification
 1. Build succeeds (zero errors).
