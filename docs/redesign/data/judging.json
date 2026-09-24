@@ -1,0 +1,902 @@
+{
+ "average_scores": {
+  "evidence-max": {
+   "evidence_fit": 9,
+   "feasibility_solo_dev": 4,
+   "phone_tech_reliability": 7,
+   "measurement_validity": 9,
+   "learner_value_and_adherence": 7,
+   "cost_and_ops": 8,
+   "overall": 7.3
+  },
+  "lean-mvp": {
+   "evidence_fit": 7.3,
+   "feasibility_solo_dev": 8.3,
+   "phone_tech_reliability": 7,
+   "measurement_validity": 7.3,
+   "learner_value_and_adherence": 7,
+   "cost_and_ops": 9,
+   "overall": 7.7
+  },
+  "measurement": {
+   "evidence_fit": 7.3,
+   "feasibility_solo_dev": 3.7,
+   "phone_tech_reliability": 6,
+   "measurement_validity": 8.3,
+   "learner_value_and_adherence": 5,
+   "cost_and_ops": 5,
+   "overall": 5.9
+  },
+  "learner-ux": {
+   "evidence_fit": 8,
+   "feasibility_solo_dev": 6,
+   "phone_tech_reliability": 7.7,
+   "measurement_validity": 8,
+   "learner_value_and_adherence": 8.7,
+   "cost_and_ops": 8,
+   "overall": 7.7
+  }
+ },
+ "judge_rankings": [
+  {
+   "lens": "EVIDENCE FIDELITY: whether each feature rests on the evidence-brief and learner-profile-addendum with the right strength label; whether designs avoid \"does not work / lacks evidence\" items; whether they measure transfer (unscripted speech, held-out items, delayed probes) rather than practice scores; whether they treat automatic scores as noisy; and whether priorities fit a French-L1 learner of English (stress, vowel pairs, /h/, fluency, with /θ ð/ low) and native-French clarity (clear speech, comparison with own baseline, no single clarity score). Both evidence files were read in full before judging.",
+   "ranking": [
+    "evidence-max",
+    "learner-ux",
+    "measurement",
+    "lean-mvp"
+   ],
+   "axes": [
+    "How strict the gate is before a machine verdict reaches the learner: κ≥.60 plus precision≥.80 (measurement, learner-ux) or precision≥.80 (evidence-max), versus κ≥.4 (lean-mvp). Also what the learner sees meanwhile: Shadow, self-check or compare mode.",
+    "Dose per contrast versus breadth of targets: minutes of HVPT per sound contrast (the evidence says 1–7 h in total; the designs range from ~10 min to ~1 h). Dose should be counted in trials and attempts, not session count.",
+    "Primary outcome: a human listener panel (correct protocol: message known for comprehensibility, text hidden for transcription, shuffled, undated, reference clips, repeat clips) versus automatic proxies (fluency, lenient ASR) as the headline.",
+    "Rigour of the multiple baseline: ≥3 tiers whose start times line up with Progress Checks, with held-out probes of untrained targets at every Check, versus compressed or two-tier staggering.",
+    "Where baseline and Check audio live and how they are protected: phone-only with export, automatic encrypted backup, or server storage. Era re-scoring after Azure model updates depends on this audio surviving.",
+    "When the French clarity track starts and how it is measured: in the MVP with calibrated ASR-in-noise plus human checks, versus deferred with acoustic proxies only.",
+    "Where scoring runs: the browser SDK with a server-issued token (streaming, low latency, NBest spoken phonemes) versus a server-side Python SDK (full toolchain, more ops). A REST fallback loses the NBest spoken-phoneme output (verified).",
+    "Scope discipline for Weak-evidence modules (LLM Talk partner, shadowing, pitch line, stress verdicts): experimental and off, or gated by Progress Check results, versus built into the core.",
+    "Whether success criteria are written down before training starts, with calibrated expectations (a flat comprehensibility result is plausible), versus heuristic targets such as '+1 point by week 16'."
+   ]
+  },
+  {
+   "lens": "Feasibility and technical risk: can a solo developer with AI coding agents build and maintain it test-first; does it work reliably in iOS Safari and Android Chrome (HTTPS, AudioWorklet/PCM capture, page-hidden behaviour, permissions, installed-PWA quirks); are the scoring choices sound (Azure en-US vs fr-FR limits, token auth in the browser, 30-second limit, model updates, MFA/Parselmouth hosting, vendor claims); data persistence and backup; security of the Azure key; monthly cost.",
+   "ranking": [
+    "lean-mvp",
+    "learner-ux",
+    "evidence-max",
+    "measurement"
+   ],
+   "axes": [
+    "Where Azure scoring runs: the browser SDK over a WebSocket with a 10-minute token issued by the Worker (lowest latency, $0, no server; iOS WebKit risk) or the SDK on a server/native (robust NBestPhonemeCount and IPA, easy re-scoring, key never leaves the server; adds latency and operations). The REST short-audio API is NOT a like-for-like fallback: it documents no NBestPhonemeCount or PhonemeAlphabet.",
+    "Where learner data lives: phone-first IndexedDB/OPFS with persist(), export and an optional encrypted R2 backup, or a server SQLite with nightly backups. The trade-off is persistence and re-scoring convenience against operations, cost and privacy exposure.",
+    "Scope of the first slice and time to first real practice: an English-core MVP with gates for adding modules (offline listening in about 2–3 weeks) against a full program that includes French, a hosted panel and a validation lab from the start (first validated speaking feedback around weeks 9–11).",
+    "iOS audio-session strategy: whether the mic is open for the whole session or only during speaking stages; half-duplex playback; an explicit navigator.audioSession; and the go/no-go spike that triggers a Capacitor wrapper.",
+    "Gate first versus stream first: streaming audio while the learner speaks cuts latency but sends and bills takes that later fail the quality gate. Buffering, gating, then pushing keeps most of the latency gain.",
+    "How much trust machinery to build: a Compare/Shadow mode until validated (all designs) versus a full measurement registry with AUC, kappa and precision promotion, and the cost of recruiting human listeners to run it.",
+    "Production acoustic stack: TypeScript DSP on the phone with Praat/Parselmouth as a test oracle only, versus Parselmouth and MFA in production (needed mainly for French vowel timing, the secondary goal).",
+    "Cost tier: Azure F0 (free, hard cap, 1 concurrent request, prosody availability unverified) versus S0 (about $2–5 a month, budget alerts only, no hard cap), plus whether to run a VPS at about €6–15 a month."
+   ]
+  },
+  {
+   "lens": "LEARNER VALUE AND ADHERENCE: would one busy French-L1 adult use it 4+ times a week for 8-12 weeks on a phone? That covers speed to first useful feedback, 1-2 actionable corrections, sessions that hold together at 5/10/15 min, real speaking that can carry over to conversation, a French clarity track worth doing, and no busywork or cognitive overload. Judged against Addendum §4 (short mobile practice, dropout, dose, latency, iOS limits) and §5 (ranked implications, especially 2, 4, 7, 8, 9, 10, 14).",
+   "ranking": [
+    "learner-ux",
+    "lean-mvp",
+    "evidence-max",
+    "measurement"
+   ],
+   "axes": [
+    "Time to first real practice versus completeness: a slice with offline listening in about 2-3 weeks (lean-mvp) or a Stress Starter in about 5-8 weeks (learner-ux), versus a full program before practice starts (evidence-max about 8-12 weeks; measurement's validated speaking feedback about 9-10 weeks).",
+    "What the learner gets from an unvalidated scorer: nothing or bars with no verdict (measurement, and lean-mvp and evidence-max for stress), versus a graded trust ladder with self-check plus model and confident-only hints (learner-ux). This decides whether the speaking half feels useful in the first weeks.",
+    "Who carries the validation work: developer-side batches and TTS/native known-answer sets, versus deliberate-error recording inside the learner's sessions and recurring human listener panels as a gate on feedback.",
+    "How much free speech is in the default session: Use/Retell in every session including 5 minutes (learner-ux, lean-mvp in Standard), versus a short 'use it' task with retell only in 15-minute sessions (evidence-max, measurement). This drives transfer to conversation.",
+    "Where scoring runs and how it reaches the learner: the browser Azure SDK streaming with a 10-minute token (lower latency, no server to keep awake) versus WAV upload to a Python server (needs the network, adds a hop, the home-server option can be down).",
+    "When the native-French clarity track arrives and how engaging it is: in the MVP as a 5-minute extension (learner-ux) or deferred (lean-mvp E8, evidence-max F9, measurement E11). Also paired-takes-only versus an ASR listener game in noise.",
+    "Cycle length and per-contrast dose: an 8-week first cycle (faster first report) versus 12 weeks (closer to the stress-hours target). One contrast at a time versus two or three at once. Four-week blocks per sound (risk of boredom) versus about 8 sessions per pair.",
+    "What counts toward the weekly goal: listening-only sessions, 3-minute sessions, exits after 3 minutes. Too loose dilutes the dose; too strict makes missed weeks more likely.",
+    "Burden of progress measurement: Check length and frequency, repeatability re-recordings, panel logistics (exported zip plus CSV, or an in-app listener link)."
+   ]
+  }
+ ],
+ "judgements": [
+  {
+   "lens": "EVIDENCE FIDELITY: whether each feature rests on the evidence-brief and learner-profile-addendum with the right strength label; whether designs avoid \"does not work / lacks evidence\" items; whether they measure transfer (unscripted speech, held-out items, delayed probes) rather than practice scores; whether they treat automatic scores as noisy; and whether priorities fit a French-L1 learner of English (stress, vowel pairs, /h/, fluency, with /θ ð/ low) and native-French clarity (clear speech, comparison with own baseline, no single clarity score). Both evidence files were read in full before judging.",
+   "evaluations": [
+    {
+     "design_key": "evidence-max",
+     "scores": {
+      "evidence_fit": 9,
+      "feasibility_solo_dev": 4,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 9,
+      "learner_value_and_adherence": 7,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "Most faithful mapping of features to evidence, with correct strength labels almost everywhere. It separates 'Moderate as a priority' from 'Weak for the training method' for stress, gives /h/ as 'one study', and HVPT as Strong for listening and Moderate for speaking.",
+      "Success criteria (S1–S7) are written down before training starts, and expectations are set to match the evidence: 'a flat S5 at 12 weeks is plausible' because no study shows a self-study app improves listener-rated comprehensibility of free speech (Brief §8). This is the best guard against overclaiming in any of the four designs.",
+      "A true three-tier multiple baseline. Blocks A (/h/), B (high vowels) and C (low vowels) start at Checks 1, 2 and 3. Held-out items for all targets, including untrained ones, are probed at every Check, and each block gets a delayed probe 4 weeks after it ends. This meets the ≥3-tier standard the brief cites.",
+      "The listener-panel protocol follows the evidence exactly. Transcription of unpredictable sentences is done without the text (intelligibility). Comprehensibility ratings are done with the story prompt visible (De Fino). Clips are shuffled and undated with fixed reference clips, and the panel is 3–5 instructed or ~10 untrained listeners.",
+      "Honest about dose. It computes ~1 h of listening per block, calls that 'the low end of 1–7 h', counts dose as trials and attempts, and extends a block by up to 2 weeks when test-voice accuracy stays below 80%.",
+      "Fluency is measured only on the first telling of a new story. Repeated rounds are practice, not measurement. There is a rephrase nudge (4-gram overlap) based on Suzuki & Hanzawa. Rate is judged against a band and never as 'faster is better'.",
+      "Handling of noisy scores is complete: a quality gate, a personal noise floor (SEM, RCI, ICC<.7 hidden), beta-binomial estimates with an evidence gate, an 'uncertain → probe slots, not training slots' rule, scoring eras with re-scoring of all stored Check audio, and a monthly anchor re-score.",
+      "The French track matches the addendum: paired habitual/clear takes, concrete cues plus a named listener, a rate gate at ±10% of habitual rate, clarity decay over a retell, formants hidden, no single clarity score, and an ASR partner validated against 2 human transcribers (V4b).",
+      "TTS content validation scores each token against both the intended word and the competitor word. This directly implements 'check that the TTS voice produces the contrast' (Brief §3.1)."
+     ],
+     "weaknesses": [
+      "The scope is very large for a solo developer: 11 epics, most of them L. The first real practice (F4) arrives after about 8–12 weeks of build, and the content pipeline is heavy (360 stress words × 6 voices + foils, 240 French items, a natural recording set). An evidence-perfect plan that is never finished helps nobody.",
+      "Phase 1 ('listen only; speaking time goes to other targets' for up to 4 sessions) goes further than the evidence. Baese-Berk & Samuel [Weak, lab listeners] supports separate blocks, not withholding speaking practice.",
+      "S6 (clear-minus-habitual keyword gain above zero) is weak as a training outcome. Instructed clear speech gives an immediate gain [Moderate], so only the ±10% rate constraint makes the criterion non-trivial. Habitual drift is the real transfer question and is marked exploratory, which is correct but secondary.",
+      "The training voice pool mixes en-IN, en-AU and en-GB voices into vowel HVPT. Varieties differ in vowel systems, and the brief says high variability can hinder some learners [Mixed]. The per-token competitor check partly mitigates this.",
+      "All Check audio lives on the phone, and cloud backup is optional. Losing it would break the era re-scoring on which the whole measurement design depends."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "'The fixed order (stress, then /h/, then high vowels, then low vowels) follows the addendum ranking.' It does not: the addendum ranks vowel pairs #2 and /h/ #3. Starting with /h/ is defensible (one validated 8-session protocol), but the claim is wrong.",
+      "'At the level of single sounds, machine scores agree with experts at only about r ≈ .6; word stress r ≈ .15–.33.' These are open-model (GOPT) figures on speechocean762, not Azure. The brief reports Azure's overall score at r=.78 and says the stress figure partly reflects coarse labels.",
+      "'No points, badges or leaderboards (Brief §3.6: motivation effects not robust)' leaves out that the brief rates game features [Moderate] for learning (g≈.49–.50). Only the motivation effects were not robust.",
+      "The beta-binomial prior means (stress 0.5, /ɪ/ 0.4, /h/ 0.35) are presented as coming 'from the French-speaker profile', but no such error rates appear in the evidence. They are invented and should be labelled provisional.",
+      "The fallback 'relay to the REST short-audio API' for sound accuracy: the documented REST Pronunciation-Assessment header lists no NBestPhonemeCount or PhonemeAlphabet (verified in MicrosoftDocs rest-speech-to-text-short.md). The fallback would therefore lose the spoken-phoneme output that the vowel feedback cards depend on.",
+      "WebKit bug 215884 is presented as current ('causes repeated microphone prompts, verified'). It is marked RESOLVED / CONFIGURATION CHANGED as of Feb 2026 (seen in search results; bugs.webkit.org was blocked). Avoiding hash routing remains harmless.",
+      "Azure neural voice counts (en-US 50+, en-GB 16, and so on) conflict with learner-ux's figures (en-US 31 standard). Unverified by me."
+     ],
+     "best_ideas_to_graft": [
+      "Pre-registered success criteria with calibrated expectations: 'a flat comprehensibility result at 12 weeks is plausible and informative'.",
+      "A three-tier staggered multiple baseline (A/B/C blocks aligned with Checks 1–3), probing held-out items for every target, trained or not, at every Check.",
+      "'Store first, analyse later' Check audio, plus scoring eras that re-score all stored Check audio before any comparison.",
+      "A TTS token check that scores each token against both the intended and the competitor word, plus a >10-point gap alert between TTS and natural test recordings.",
+      "Measure fluency only on the first telling of a new prompt, with the rephrase nudge from 4-gram overlap.",
+      "Panel protocol: transcription without the text; comprehensibility with the prompt visible; shuffled, undated, with reference clips.",
+      "Dose counted in trials and attempts per target, with adaptive block extension when test-voice listening stays below 80%.",
+      "'Uncertain' targets get probe slots rather than training slots. Hearing and speaking tracks are kept separate for each target.",
+      "A listening-only session (earbuds, somewhere the learner cannot speak) that counts toward the weekly goal."
+     ]
+    },
+    {
+     "design_key": "learner-ux",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 5,
+      "phone_tech_reliability": 8,
+      "measurement_validity": 8,
+      "learner_value_and_adherence": 9,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "The trust ladder (Shadow → Self-check → Hint → Correction), with demotion when upheld disputes exceed 25%, is an elegant implementation of 'treat automatic scores as noisy' and 'flag only errors detected with confidence'. Promotion requires κ≥0.6 and precision≥0.8, which is well calibrated to expert agreement (.60).",
+      "'Use first, trust later': Azure runs in Shadow mode from the first slice, silently logging verdicts. This builds the labelled validation data while the learner already trains with the best-supported mechanism (HVPT, Strong).",
+      "The panel protocol is correct: listeners know the intended message (De Fino, Brief §4), with the reasoning given explicitly. Clips are mixed, shuffled and unlabelled, with reference clips. Checks use parallel forms A–D and re-score all past Check audio with today's scorer.",
+      "Retrieval practice is built in: stress dots are hidden on review items (Brief §3.2, recall beats restudy [Moderate, non-language]). Stress patterns are taught and quizzed (Tremblay 2008). There are hard multi-voice sequence tasks (Dupoux).",
+      "The onboarding matches Brief §7.2 most closely: a sentence-repetition level check, a no-feedback listening screener with sequences, two sittings, and anchors recorded twice. The baseline can reorder the sound thread.",
+      "The stress dose (~3.6 h over 12 weeks) matches the addendum's ~4 h estimate. The multiple baseline is staggered across 4 sound targets over Checks at weeks 0/4/8/12, and there is an explicit rule: 'untrained contrasts improve as much as trained ones → exposure or test effect'.",
+      "The French track follows the addendum: pairs, over-enunciate cues, a named listener, slow-then-natural speed, a noisy-café ASR partner calibrated against a human, retell drop, vowel probes in Shadow, and no single clarity score.",
+      "Plain-language result wording ('Clearly better / Probably better / No clear change') tied to probability thresholds plus RCI. Practice and Progress areas are kept separate, and practice statistics are labelled 'practice, not progress'."
+     ],
+     "weaknesses": [
+      "The dose per sound contrast is far below the evidence. At ~1–1.5 min of listening per session, '/h/ weeks 1–2, about 8 sessions' gives ~10–15 min of HVPT in total. Melnik & Peperkamp's 8 sessions and the brief's '1–7 h total' are much larger. Matching the session count is not matching the dose, so the multiple baseline may show nothing simply because dose was too low.",
+      "The Talk / LLM partner module (EN-8, D5) adds scope and privacy exposure for a Weak-evidence mechanism. Bibauw has no pronunciation outcome, and LLM partners have no blind comprehensibility data.",
+      "60/45/30 s retell rounds are steeper than the brief's 'gently shrinking' limits. Time pressure alone may lower accuracy and cause recycling (Boers [Weak]).",
+      "The round-to-round display ('pauses inside phrases 5 → 3') shows a within-session performance gain that Suzuki & Hanzawa show is expected from repetition, while articulation may slow. Even labelled 'within today', it acts as a pseudo-progress signal.",
+      "The headline 'Understood' card can come from 'panel or machine listener'. Merging lenient ASR into the headline intelligibility card risks overclaiming, because ASR hides errors (Brief §3.7).",
+      "Sessions of 3+ minutes count toward the weekly target, although the engagement evidence cites 5+ minute sessions (Weak). This is minor.",
+      "/h/ is scheduled before the vowel pairs, the reverse of the addendum's ranking. It is defensible but not explained."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "EN-8 Talk is justified with 'Bibauw 2022: d = 0.84 for spoken practice'. The meta-analysis had no pronunciation outcome category, and scripted TTS partner lines are not the dialogue systems it pooled. The relevance to intelligibility is overstated.",
+      "'/h/ … about 8 sessions' and 'about 8 sessions each' for vowel pairs are presented as close to the studies. The addendum says the minutes per study session are unknown and the 8 sessions covered all vowels. Here the minutes are tiny, so session count is not equivalent dose.",
+      "'A wrong correction costs more motivation than a missing one' is an unsupported design assertion presented as the rationale for the ladder. The ladder itself is well supported by the score-noise evidence.",
+      "REST fallback D would lose the NBest spoken-phoneme output (the documented REST header lacks NBestPhonemeCount; verified), which the 'Heard: ship (probably)' feedback needs.",
+      "WebKit bug 215884 'RESOLVED, CONFIGURATION CHANGED (Feb 2026)' is correct per search results.",
+      "The Claude model names and prices in D5 and the cost table were not verified by me."
+     ],
+     "best_ideas_to_graft": [
+      "The trust ladder (Shadow → Self-check → Hint → Correction) with automatic demotion on upheld disputes and on scorer epoch changes.",
+      "Run Azure in Shadow from day 1 so validation data build up while the learner practises listening.",
+      "Hidden stress dots on review items (retrieval) and a quiz on each word's stress pattern.",
+      "Parallel Check forms A–D, and re-scoring all past Check audio with the current scorer before comparing.",
+      "Listeners know the intended message for comprehensibility ratings, with the rationale stated.",
+      "A per-voice native-listener identification gate (≥90% per voice per contrast) before a TTS voice is used for a contrast.",
+      "The Hear → Say → Use → Wrap loop as a fixed, low-friction routine, with a comeback session that starts on the strongest target.",
+      "An encrypted backup triggered automatically after each Progress Check, so the audio needed for re-scoring is not lost.",
+      "A weekly 20-second plan review and a pause (vacation) mode."
+     ]
+    },
+    {
+     "design_key": "measurement",
+     "scores": {
+      "evidence_fit": 7,
+      "feasibility_solo_dev": 3,
+      "phone_tech_reliability": 6,
+      "measurement_validity": 7,
+      "learner_value_and_adherence": 5,
+      "cost_and_ops": 5
+     },
+     "strengths": [
+      "The most rigorous response to 'automatic scores are noisy'. A measurement registry assigns trust levels (Recorded / Lab / Experimental / Trusted). Promotion requires repeat-check ICC, known-answer AUC and listener κ≥.60 plus precision≥.80. A measure is demoted after a scorer epoch or device change, and trust levels change only in a commit that includes the validation report.",
+      "The primary outcome is the right one (Brief principle 1): a blind listener panel for comprehensibility and intelligibility, using a mix of native and proficient non-native listeners to match the international target. It adds 10% repeated clips and a rater-consistency filter (V9).",
+      "The French track is framed as an experiment with a readout, not a promise, which matches the evidence ('None found' for lasting change). It uses clarity in usual (unprompted) speech plus ASR in noise, calibrated against 2–3 French listeners.",
+      "Target order follows the addendum ranking (stress + FLEECE–KIT first, then /h/). /θ ð/, clusters and intonation are diagnose-only probes. Weak forms are left for cycle 2, listening first.",
+      "It correctly identifies (verified) that the REST short-audio header has no NBestPhonemeCount, so spoken-phoneme feedback needs the SDK.",
+      "Lossless server-side FLAC storage with nightly backups and test restores gives the strongest longitudinal integrity for re-scoring after model updates.",
+      "Rules for changing course are tied to the practice-versus-transfer evidence ('listening improves but speaking on held-out words does not → shift time to speaking with feedback')."
+     ],
+     "weaknesses": [
+      "Corrective feedback, the Moderate-evidence mechanism tied to transfer (Saito & Lyster), is gated behind Trusted status. Validated feedback ships only around weeks 9–10 of the build (Slice 2), and a κ≥.60 bar equal to expert agreement may never be reached for some measures, so the learner may get only listening training and compare views for a long time.",
+      "The per-contrast dose is very low and internally inconsistent. GOOSE–FOOT gets 1 listening week (~3 English sessions × ~1.5 min) before speaking, and TRAP–STRUT–LOT likewise, while the text claims '~8 sessions each'. The 80% listening gate would contradict the fixed week plan.",
+      "The stagger is compressed: all sound targets start by week 5–6, so only Check 1 has an untrained control target. That is weaker than a true three-tier multiple baseline.",
+      "The graduation rule uses a delayed probe '≥7 days after last practice', shorter than the evidence's 2–4 weeks and inconsistent with its own section 2.1.",
+      "The heaviest stack (a Python FastAPI server, an MFA conda container, spaCy, Parselmouth, a VPS or home server, plus the TS PWA) relies on tools the brief says have 'little validation on learner speech'. They sit in the lab, which is appropriate, but they carry large build and ops cost for a solo developer.",
+      "Its default of 4 sessions a week (3 English + 1 French) sits at the minimum and leaves little room for dose."
+     ],
+     "fatal_flaws": [
+      "The primary outcome protocol contradicts the evidence it cites: 'Raters are not told the intended message (Brief §3.7 [Moderate])'. De Fino et al. show that raters who don't know the message rate L2 speech as easier (inflated), and Brief §4 lists this as a practice to avoid. For a design whose pitch is that its 'you improved' can be believed, this biases the headline measure. It is fixable with one protocol change, but it is invalid as written."
+     ],
+     "wrong_or_unverified_claims": [
+      "'Raters are not told the intended message (Brief §3.7 [Moderate])' cites evidence that supports the opposite practice.",
+      "'A target graduates when … at a delayed probe (at least 7 days after its last practice)' conflicts with the evidence (2–4 weeks) and with the design's own 2.1.",
+      "'Vowel pairs get about 8 sessions each' is inconsistent with the week plan (1–2 weeks at 3 English sessions a week).",
+      "The target of 'comprehensibility up by ≥1 point on the 9-point scale by week 16' is labelled a heuristic but has no evidentiary basis. The brief found no study showing a self-study app moves listener-rated comprehensibility of free speech.",
+      "'Known-answer (deliberate errors) is our own addition' is correctly labelled. It is noted here because deliberate errors differ from natural ones, which the design itself acknowledges.",
+      "The latency budget (upload ~0.2 s, Azure plus Parselmouth 1–3 s) is unverified, as the design acknowledges.",
+      "Verified correct: the REST short-audio Pronunciation-Assessment header lists no NBestPhonemeCount or PhonemeAlphabet."
+     ],
+     "best_ideas_to_graft": [
+      "A measurement registry with explicit trust levels, promotion criteria and automatic demotion after scorer-epoch or device changes, with trust changes committed together with the validation report.",
+      "Known-answer calibration (deliberate right and wrong productions, AUC) as a cheap first validation stage before listener agreement.",
+      "A panel of mixed native and proficient non-native listeners for an international target, with 10% repeated clips to screen rater consistency.",
+      "Treat 'unclear' results as 'no verdict': excluded from statistics and never shown as an error.",
+      "Durable, lossless, backed-up storage of all baseline and Check audio. Whether on a server or through encrypted client backup, the audio needed for re-scoring must survive device loss.",
+      "Explicit rules for changing course at each Check."
+     ]
+    },
+    {
+     "design_key": "lean-mvp",
+     "scores": {
+      "evidence_fit": 6,
+      "feasibility_solo_dev": 8,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 6,
+      "learner_value_and_adherence": 7,
+      "cost_and_ops": 9
+     },
+     "strengths": [
+      "The English priorities are correct and follow the addendum order: stress first and listening first, then /iː–ɪ/ with /h/, then /uː–ʊ/ and /æ–ʌ–ɑː/, then fluency. /θ ð/ has weight 0.2, and clusters wait for evidence.",
+      "An excellent data rule: only first attempts count toward error estimates. Attempts right after the model are imitation and are excluded, while self-corrections are logged as stronger evidence (Brief §3.2).",
+      "The N-of-1 hypotheses (H1–H5) are written down before Check 1 and tied to a decision-gate table that adds modules only when the evidence calls for them. This is a good discipline against scope creep and overclaiming.",
+      "It avoids the 'does not work' items: no speed ladders, no shadowing (1 of 44 studies had a delayed test), no LLM judge, no fr-FR Azure accuracy for native French, no streaks.",
+      "A French baseline is recorded at week 0 even though French training is deferred, so a before-measure exists.",
+      "The smallest viable path to the Strong-evidence mechanism: offline HVPT listening sessions ship after about 2–3 weeks of build."
+     ],
+     "weaknesses": [
+      "The verdict gate is lenient. H2 accepts Azure verdicts with κ≥.4 and 80% repeatability, below expert agreement (.60) and against 'only errors detected with confidence'. The stress gate (V4) uses raw ≥80% match with no precision requirement, which risks confidently wrong corrections.",
+      "The most trusted progress measure is automatic fluency, not intelligibility or comprehensibility. Fluency correlates with comprehensibility at r=.82 (correlational) but is shaped by task familiarity and L1 pause habits (Kahng; de Jong) [Weak–Moderate]. The listener panel is optional and ranked 5th.",
+      "The multiple baseline has only two tiers (Block A vs Block B), below the ≥3-tier standard, and three new targets start at once in Block A.",
+      "The dose claim is inflated: '~20 sessions per pair, above the 8-session guess' at ~2 min of listening per session is ~40 min, against 1–7 h in the evidence. Block B trains two vowel sets together in 4 weeks.",
+      "The French goal (a confirmed user target) is deferred past the MVP. When it arrives (E8), it uses only phone acoustic proxies (rate, pitch range, 1–3 kHz energy) whose links to intelligibility are Mixed. There is no intelligibility-in-noise measure until E11.",
+      "Sentence stress and phrasing (Moderate) are deferred. The onboarding screener is smaller than the brief's (6 sets vs 15–20 contrasts), and there is no sentence-repetition level check.",
+      "The listener pack does not say whether raters see the intended message for comprehensibility ratings (De Fino)."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "'Each vowel pair gets roughly 20 sessions in its block, above the about-8-sessions design guess' conflates session count with dose (the study session length is unknown; this design uses ~2 min per session).",
+      "H3 is presented as a 'multiple baseline across sounds', but with only two tiers it does not meet the ≥3-tier standard the brief cites (Kratochwill, not re-checked).",
+      "Abel & de Bruin is cited as 'Brief §3.6 [Weak]'. It is in §3.5 under a [Moderate] header (non-language), a conservative mislabel.",
+      "'/æ–ʌ–ɑː/ sets (cat/cut/cart …) scored against en-US' is a problem: in rhotic en-US 'cart' contains /ɑr/, not a pure vowel contrast with 'cut'. This is a content/locale mismatch.",
+      "The REST proxy fallback (D2-B) would lose NBestPhonemeCount spoken-phoneme output (documented header lacks it; verified), which the 'probably heard as /ɪ/' feedback relies on.",
+      "'kappa ≥ .4 … good enough to steer practice' is a heuristic presented as sufficient, with no evidence basis and below expert agreement."
+     ],
+     "best_ideas_to_graft": [
+      "The first-attempt-only data rule: exclude post-model imitations from error estimates and log unaided self-corrections separately.",
+      "Pre-registered N-of-1 hypotheses linked to a decision-gate table that decides which module comes next.",
+      "Record the French baseline at week 0 even if French training starts later.",
+      "A minimal token-only Worker backend (no audio, no database, no TTS proxy), with a CI key scan for the value and for the Ocp-Apim-Subscription-Key header name.",
+      "Ship offline HVPT listening first as the earliest slice, since it rests on the strongest evidence and needs no validated scorer."
+     ]
+    }
+   ],
+   "ranking": [
+    "evidence-max",
+    "learner-ux",
+    "measurement",
+    "lean-mvp"
+   ],
+   "key_decision_axes": [
+    "How strict the gate is before a machine verdict reaches the learner: κ≥.60 plus precision≥.80 (measurement, learner-ux) or precision≥.80 (evidence-max), versus κ≥.4 (lean-mvp). Also what the learner sees meanwhile: Shadow, self-check or compare mode.",
+    "Dose per contrast versus breadth of targets: minutes of HVPT per sound contrast (the evidence says 1–7 h in total; the designs range from ~10 min to ~1 h). Dose should be counted in trials and attempts, not session count.",
+    "Primary outcome: a human listener panel (correct protocol: message known for comprehensibility, text hidden for transcription, shuffled, undated, reference clips, repeat clips) versus automatic proxies (fluency, lenient ASR) as the headline.",
+    "Rigour of the multiple baseline: ≥3 tiers whose start times line up with Progress Checks, with held-out probes of untrained targets at every Check, versus compressed or two-tier staggering.",
+    "Where baseline and Check audio live and how they are protected: phone-only with export, automatic encrypted backup, or server storage. Era re-scoring after Azure model updates depends on this audio surviving.",
+    "When the French clarity track starts and how it is measured: in the MVP with calibrated ASR-in-noise plus human checks, versus deferred with acoustic proxies only.",
+    "Where scoring runs: the browser SDK with a server-issued token (streaming, low latency, NBest spoken phonemes) versus a server-side Python SDK (full toolchain, more ops). A REST fallback loses the NBest spoken-phoneme output (verified).",
+    "Scope discipline for Weak-evidence modules (LLM Talk partner, shadowing, pitch line, stress verdicts): experimental and off, or gated by Progress Check results, versus built into the core.",
+    "Whether success criteria are written down before training starts, with calibrated expectations (a flat comprehensibility result is plausible), versus heuristic targets such as '+1 point by week 16'."
+   ],
+   "notes": "Both evidence files were read in full: /home/user/Pronunciation-App/docs/research/evidence-brief.md (1046 lines) and /home/user/Pronunciation-App/docs/research/learner-profile-addendum.md (494 lines).\n\nOverall: evidence-max is the most evidence-faithful design. Its main risk is how much a solo developer would have to build. learner-ux has the best learner experience and a strong way to handle noisy scores (the trust ladder), but it gives too little listening practice per sound contrast. measurement is the most rigorous about validating scores, yet it gets the listener-panel protocol for its primary outcome backwards and holds back corrective feedback for a long time. lean-mvp is the easiest to build, but its gate for showing verdicts is too lenient, its multiple baseline has only two tiers, and it treats fluency as the most trusted progress measure.\n\nA shared weakness: every design except evidence-max gives far less listening practice per contrast than the studies behind it. They cite '8 sessions', but at 1–2 minutes per session that is roughly 10–40 minutes. The brief's lasting gains came from about 1–7 hours in total.\n\nRecommended final design: evidence-max's measurement spine (success criteria set in advance, three-tier multiple baseline, era re-scoring, correct panel protocol, dose counted in trials and attempts with block extension). Add learner-ux's trust ladder, Shadow-from-day-1 scoring, retrieval on hidden stress dots, parallel Check forms and automatic encrypted backup after each Check. Add lean-mvp's first-attempt-only data rule and its small token-only Worker. Add measurement's registry-based demotion after a scorer epoch or device change, known-answer calibration and repeated panel clips. Keep LLM Talk, shadowing and stress verdicts experimental, turned on only when a Progress Check result calls for them.\n\nTechnical checks I made:\n(1) Verified: the documented Pronunciation-Assessment header for the REST short-audio API lists ReferenceText, GradingSystem, Granularity, Dimension, EnableMiscue, EnableProsodyAssessment and ScenarioId. It does not list NBestPhonemeCount or PhonemeAlphabet. So the REST fallbacks proposed in evidence-max, lean-mvp and learner-ux would lose the spoken-phoneme output the vowel feedback cards need. Source: https://raw.githubusercontent.com/MicrosoftDocs/azure-ai-docs/main/articles/ai-services/speech-service/rest-speech-to-text-short.md\n(2) WebKit bug 215884 ('getUserMedia recurring permissions prompts in standalone when hash changes') is marked RESOLVED / CONFIGURATION CHANGED, last updated 2026-02-03. I saw this only in search results because bugs.webkit.org was blocked by the proxy. learner-ux is right; evidence-max presents the bug as current. Source: https://bugs.webkit.org/show_bug.cgi?id=215884\n\nUnverified by me: the Azure neural voice counts (evidence-max and learner-ux disagree), Claude model names and prices, Hetzner prices, and whether F0 supports prosody."
+  },
+  {
+   "lens": "Feasibility and technical risk: can a solo developer with AI coding agents build and maintain it test-first; does it work reliably in iOS Safari and Android Chrome (HTTPS, AudioWorklet/PCM capture, page-hidden behaviour, permissions, installed-PWA quirks); are the scoring choices sound (Azure en-US vs fr-FR limits, token auth in the browser, 30-second limit, model updates, MFA/Parselmouth hosting, vendor claims); data persistence and backup; security of the Azure key; monthly cost.",
+   "evaluations": [
+    {
+     "design_key": "evidence-max",
+     "scores": {
+      "evidence_fit": 9,
+      "feasibility_solo_dev": 5,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 9,
+      "learner_value_and_adherence": 8,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "Every module traces back to a ranked capability in the brief or the addendum. Deliberate omissions (speed ladders, rhythm scores, audio-LLM judges, streaks) are all justified.",
+      "Local-first PWA with a small Cloudflare Worker that issues tokens: about $0 a month, no always-on server, and the key stays in a Worker secret. The 10-minute token life and the '9 minutes' reuse guidance are correct.",
+      "Core domain logic sits in pure-TypeScript packages (core, dsp) with no DOM. That fits Red→Green→Refactor well: property tests with fast-check, synthetic-signal DSP tests, Praat/Parselmouth used only as an offline test oracle, and parser contract tests that turn v1's bugs into regression tests.",
+      "The strongest validation plan of the three client-side designs. V2 uses deliberate-error scripts with precision ≥ .80 per error type. V3 requires kappa ≥ .6 and precision ≥ .85 before any stress verdict. V7 is an iOS latency and storage test with a Capacitor escape hatch.",
+      "Scoring eras with a monthly anchor re-score, plus re-scoring of all stored Check audio. This handles the documented August 2026 model update correctly. 'Store first, analyse later' lets Check capture ship before the analysis code exists.",
+      "Data safety is good: `navigator.storage.persist()`, a home-screen install, zip export, and an optional AES-GCM encrypted backup to R2 with the key derived on the phone.",
+      "Avoids hash routing to dodge the WebKit 215884 re-prompt issue. Capture is scoped to one mic stream per session, with an anti-aliased resampler, and MediaRecorder is kept as a fallback only."
+     ],
+     "weaknesses": [
+      "The scope is very large for a solo developer: 10 core epics, five of them L (3–4 weeks each). By its own sizing, the first real practice (F4 'Stress Starter') arrives about 9–11 weeks in, and the full program about 5–6 months in. It adds a hosted listener panel, a Validation Lab, French DSP, fluency and encrypted backup on top. The risk of stalling is high.",
+      "The mic opens at session start and stays open through the listening (HVPT) blocks. On iOS, an active getUserMedia switches WebKit to play-and-record, which can route playback to the earpiece or lower its volume. That would hurt the core listening trials. There is no audio-session handling and no rule against recording while model audio plays, and with echoCancellation off, speaker playback will leak into takes.",
+      "The design streams audio to Azure while the learner speaks, yet also says failed quality-gate takes are 'not scored'. The two are in tension: the audio has already been sent and billed. The fix is to buffer, gate, then push.",
+      "OPFS is the audio store, but `FileSystemFileHandle.createWritable` only arrived in Safari 26. Older iOS versions need `createSyncAccessHandle` inside a worker. The design does not address this.",
+      "No request timeout or tail-latency handling is specified for the SDK path.",
+      "The French clarity pipeline depends on unverified fr-FR phoneme timings (V4a) and a calibrated noise-mixing ASR. That is a lot of engineering for a secondary goal, with evidence of Weak–Moderate strength."
+     ],
+     "fatal_flaws": [
+      "Conditional: the documented fallback when the browser SDK fails on iOS is a relay to the Azure REST short-audio API. Its Pronunciation-Assessment header documents no NBestPhonemeCount or PhonemeAlphabet, so the fallback would lose the spoken-phoneme and IPA output that all the vowel and /h/ feedback depends on. The real fallback has to be a native wrapper (Capacitor) or a server running the SDK. The design names Capacitor as the escape hatch, so this is not fatal if that path is kept."
+     ],
+     "wrong_or_unverified_claims": [
+      "'SpeechSuper: pricing not published; contact sales (verified)' is wrong. SpeechSuper publishes pay-as-you-go pricing: a $20 monthly minimum, about $0.004 per word and $0.006 per sentence request (from the pricing page via search; the page itself was blocked).",
+      "'Screen Wake Lock (iOS support unverified)': MDN browser-compat-data shows iOS 18.4+ supports it in standalone home-screen apps. Versions 16.4–18.3 did not work in standalone mode.",
+      "The REST relay fallback is presented as equivalent to the SDK path. It is not: the REST header documents no NBestPhonemeCount or PhonemeAlphabet.",
+      "The voice counts (en-US 50+, en-GB 16, en-AU 15, fr-FR 20+, fr-CA 6, 'verified') conflict with learner-ux's counts (31/14/14/14/4), which were also 'verified'. The difference probably comes from which voice types are counted. It does not matter for a 4–6 voice pool.",
+      "MFA needing 8 GB of RAM or more remains unverified; it is only relevant to validation on the laptop.",
+      "'F0 includes pronunciation assessment and prosody' is correctly marked unverified. The docs describe pricing for Standard and commitment tiers only.",
+      "Confirmed correct: the F0 limit of 1 concurrent request (not adjustable); the 30-s REST limit and chunked upload; AudioWorklet in Safari 14.1+; pronunciation-assessment models updated for en-US and fr-FR in August 2026; the JS SDK exposing nbestPhonemeCount, phonemeAlphabet and enableProsodyAssessment."
+     ],
+     "best_ideas_to_graft": [
+      "V2 deliberate-error validation with a precision gate per error type (≥ .80) before any verdict is shown.",
+      "Scoring eras: a monthly anchor re-score, and re-scoring of all stored Check audio before any comparison.",
+      "Build the content pipeline so each TTS token is scored against both the intended word and its competitor. Keep it only if the intended word wins by a margin.",
+      "A seeded train/test split, with a unit test that fails if any test item or test voice appears in practice.",
+      "An AES-GCM encrypted backup to R2, with the key derived from a passphrase on the phone.",
+      "Parser contract tests built from real captured Azure JSON, one per v1 bug (callbacks, not an awaited promise; enum reasons; the NBest[0].Words path; prosody requested).",
+      "Praat/Parselmouth as an offline test oracle for the TypeScript DSP, rather than a production dependency.",
+      "Pre-registered success criteria (S1–S7) and 'store first, analyse later' for Checks."
+     ]
+    },
+    {
+     "design_key": "lean-mvp",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 9,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 8,
+      "learner_value_and_adherence": 7,
+      "cost_and_ops": 9
+     },
+     "strengths": [
+      "The most buildable design: about 35–48 developer-days. Offline HVPT listening sessions ship around week 2–3 (E2), before any scoring code exists, and the full MVP ships in about 7–8 weeks, timed so Progress Check 1 is ready at practice week 4.",
+      "The smallest attack surface. The Worker has only /speech-token and /health: no database, no audio relay, no TTS proxy. Checks include constant-time secret comparison, an Origin check, 30 tokens an hour, and the F0 hard cap as a cost ceiling.",
+      "The best CI key-leak check: it scans dist/ for the real key value (supplied from a CI secret) and the Ocp-Apim-Subscription-Key header name. That is more robust than regex heuristics.",
+      "Decision gates (H1–H5) add modules only when Progress Check data justify them. That is an effective guard against scope creep for a solo developer.",
+      "Careful capture details: `track.getSettings()` and `AudioContext.sampleRate` stored per take; explicit quality-gate thresholds; MediaRecorder takes marked 'lossy' and excluded from acoustic measures; a Bluetooth headset warning; a Wake Lock release at session end; a planned 8-day eviction test.",
+      "Scorer interface with Azure and Fake implementations, a shared contract suite, 'record once, replay forever' fixtures with a drift snapshot diff, fake-indexeddb for storage, and the Workers vitest pool for the Worker. The whole stack is TDD-friendly.",
+      "Correct data rule: only first attempts count; attempts made right after hearing the model are stored but excluded, and self-corrections are logged separately.",
+      "Records the French baseline at week 0 even though French training is deferred, so the later French track still has a before-measure."
+     ],
+     "weaknesses": [
+      "Opens the mic at session start (0:00) and runs listening trials with it open. On iPhones this risks playback being routed to the earpiece or ducked. There is no navigator.audioSession handling and no half-duplex rule (never record while model audio plays), and with echoCancellation off this matters.",
+      "It streams to Azure during recording but says failed quality-gate takes are 'not sent to Azure'. The two contradict each other: buffer, gate, then push.",
+      "The only backup is a manual ZIP export with a monthly nudge. Months of Check audio live only in IndexedDB on one phone, so loss or reset of the phone is a real risk.",
+      "Practice audio is stored as IndexedDB blobs, which is fine. But at roughly 30 MB per Check, the export ZIPs grow large for the iOS share sheet over several cycles.",
+      "The French clarity goal is deferred to after the MVP (E8). That is defensible because English is primary, but the user did confirm French as a second target, and nothing French is trained for about 8 weeks or more.",
+      "The V3 gate (kappa ≥ .4) is a low bar for showing vowel and /h/ verdicts compared with expert agreement of about .60."
+     ],
+     "fatal_flaws": [
+      "Conditional: fallback D2-B (the Worker proxies audio to the REST API) loses NBestPhonemeCount. The REST header documents no such key, and the design's verdict rule needs Azure's top spoken phoneme to match the target. If the browser SDK fails on iOS, the vowel and /h/ verdicts cannot be computed on the fallback. Capacitor (option B) is the real fallback."
+     ],
+     "wrong_or_unverified_claims": [
+      "'WebKit bug 215884: current status unverified': search results show it RESOLVED, CONFIGURATION CHANGED on 2026-02-03. Behaviour on the user's iOS version still needs testing.",
+      "'Chromium fake-mic flags unverified': `--use-fake-device-for-media-stream` and `--use-file-for-fake-audio-capture` are standard, documented Chromium flags. It is correct that WebKit in Playwright cannot fake mic input.",
+      "The REST fallback is presented as preserving scoring. It does not preserve the spoken-phoneme output (see fatal flaws).",
+      "'Dual reference' (scoring against both words) doubles the audio hours for grey-zone items and must run one request at a time on F0. The design mentions F0 concurrency only as unverified, but the quotas page confirms 1 concurrent request that cannot be changed.",
+      "Confirmed correct: pronunciation assessment is available in all speech-to-text regions (release notes); Wake Lock works in iOS home-screen apps from 18.4; SDK 1.51.0 was released in July 2026 (npm); SSML IPA stress marks; the prosody add-on charge; 10-minute tokens."
+     ],
+     "best_ideas_to_graft": [
+      "The epic order: ship offline HVPT listening first, add say-it with feedback next, and capture the baseline before any speaking practice.",
+      "Decision gates H1–H5 that decide when the next module is added.",
+      "The CI scan for the real key value plus the header name.",
+      "A usage counter that warns at 70% of the F0 5-hour allowance.",
+      "A storage-status panel in Settings, and a deliberate 8-day-idle eviction test on the iPhone.",
+      "Only first attempts feed the error estimates; self-corrections are tagged separately.",
+      "A listener pack exported as a zip and CSV instead of a hosted rater web app (much less to build and secure).",
+      "An N-of-1 hypotheses file written before Check 1."
+     ]
+    },
+    {
+     "design_key": "measurement",
+     "scores": {
+      "evidence_fit": 7,
+      "feasibility_solo_dev": 4,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 9,
+      "learner_value_and_adherence": 6,
+      "cost_and_ops": 5
+     },
+     "strengths": [
+      "Technically the most robust scoring path. The Python Speech SDK on the server supports NBestPhonemeCount, IPA and prosody. The design correctly notes that the REST short-audio header lists no NBest-phoneme option (verified against the docs). The Azure key never leaves the server, and there is no token handling in the browser.",
+      "Upload happens after the on-phone quality gate, so failed takes never reach Azure. There is no contradiction between streaming and gating, and an IndexedDB outbox covers network loss.",
+      "Server-side storage (FLAC, SQLite with migrations, nightly backup to object storage, a monthly test restore) solves persistence and makes re-scoring every stored recording after an Azure model update trivial.",
+      "The measurement registry is the most rigorous validation framework offered. It has four trust levels (Recorded→Lab→Experimental→Trusted), promotion needs known-answer AUC, listener kappa and precision thresholds, and trust levels change only in a commit that includes the validation report. A new scorer epoch or a device change demotes a measure.",
+      "The server side fits pytest + Hypothesis. DSP is tested against synthetic sounds generated in Praat. The Azure adapter is tested against real recorded JSON parsed through Pydantic, with FakeAzure keyed by audio hash.",
+      "Explicit timeouts (Azure 15 s, aligner 30 s) with retries, and a latency budget table."
+     ],
+     "weaknesses": [
+      "Heaviest build and operations load for a solo developer: two languages (TypeScript client, Python server), FastAPI, a job worker, SQLite migrations, a separate MFA aligner container installed through conda, Docker Compose, Caddy, a VPS to patch and secure, and nightly backups. It has 14 epics, and validated speaking feedback (Slice 2) arrives only around weeks 9–10.",
+      "Upload-then-score gives up streaming. Every speaking attempt needs connectivity and a round trip, and the median-latency target of 3 s or less is unverified. A 2022 SDK issue reports about 5% of pronunciation-assessment requests taking about 20 s (older SDK, unverified today).",
+      "The H1 home-server option means scoring stops whenever the home machine is off or unreachable. That is a poor fit for short phone sessions taken on the go.",
+      "An internet-exposed server holding voice recordings brings a security-patching and privacy burden. The single-user pairing token is fine, but the server's attack surface is much larger than a token-only Worker.",
+      "MFA and Parselmouth running in production for French are costly for the secondary goal. The speed of MFA `align_one` on a 2 vCPU / 4 GB VPS is unverified, and the design already hedges by suggesting an 8 GB plan.",
+      "The mic still opens at session start and stays open through listening blocks, with the same iOS earpiece and ducking risk as the others. Its downmix-to-mono and applied-settings logging are good."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "'Raters are not told the intended message (Brief §3.7 [Moderate])' misreads the evidence. De Fino et al. found that raters without the intended message rated L2 speech as EASIER to understand, which inflates scores. Brief §7 capability 1 prescribes tasks with a known intended message. The primary outcome measure would be biased upward; evidence-max and learner-ux get this right.",
+      "'Apple developer account $99 a year (unverified)': Apple's membership page, checked by the other designs, confirms $99 a year.",
+      "Latency figures ('upload ~0.2 s', 'Azure PA 1–3 s') are unverified. An SDK GitHub issue reports a long tail (~20 s on about 5% of requests, 2022-era SDK).",
+      "'The JS SDK now uses AudioWorkletNode for mic input' is plausible but was not verified here.",
+      "MFA speed on ARM64 or a small VPS, and a 4 vCPU Hetzner price of about €9–12, are unverified.",
+      "Confirmed correct: the REST header has no NBestPhonemeCount; Hetzner CX23 at €5.49 after the 15 June 2026 increase (secondary sources); SpeechSuper pay-as-you-go with a $20 monthly minimum at $0.004/$0.006 per request (secondary sources); home-screen apps exempt from the 7-day storage cleanup; Cloudflare Tunnel and Access free tiers (secondary sources)."
+     ],
+     "best_ideas_to_graft": [
+      "A measurement registry with trust levels, promoted only by a committed validation report, and demoted on a scorer-epoch or device change.",
+      "Known-answer AUC checks (the learner deliberately says both members of a contrast) as a cheap first validation stage before listener agreement.",
+      "Gate first, then send: buffer the take, run the quality gate, then push the buffered PCM to Azure. This keeps most of the streaming latency benefit without paying for bad takes.",
+      "Recognise that a spoken-phoneme fallback needs an SDK, not the REST API. Keep a server-side or native SDK path as the true fallback.",
+      "FakeAzure keyed by audio hash, fixtures validated against the schema, and a nightly live contract test to catch changes in Azure's response shape.",
+      "An explicit latency budget per step, and epochs that also cover device changes.",
+      "A Cloudflare Tunnel for HTTPS on the phone during development."
+     ]
+    },
+    {
+     "design_key": "learner-ux",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 7,
+      "phone_tech_reliability": 8,
+      "measurement_validity": 8,
+      "learner_value_and_adherence": 9,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "The best iOS audio handling of the four. The mic opens only when the Say stage starts, so Hear trials run with no mic and no network; `navigator.audioSession.type = 'play-and-record'` is set (MDN browser-compat-data: Safari 16.4); a half-duplex rule means it never records while model audio plays; the URL does not change during a session; interruptions are handled; and it uses Wake Lock (iOS 18.4+ in home-screen apps, verified).",
+      "An E0 go/no-go spike on the user's own phone (50 attempts: latency, permissions, playback routing) before any building. The fallback order is explicit: a PWA first, then Capacitor.",
+      "Practical Azure adapter details: wrapping the callback API in a promise with an 8-s timeout, token refresh at 8 minutes, serialising requests on F0 (1 concurrent, which is verified), lazy-loading the SDK during the Hear stage, and storing the raw JSON.",
+      "A trust ladder with a Shadow mode. Azure verdicts are logged silently from the first slice, which builds labelled validation data while the learner still gets value from listening-first training. 'Use first, trust later' is a sound way to de-risk.",
+      "Listener-panel packs encrypted with the key in the URL fragment, which never reaches the server; optional encrypted backups to R2, run automatically after each Check; phone-first data with no plaintext on the server.",
+      "Strong adherence design: a 15-second time to first feedback, a complete 5-minute version, a comeback session, a backup if-then plan, pause mode, a weekly review, and no streaks.",
+      "A full TDD layer table, including Worker tests in the Workers vitest pool and a content validator run in CI."
+     ],
+     "weaknesses": [
+      "The scope is larger than lean-mvp's: 11 epics, including French, a panel, backup and an optional LLM partner (L). The first slice arrives around 6–7 weeks in.",
+      "It streams to Azure during the take while also saying a take that fails the gate is 'not sent to Azure'. The same contradiction as the other streaming designs; resolve it by gating before pushing.",
+      "`play-and-record` can itself route output to the earpiece at low volume on iOS. The design correctly marks this for testing, but model playback in the Say stage may still sound quiet.",
+      "The CI rule 'fail on any 32-character hex string' is brittle. It will false-positive on content hashes and manifests, and may miss key formats that differ (unverified). Scanning for the actual key value is safer.",
+      "The optional LLM partner adds a second secret (ANTHROPIC_API_KEY), a relay endpoint, prompt-safety work and cost, for Weak evidence on pronunciation outcomes.",
+      "Keeping practice audio for 30 days (150–250 MB) plus all Check audio in IndexedDB or OPFS is fine on quota. OPFS `createWritable`, however, requires Safari 26; older iOS versions need sync access handles in a worker."
+     ],
+     "fatal_flaws": [
+      "Conditional: fallback D (the Worker relays WAV to the REST short-audio API) loses NBestPhonemeCount and IPA, because neither is documented in the REST header. The spoken-phoneme and two-reference vowel and /h/ detectors would degrade. Option B (Capacitor, native SDK) is the only fallback that keeps them; the design lists it, so this is manageable."
+     ],
+     "wrong_or_unverified_claims": [
+      "'SpeechSuper … Pricing is not public' is wrong. Published pay-as-you-go: a $20 monthly minimum, $0.004 per word and $0.006 per sentence request (secondary sources).",
+      "The fallback-D description implies the same detectors keep working over REST. The documented REST header has no NBestPhonemeCount or PhonemeAlphabet.",
+      "'Browser bundle is about 378 KB minified' is unverified. The npm package unpacks to about 7.2 MB, although the minified browser bundle is much smaller.",
+      "The voice counts (en-US 31, en-GB 14, en-AU 14, fr-FR 14, fr-CA 4) conflict with evidence-max's 'verified' counts. The definition of a 'standard neural voice' differs between the two; this is not material.",
+      "Confirmed correct: WebKit bug 215884 RESOLVED/CONFIGURATION CHANGED as of 2026-02-03 (search summary); Audio Session API in Safari 16.4; Wake Lock in iOS home-screen apps from 18.4; SDK 1.51.0 from July 2026; F0 limit of 1 concurrent request; Claude list prices of Opus 5 $5/$25, Sonnet 5 $2/$10 and Haiku 4.5 $1/$5 (confirmed against the Claude API reference); the prosody add-on charge; the Chromium fake-mic flags."
+     ],
+     "best_ideas_to_graft": [
+      "Open the mic only when the Say stage starts; run the Hear stage with no mic and no network.",
+      "Set `navigator.audioSession.type` explicitly, and follow a half-duplex rule: never record while model audio plays.",
+      "Lazy-load the Azure SDK and fetch the token during the Hear stage, so the Say stage is ready.",
+      "A Shadow step on the trust ladder: log Azure verdicts silently from day 1 to build the validation set.",
+      "Serialise requests on F0, refresh the token at 8 minutes, and use an 8-s timeout with a 'couldn't judge, no verdict' state.",
+      "An E0 spike on the real iPhone as a go/no-go gate before choosing PWA or Capacitor.",
+      "Panel packs encrypted with the key in the URL fragment.",
+      "A backup if-then plan, pause mode, and demoting a detector when more than 25% of its flags are disputed and upheld."
+     ]
+    }
+   ],
+   "ranking": [
+    "lean-mvp",
+    "learner-ux",
+    "evidence-max",
+    "measurement"
+   ],
+   "key_decision_axes": [
+    "Where Azure scoring runs: the browser SDK over a WebSocket with a 10-minute token issued by the Worker (lowest latency, $0, no server; iOS WebKit risk) or the SDK on a server/native (robust NBestPhonemeCount and IPA, easy re-scoring, key never leaves the server; adds latency and operations). The REST short-audio API is NOT a like-for-like fallback: it documents no NBestPhonemeCount or PhonemeAlphabet.",
+    "Where learner data lives: phone-first IndexedDB/OPFS with persist(), export and an optional encrypted R2 backup, or a server SQLite with nightly backups. The trade-off is persistence and re-scoring convenience against operations, cost and privacy exposure.",
+    "Scope of the first slice and time to first real practice: an English-core MVP with gates for adding modules (offline listening in about 2–3 weeks) against a full program that includes French, a hosted panel and a validation lab from the start (first validated speaking feedback around weeks 9–11).",
+    "iOS audio-session strategy: whether the mic is open for the whole session or only during speaking stages; half-duplex playback; an explicit navigator.audioSession; and the go/no-go spike that triggers a Capacitor wrapper.",
+    "Gate first versus stream first: streaming audio while the learner speaks cuts latency but sends and bills takes that later fail the quality gate. Buffering, gating, then pushing keeps most of the latency gain.",
+    "How much trust machinery to build: a Compare/Shadow mode until validated (all designs) versus a full measurement registry with AUC, kappa and precision promotion, and the cost of recruiting human listeners to run it.",
+    "Production acoustic stack: TypeScript DSP on the phone with Praat/Parselmouth as a test oracle only, versus Parselmouth and MFA in production (needed mainly for French vowel timing, the secondary goal).",
+    "Cost tier: Azure F0 (free, hard cap, 1 concurrent request, prosody availability unverified) versus S0 (about $2–5 a month, budget alerts only, no hard cap), plus whether to run a VPS at about €6–15 a month."
+   ],
+   "notes": "I read both evidence files in full (brief lines 1–1047, addendum 1–495) and checked the key technical claims on the web.\n\nVerified:\n- The Azure REST short-audio Pronunciation-Assessment header documents only ReferenceText, GradingSystem, Granularity, Dimension, EnableMiscue, EnableProsodyAssessment and ScenarioId. It has no NBestPhonemeCount and no PhonemeAlphabet. That undermines the REST-relay fallbacks in evidence-max, lean-mvp and learner-ux.\n- F0 speech-to-text allows 1 concurrent request, and this cannot be changed (quotas doc).\n- The JS SDK PronunciationAssessmentConfig exposes phonemeAlphabet, nbestPhonemeCount and enableProsodyAssessment (SDK source). The SDK is at 1.51.0 on npm (July 2026).\n- Prosody is an add-on charge (pronunciation-assessment-tool.md). Pricing is about $1–1.32 an hour plus about $0.30 an hour, and F0 gives 5 hours a month (secondary sources).\n- Pronunciation assessment is available in all speech-to-text regions, and the en-US and fr-FR models were updated in August 2026 (release notes).\n- Wake Lock works in iOS standalone home-screen apps only from 18.4 (MDN browser-compat-data). The Audio Session API is in Safari 16.4. OPFS createWritable needs Safari 26; createSyncAccessHandle is in Safari 15.2.\n- WebKit bug 215884 is RESOLVED/CONFIGURATION CHANGED as of 2026-02-03 (search summary). iOS still does not persist mic permission across page loads.\n- iOS routes playback to play-and-record or the earpiece when getUserMedia is active.\n- SpeechSuper publishes pay-as-you-go pricing ($20 monthly minimum), so evidence-max and learner-ux are wrong to say it is unpublished.\n- Hetzner CX23 costs €5.49 after the 15 June 2026 increase.\n- Claude prices quoted by learner-ux are correct.\n- Playwright cannot fake mic input in WebKit.\n- An SDK GitHub issue reports a long latency tail for pronunciation assessment (about 5% of requests near 20 s, older SDK).\n\nCross-cutting issues:\n1. Three designs stream during the take and also claim that gated takes are never sent to Azure. Buffering, gating, then pushing resolves this.\n2. Three designs keep the mic open during listening blocks. On iPhone this risks quiet or earpiece playback; learner-ux's approach of opening the mic at the Say stage with half-duplex playback should be adopted.\n3. Measurement's blind-to-message rater setup contradicts the evidence (De Fino) and would inflate comprehensibility.\n\nRecommended synthesis: lean-mvp's scope, epic order and gates, plus learner-ux's iOS audio handling, Shadow-mode trust ladder and E0 spike, plus evidence-max's validation rules (V2/V3 precision gates), scoring eras and encrypted backup. Keep a native (Capacitor) or server-SDK path as the only real fallback that preserves spoken-phoneme output. Adopt measurement's gate-then-send and registry discipline in lightweight form."
+  },
+  {
+   "lens": "LEARNER VALUE AND ADHERENCE: would one busy French-L1 adult use it 4+ times a week for 8-12 weeks on a phone? That covers speed to first useful feedback, 1-2 actionable corrections, sessions that hold together at 5/10/15 min, real speaking that can carry over to conversation, a French clarity track worth doing, and no busywork or cognitive overload. Judged against Addendum §4 (short mobile practice, dropout, dose, latency, iOS limits) and §5 (ranked implications, especially 2, 4, 7, 8, 9, 10, 14).",
+   "evaluations": [
+    {
+     "design_key": "learner-ux",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 6,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 8,
+      "learner_value_and_adherence": 8,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "Every session runs the same ritual: Hear → Say → Use → Wrap. Starting costs almost nothing, and the 5, 10 and 15-minute versions all hold together because each one keeps all four stages (5-min: 12+8 listening trials, 5+3 Say items, one 45-s Use round).",
+      "First useful feedback is the fastest of the four designs, about 15 s after tapping the icon. Listening comes first, works offline from cached audio, needs no mic prompt and answers in under 0.1 s. The Azure SDK and token load in the background during Hear. This matches Add. §5.10 and gives an early success (Brief §3.6 self-efficacy).",
+      "The mic opens on the first spoken word and the level/noise check runs on that same word. A separate check sheet appears only when that check fails. This removes a screen and a delay that the other designs put at the start of every session.",
+      "It is the only design with real free speech in every session, including the 5-minute one (a 45-s Use round). Feedback covers only the current targets plus one pacing note, and comes after the round, never mid-speech. This serves transfer to conversation directly (Brief §2 #8, #13).",
+      "The trust ladder (Shadow → Self-check → Hint → Correction) always gives the learner something meaningful. Before a detector is validated, the learner gets a self-check plus the model, which trains self-monitoring (Brief §3.6). Other designs give either nothing or bars with no verdict. 'A wrong correction costs more motivation than a missing one' is exactly the right principle for adherence.",
+      "Dose follows the addendum: /h/ for about 8 sessions (weeks 1-2), about 8 sessions per vowel pair, and the stress thread at about 3.6 h against the addendum's about 4 h. There is also a maintenance period in weeks 13-16 with a week-16 delayed probe.",
+      "The adherence toolkit is the richest and best matched to Add. §4.1: a backup if-then plan ('if I miss it, the 5-minute version on the train'), pause mode for holidays, a 20-s weekly review asking 'what got in the way?', a real-life mission, a comeback that starts on the strongest target, and an exit after 3 or more minutes that still counts.",
+      "Results use plain words: 'Clearly better / Probably better / No clear change / Probably worse'. The Progress screen has four headline cards. 'Practice, not progress' labels, a 'why these numbers wobble' explainer and the Then & Now 'Which is newer?' game make honest measurement understandable, not intimidating.",
+      "The French track fits the life of a busy learner: a 5-minute extension or a standalone session, 1-2 times a week, with warm-up, pairs, noisy café and retell drop. Before validation it asks 'Which would your listener catch better?', which keeps French engaging instead of showing empty bars.",
+      "The optional spoken-only Talk role-play and the optional LLM partner (text only, never scores) give an engaging transfer activity that the evidence calls Moderate for dialogue systems (Bibauw d=0.84, spoken). It stays off in v2.0."
+     ],
+     "weaknesses": [
+      "The first shippable slice (Stress Starter) comes only after E0-E3: about S-M + M + M + M-L, so roughly 5-8 weeks of building. That is slower than lean-mvp's offline listening slice at 2-3 weeks.",
+      "The sound thread (/h/, vowels; E6) is 7th in the build order, after scheduler and Checks. The 12-week program table (/h/ in weeks 1-2) does not match the roadmap. The learner may run several weeks of stress-only sessions (stress + retell), which gets monotonous.",
+      "The Use rounds shrink 60 → 45 → 30 s. Halving the time is steeper than the brief's 'gently shrinking' limits, and time pressure drives word-for-word recycling and lower accuracy (Boers 2014; Suzuki & Hanzawa 2022). Keep it closer to 60/50/40.",
+      "'Any session ≥3 minutes counts' toward a weekly target of 4 sits below Hwang et al.'s ≥5-minute persistence pattern. The target could be met with a weekly dose too small for the stress-hours plan.",
+      "There are many optional surfaces: 16 screens, including a recordings library, disputes review, validation dashboard, missions, weekly review, pause mode and the Then & Now game. Each is small, but together they risk extra things to manage. Some (disputes review, missions) should be hidden until used.",
+      "The correction card has four buttons plus a Details drawer. On a phone, one-thumb flow needs the retry to be the obvious default.",
+      "Stress corrections need validation V4, which needs about 200 attempts plus blind native labels. Stress speaking may stay at the self-check step for many weeks, and the design doesn't say how long that is acceptable."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "The en-US standard neural voice count ('31') conflicts with evidence-max's '50+'. The counts depend on whether multilingual/HD voices are included. Unresolved, and minor for design.",
+      "SDK bundle size 'about 378 KB minified' was not independently verified here.",
+      "The pause threshold of 250 ms is correctly labelled unverified as a standard.",
+      "The Claude API prices (Opus 5 $5/$25, Sonnet 5 $2/$10, Haiku 4.5 $1/$5 per M tokens) and the monthly LLM cost arithmetic ($2.25 / $0.90 / $0.45) check out against Anthropic's cached pricing table. Correct.",
+      "The claim that WebKit bug 215884 was 'RESOLVED (Feb 2026)' matches the tracker status found through search. Correct.",
+      "Wake Lock in iOS home-screen apps from 18.4 is confirmed by MDN browser-compat-data (not supported in standalone mode for 16.4-18.3). Correct."
+     ],
+     "best_ideas_to_graft": [
+      "The fixed Hear → Say → Use → Wrap ritual, with every length being a complete session that includes a Use round.",
+      "Listening first so feedback lands in under 0.1 s, offline, with no mic prompt, while the SDK and token load in the background.",
+      "Open the mic on the first spoken word and run the quality check inline on that word. Show a mic sheet only when the check fails.",
+      "The trust ladder (Shadow → Self-check → Hint → Correction). Unvalidated detectors run silently and collect data while the learner gets a self-check plus the model ('use first, trust later').",
+      "A backup if-then plan, pause mode, a 20-s weekly review ('what got in the way?'), and a comeback that starts on the strongest target.",
+      "Plain-word result labels and four headline progress cards. The Then & Now 'Which is newer?' blind game.",
+      "Half-duplex audio: never record while model audio plays. Set the audioSession play-and-record hint.",
+      "A French pre-validation fallback: play both takes and ask 'Which would your listener catch better?' instead of showing unvalidated numbers."
+     ]
+    },
+    {
+     "design_key": "lean-mvp",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 8,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 8,
+      "learner_value_and_adherence": 7,
+      "cost_and_ops": 9
+     },
+     "strengths": [
+      "Time to real practice is the fastest of the four: daily 5-minute offline listening sessions (stress, /iː–ɪ/, /h/) ship after E0-E2, about 2-3 build weeks. Listen-and-say comes at about 3-4 weeks. The learner starts getting evidence-strong training (HVPT [Strong]) almost at once, and that keeps a developer who is also the learner motivated.",
+      "A Retell ×3 runs in every 10-minute Standard session. The story cards give French bullet facts plus 3 English target words. The intended message is known, the learner is not reading English aloud, and the targets have to be used in free speech. This is the best-designed free-speech transfer task of the four.",
+      "The adherence decision gates govern the product: if H1 (≥4 sessions a week) fails, 'fix sessions first… add no modules'. Scope then follows real use, not the plan. This is the most adherence-aware roadmap rule of the four.",
+      "An 8-week cycle matches Add. §5.7 ('6–8-week cycles') and reaches a first Cycle Report sooner than 12 weeks. That is motivating.",
+      "Room noise is measured silently during the first 0.5 s, with no extra screen. Results are one line with no 0-100 number. The session summary has no score. There are few decisions per session.",
+      "The data rule is sensible: only first attempts count, and retries after the model are stored but excluded. This protects the learner from inflated 'progress' without adding any UI burden.",
+      "The Progress screen shows only Check results. A separate 'Practice log' is labelled 'inflated by repetition'. Honest, and simple.",
+      "The 3-minute comeback aims for early success, and overdue reviews are spread over later sessions ('no backlog wall').",
+      "Honest about dose: the design says openly that stress reaches only about 2 h by week 8 and continues in cycle 2."
+     ],
+     "weaknesses": [
+      "The second goal (native French clarity) is missing from the MVP. It arrives only as E8 after about 7-8 build weeks plus the first gates, and even then as 'lite' with no listener game (E11 later). For a learner with two stated goals, months with nothing for French weakens engagement. D6 option B (+1 week) should probably be the default.",
+      "Stress speaking stays in 'compare mode' (syllable bars, no verdict) until V4 passes. For a French speaker who may not be able to hear stress yet, bars with no verdict are hard to act on and can feel like busywork.",
+      "Until E8 ships, the 15-minute Full session fills 10:00-13:30 with 'a second stress set and extra review'. That is filler, not a reason to choose 15 minutes.",
+      "'At most 20 review items come due per session' does not fit a 10-minute session with only 6 Say items. The cap should be about 12 or tied to a share of Say items.",
+      "Block A trains stress, /iː–ɪ/ and /h/ together, and Block B trains /uː–ʊ/ and /æ–ʌ–ɑː/ together. Two new contrasts plus the stress thread in one block splits a 10-minute session. Feedback stays on one target, but the load for the learner is higher than with one contrast at a time.",
+      "Five Retell ×3 rounds a week (about 3.3 min each) with only 48 cards may get repetitive over 8 weeks. Topic rotation is not specified.",
+      "The listener pack is a zip plus a CSV that the learner sends and imports. That friction makes it less likely the optional human check ever happens."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "'Each vowel pair gets roughly 20 sessions in its block' overstates the dose. The two contrasts in a block share about 3-5 minutes a session, so 20 sessions are not the same dose as 20 sessions of a single contrast.",
+      "WebKit bug 215884 'current status unverified': the tracker shows it RESOLVED (Feb 2026). No-URL-change routing is still prudent.",
+      "'Dual reference' scoring (the same audio scored against 'eat' and 'heat') is correctly marked as an untested design idea.",
+      "The Chromium fake-mic flags are marked unverified. learner-ux cites a source for them, and they are standard Chromium switches.",
+      "Wake Lock in iOS home-screen apps from 18.4 is correct (MDN browser-compat-data)."
+     ],
+     "best_ideas_to_graft": [
+      "The adherence-first gate: if weekly sessions fall below target, fix friction (a shorter default, a new cue time, fewer taps) before adding any module.",
+      "Retell cards with French bullet facts plus 3 English target words: a known message, no reading-aloud priming, and targets used in free speech.",
+      "Ship an offline listening-only slice in about 2-3 weeks so real training starts before the scoring pipeline exists.",
+      "The silent 0.5-s room-noise check at session start (no separate screen).",
+      "Only first attempts count toward error estimates. Post-model imitation is stored but excluded.",
+      "Write the N-of-1 hypotheses down (docs/research/n-of-1-plan.md) before Check 1.",
+      "An 8-week first cycle so the first Cycle Report arrives sooner."
+     ]
+    },
+    {
+     "design_key": "evidence-max",
+     "scores": {
+      "evidence_fit": 9,
+      "feasibility_solo_dev": 3,
+      "phone_tech_reliability": 7,
+      "measurement_validity": 9,
+      "learner_value_and_adherence": 6,
+      "cost_and_ops": 8
+     },
+     "strengths": [
+      "Its session scripts are the most concrete and best timed: 5, 10 and 15-minute English sessions plus a 10-minute French session, with trial counts per block (about 36 listening trials in 3 min, about 10 spoken words, 12 stress-shape trials, a 50-s 'use it' task). Each length is coherent and clearly ordered.",
+      "A 'Listening-only' session (earbuds, somewhere the learner can't speak) counts toward the weekly goal. This is an excellent adherence idea for commutes and shared spaces, and no other design has it.",
+      "The French track is the most engaging and meaningful of the four. The listener game in noise has an ASR 'partner' tuned to mishear about 20-30% of ordinary takes (Buz 2016). Paired takes come with a named listener. Wrap-up feedback reads 'Your vowels got longer; your pitch range did not change. Next cue: let your voice move', which is actionable and limited to one cue. The clear-at-normal-rate gate starts at week 4, so slowness is never rewarded.",
+      "Feedback discipline: an instant quality verdict in under 0.3 s, a self-estimate on 1 trial in 4, one correction (never more than two), self-correction before the model, then a new word, plus a 'That was right' button and accepted-variant lists.",
+      "Phase rules keep new contrasts listen-only until listening accuracy reaches 80%. The learner meanwhile speaks on established targets, so sessions still contain speaking.",
+      "Honest motivation elements: a weekly ring, never a streak; a 3-minute welcome-back with the backlog capped at 12; monthly blind A/B clips; one line explaining 'Mixed practice feels harder. That is on purpose'; a weekly real-world speaking log.",
+      "Stress feedback splits into length, pitch, loudness and reduction, with syllable bubbles on prompts. This matches Add. §2 r1 and §5.3."
+     ],
+     "weaknesses": [
+      "Time to first real practice is very long. F1 (M) + F2 (M) + F3 (L, including the validation sprint) + F4 (L) comes to roughly 8-12 weeks before the 'Stress Starter'. French arrives only in F9, several months in. For a developer who is also the learner, that is a real motivation risk.",
+      "Heavy testing burden on the learner. Baseline runs over 3 days, and the 10 repeatability sentences are recorded twice at every Check. Checks every 4 weeks are about 7+7 min English plus about 8 min French with no feedback. The validation sprint asks for 60 items with deliberate errors, 80 deliberately mis-stressed words, V4a/V4b calibration and a quarterly mini re-validation. Much of this feels like work, not practice.",
+      "The 12-week fixed blocks give /h/ a full 4 weeks (about 16 sessions), about twice the addendum's ~8 sessions. The same contrast for a month risks boredom. Block B combines /iː-ɪ/ with /uː-ʊ/.",
+      "Free speech in the default 10-minute session is a single 50-s 'use it' task. The fluency retell appears only in 15-minute sessions (about 1-2 times a week), so less speaking transfers to conversation than in lean-mvp or learner-ux.",
+      "Cognitive load in the UI: 15 screens, including a Validation Lab, Listener panel manager, scoring eras in Settings, a 7-state target status vocabulary, and pre-registered criteria S1-S7 with RCI/NAP. That is right for the developer, but too much if it leaks into the learner's view.",
+      "Stress speaking shows cue patterns only until V3 passes. V3 needs kappa ≥ .6 and precision ≥ .85, which the design itself expects is unlikely ('High likelihood' that stress detection is not valid). Stress speaking may never produce a verdict.",
+      "The scope (11 epics, 6 of them L) makes it likely that the program stalls part-way, leaving the learner with a partial app."
+     ],
+     "fatal_flaws": [],
+     "wrong_or_unverified_claims": [
+      "'Screen Wake Lock (iOS support unverified)': MDN browser-compat-data shows full support in iOS 18.4+, including home-screen apps. It was not supported in standalone mode for 16.4-18.3.",
+      "WebKit bug 215884 is presented as a current bug. The tracker shows it RESOLVED (Feb 2026). No-hash routing is still sensible, but it is no longer a verified current defect.",
+      "The en-US '50+' neural voice count conflicts with learner-ux's '31 standard voices'. Counting method unclear; unresolved.",
+      "'Result in about 1–2 s': typical Azure pronunciation assessment is about 2 s, but a reported tail of about 5% of requests takes around 20 s (Azure-Samples issue #1327, older JS SDK, 2021; current behaviour unverified). The feedback UX has no plan for slow tail responses.",
+      "Kratochwill's ≥3-target multiple-baseline standard is not re-checked (the design acknowledges this).",
+      "The trial-rate estimates (for example 36 listening trials in 3 minutes) are design assumptions, not tested."
+     ],
+     "best_ideas_to_graft": [
+      "A 'Listening only' session mode (earbuds, no speaking) that counts toward the weekly goal.",
+      "The French listener game in noise: an ASR partner at a calibrated SNR that mishears about 20-30% of habitual takes, with a clearer retry aimed at the confusable part.",
+      "French wrap-up feedback that names the feature the learner did not change and gives exactly one cue for next time.",
+      "Phase rule: a new contrast stays listen-only until about 80% on training voices, while speaking time goes to established targets.",
+      "A rephrase nudge when more than about 70% of 4-word sequences repeat the previous retell round. Rate is shown against a band, never 'faster is better'.",
+      "Split the Progress Check into two parts of about 7 minutes, use a distinct calm theme, and 'store first, analyse later'.",
+      "One line explaining why mixed practice feels harder on purpose. A weekly one-tap real-world speaking log."
+     ]
+    },
+    {
+     "design_key": "measurement",
+     "scores": {
+      "evidence_fit": 8,
+      "feasibility_solo_dev": 4,
+      "phone_tech_reliability": 5,
+      "measurement_validity": 9,
+      "learner_value_and_adherence": 4,
+      "cost_and_ops": 5
+     },
+     "strengths": [
+      "The principle that the app never shows a verdict it cannot measure protects the learner's trust. An 'unclear result' reads 'Couldn't judge this one clearly — no verdict' and is excluded from statistics, never shown as an error. This is good UX for noisy scoring.",
+      "'Try again — without the model' is clear wording for a self-correction prompt.",
+      "The 5-minute session is coherent: 14 listening trials, about 8 speaking attempts on 6 new words, 2 reviews and a wrap-up.",
+      "The 10-minute French session is well built: warm-up, 5 paired sentences with change in vowel length and pitch range, vowel probe, a 90-s retell at normal pace, and a report with 2-3 changed measures plus one cue.",
+      "Dose is shown as attempts ('18 attempts on FLEECE–KIT this week'), not minutes. There is a weekly real-life task and monthly before/after anchors.",
+      "Its course-correction rules are learner-sensible, for example 'fewer than 3 sessions a week for 3 weeks → shorten the default session and move the reminder'."
+     ],
+     "weaknesses": [
+      "Speaking feedback arrives late and depends on outside people. Slice 1 (listening only) comes at about 5-6 build weeks, and the first validated speaking feedback (Slice 2) at about 9-10. Stress speaking feedback comes even later (E9, L).",
+      "Calibration becomes busywork inside practice: '2 min per session' of deliberately saying contrasts wrong in weeks 1-3. That is about 20-40% of a 5-10-minute session, spent on work for the developer, not on learning.",
+      "Heavy social burden: 3 English listeners must label 40-60 natural attempts per measure in weeks 3-6, 2-3 French listeners check noisy clips, and panel rounds run 2-3 times a cycle with 10% repeat clips. Many solo learners cannot sustain this.",
+      "Scoring means uploading a WAV to the server, with no streaming during speech. The latency budget is 0.8 + ~0.2 + 1-3 s, with no evidence behind it. Speaking feedback needs the network, and offline takes wait in an outbox. Commute practice suffers.",
+      "Hosting option H1 (home server + tunnel) means 'scoring works only while the home machine is on'. From the learner's side, the speaking half of sessions would fail unpredictably.",
+      "The 8-week cycle packs stress, three vowel sets, /h/, fluency and sentence stress. GOOSE-FOOT gets 1 week of listening then speaking, and TRAP-STRUT-LOT 1 week of each. The default 10-minute session juggles 3 targets across 6 blocks. That is fragmented and gives each contrast less than the ~8 sessions the addendum suggests.",
+      "Free speech in the default 10-minute session is a single 55-s 'Use it' answer. The retell appears only in 15-minute sessions.",
+      "Most of its value (Measurement Lab, registry, trust promotion) goes to the developer, not the learner."
+     ],
+     "fatal_flaws": [
+      "Every speaking verdict (vowels, /h/, stress) is gated behind reaching 'Trusted': known-answer AUC ≥ .85 AND κ ≥ .60 against a 3-listener majority on ≥40 natural attempts per measure. The design itself rates 'No human listeners available' as a Medium-likelihood, High-impact risk. If listeners cannot be recruited or cannot agree, the learner never gets corrective speaking feedback, which is the mechanism Add. §5.4 and Brief §2 #5 rate most important for speaking. The app then stays a listening trainer with bars that give no verdict.",
+      "Conditional: if hosting option H1 is chosen, speaking practice works only while a home computer is on and reachable, which is incompatible with short phone sessions whenever and wherever the learner has time."
+     ],
+     "wrong_or_unverified_claims": [
+      "Its reason for server-side scoring ('spoken-phoneme output needs the SDK') does not require a server. The browser JS SDK also exposes nbestPhonemeCount, phonemeAlphabet and enableProsodyAssessment, as evidence-max and learner-ux confirmed in the SDK source and types. Server scoring is a choice, not a necessity.",
+      "The latency budget (upload about 0.2 s; Azure plus Parselmouth 1-3 s; total ≤3 s) is unverified. Reported Azure pronunciation-assessment tail latency reaches about 20 s for about 5% of requests (Azure-Samples issue #1327, older SDK).",
+      "Internal inconsistency: 'Vowel pairs get about 8 sessions each' does not fit the week plan, which gives GOOSE-FOOT and TRAP-STRUT-LOT about 1-2 weeks at 3 English sessions a week.",
+      "'Apple developer account ($99 a year, unverified)': the other designs verified it on Apple's membership page.",
+      "'Safari 26 records stereo when echo cancellation is off' rests on one third-party blog.",
+      "Hetzner prices after the June 2026 increase come from secondary blogs."
+     ],
+     "best_ideas_to_graft": [
+      "'Couldn't judge this one clearly — no verdict': ambiguous results are shown neutrally and excluded from statistics, never shown as errors.",
+      "A measurement registry with trust levels and promotion rules, run by the developer outside learner sessions, never as in-session calibration chores.",
+      "Known-answer checks on TTS right and wrong versions and native recordings (V4: ≥95% on native speech, or the measure is broken). Cheap and needs no learner time.",
+      "'Try again — without the model' as the self-correction button label.",
+      "Show dose as attempts per target ('18 attempts on FLEECE–KIT this week').",
+      "A rule to shorten the default session and move the reminder after 3 weeks below 3 sessions a week."
+     ]
+    }
+   ],
+   "ranking": [
+    "learner-ux",
+    "lean-mvp",
+    "evidence-max",
+    "measurement"
+   ],
+   "key_decision_axes": [
+    "Time to first real practice versus completeness: a slice with offline listening in about 2-3 weeks (lean-mvp) or a Stress Starter in about 5-8 weeks (learner-ux), versus a full program before practice starts (evidence-max about 8-12 weeks; measurement's validated speaking feedback about 9-10 weeks).",
+    "What the learner gets from an unvalidated scorer: nothing or bars with no verdict (measurement, and lean-mvp and evidence-max for stress), versus a graded trust ladder with self-check plus model and confident-only hints (learner-ux). This decides whether the speaking half feels useful in the first weeks.",
+    "Who carries the validation work: developer-side batches and TTS/native known-answer sets, versus deliberate-error recording inside the learner's sessions and recurring human listener panels as a gate on feedback.",
+    "How much free speech is in the default session: Use/Retell in every session including 5 minutes (learner-ux, lean-mvp in Standard), versus a short 'use it' task with retell only in 15-minute sessions (evidence-max, measurement). This drives transfer to conversation.",
+    "Where scoring runs and how it reaches the learner: the browser Azure SDK streaming with a 10-minute token (lower latency, no server to keep awake) versus WAV upload to a Python server (needs the network, adds a hop, the home-server option can be down).",
+    "When the native-French clarity track arrives and how engaging it is: in the MVP as a 5-minute extension (learner-ux) or deferred (lean-mvp E8, evidence-max F9, measurement E11). Also paired-takes-only versus an ASR listener game in noise.",
+    "Cycle length and per-contrast dose: an 8-week first cycle (faster first report) versus 12 weeks (closer to the stress-hours target). One contrast at a time versus two or three at once. Four-week blocks per sound (risk of boredom) versus about 8 sessions per pair.",
+    "What counts toward the weekly goal: listening-only sessions, 3-minute sessions, exits after 3 minutes. Too loose dilutes the dose; too strict makes missed weeks more likely.",
+    "Burden of progress measurement: Check length and frequency, repeatability re-recordings, panel logistics (exported zip plus CSV, or an in-app listener link)."
+   ],
+   "notes": "I read both evidence files in full, with addendum §4-5 first. I verified these on the web:\n- Wake Lock works in iOS home-screen apps from 18.4 (MDN browser-compat-data WakeLock.json). evidence-max wrongly calls this unverified.\n- WebKit bug 215884 is marked RESOLVED (Feb 2026), found through search results. The tracker itself is blocked by the proxy.\n- Azure pronunciation-assessment latency is about 2 s typically, with a reported tail of about 5% at around 20 s (github.com/Azure-Samples/cognitive-services-speech-sdk/issues/1327, JS SDK 1.18-1.19, 2021; current behaviour unverified). No design plans for slow tail responses in the UX. All should add a 'still checking… skip / keep going' state and a timeout, not only an 8-15 s hard timeout.\n- learner-ux's Claude API prices match Anthropic's cached pricing table.\n\nThrough the learner lens, the best final design combines these:\n- learner-ux's fixed Hear → Say → Use → Wrap ritual, trust ladder and adherence toolkit (backup if-then plan, pause mode, weekly review);\n- lean-mvp's build order and adherence gates (an offline listening slice in about 2-3 weeks; 'fix friction before adding modules') and its French-bullet retell cards;\n- evidence-max's listening-only session mode and its French ASR listener game in noise, with one-cue French feedback;\n- measurement's neutral 'no verdict' handling, with validation moved out of learner sessions into developer batches.\n\nWatch for:\n- /h/ or any contrast running 4 weeks straight (boredom);\n- 30-s final retell rounds (recycling);\n- counting sessions under 5 minutes toward the target without a dose check;\n- any design that makes corrective speaking feedback depend on recruiting human listeners.\n\nSources: https://raw.githubusercontent.com/mdn/browser-compat-data/main/api/WakeLock.json ; https://github.com/Azure-Samples/cognitive-services-speech-sdk/issues/1327 ; https://bugs.webkit.org/show_bug.cgi?id=215884 (status via search results)."
+  }
+ ],
+ "red_team_issues": [
+  {
+   "severity": "high",
+   "problem": "Section 2.8 says the CI key scan fails the build if the bundle contains the header name `Ocp-Apim-Subscription-Key`. The Azure Speech SDK itself contains that string. I checked the npm package: SDK 1.51.0's minified browser bundle has `HeaderNames.AuthKey = \"Ocp-Apim-Subscription-Key\"`, so every build that bundles the SDK would fail. The likely result is that someone switches the key check off.",
+   "fix": "Scan every bundle file for the real key value and the name `AZURE_SPEECH_KEY`. Scan only the app's own code, not the SDK chunk, for the header name and for calls to `SpeechConfig.fromSubscription`. The reason and the check are now in section 2.8 and Appendix A."
+  },
+  {
+   "severity": "high",
+   "problem": "Word stress (rank 1) is overclaimed and the numbers contradict each other. The 10-minute session timeline gives stress about 2 min 10 s (1:10 listening, 1:00 speaking). That is about 10 minutes a week and about 2 hours over 12 weeks, not the 20 minutes a week and 4 hours that the dose table claims. The table says the plan 'matches the addendum's estimate of about 4 hours', which is false. Option A's risk line ('about 2 hours by week 8') is also wrong: it is about 1.3 hours.",
+   "fix": "Restated the stress dose as about 2 hours, about half the addendum's estimate, in 2.3, EN-1, the 6.3 dose table and note, Option A's risks and the evidence map. Added a choice to D8: about 2 minutes of stress per session (the default) or about 4 minutes, which reaches about 4 hours but halves the sound-block time."
+  },
+  {
+   "severity": "high",
+   "problem": "Option B's French timing does not add up. The 12-week program table starts French in practice weeks 1–4, but slice 4 (French) ships at build weeks ~10–12. Practice starts at build weeks 3–5, so French actually starts around practice week 6–10. Cycle 1 then gives only about 5–10 French sessions. Reason #1 of the recommendation ('serves both of your goals in cycle 1') overstates this. S7 ('from week 6') and the week-4 rate check cannot be reached on that timeline.",
+   "fix": "Corrected the French column of the program table, the timelines, reason #1, Option B's risks and the comparison table. The week-8 French Check now doubles as a second baseline when French has not started. Added decision D14, which offers an early French first version: it needs only the audio core and moves slices 2–3 about a week later."
+  },
+  {
+   "severity": "medium",
+   "problem": "The listener-panel size misreads the brief. Brief §3.7 and §7 cap. 1 call for 3–5 *trained* listeners or about 10 untrained ones. The document says '3–5 instructed', and D6 recommends 3–5 friends. Friends are untrained listeners, so 3–5 of them is below the evidence.",
+   "fix": "Changed the wording to '3–5 trained or about 10 untrained; friends with a short briefing count as untrained' in 2.2, 6.7, D6 and the evidence map."
+  },
+  {
+   "severity": "medium",
+   "problem": "The noisy café (FR-4) cites noise-while-speaking evidence (Add. §3.3 #4; Garnier 2018), but the design mixes noise into the recording afterwards. You never hear noise while you speak. Playing noise in earbuds while recording would break the audio rules, and Bluetooth headset mics degrade the audio. The only evidence that applies is the partner who sometimes mishears (Buz 2016).",
+   "fix": "FR-4 and the evidence map now say that noise is mixed in after recording, that the mishearing-partner mechanism is the evidence, and that noise heard while speaking is not used. The 20–30% mishearing target is labelled a working rule."
+  },
+  {
+   "severity": "medium",
+   "problem": "S7 overclaims. It expects the clear-minus-usual gain at your usual speed (±10%) to 'pass' with Moderate evidence, but keeping clarity at normal speed is Weak (Add. §3.3 #3), and only about 23 of 41 talkers gave a significant benefit (Add. §3.2). Also, 'stays above zero' can be met at baseline, so it does not test training.",
+   "fix": "Rewrote S7 as the week-12 gain beating the week-0 gain by more than the day-to-day spread. The expectation is now 'uncertain', with the Weak and None found labels. Added the 23-of-41 caveat to 2.4."
+  },
+  {
+   "severity": "medium",
+   "problem": "The roadmap claims 'If you stop after R6, plus a small part of R10, you have Option A'. But Option A includes the /h/ block, which is in R7. Section 5 also claims 'the first three slices of A and B are the same', but B's slice 3 comes later because R5 (backup) comes first.",
+   "fix": "Changed to 'R1–R6, the /h/ part of R7 and the core of R10'. The first two slices are the same, and B's third comes about a week later."
+  },
+  {
+   "severity": "medium",
+   "problem": "Build estimates are optimistic and do not match each other. Slice 1 at build weeks 3–5 needs R1+R2+R3, which is 12–40 developer-days at the stated epic sizes. B's epics add up to about 11–28 weeks, against the claimed 16–20. Option A's 8–11 weeks is below B's own sizing for the same work. 'Build week' is never defined (full-time or part-time).",
+   "fix": "Defined build weeks as full-time weeks. Kept R3's pack v0 small so R3 is size M. Restated slice 1 as ~3–6, B as ~16–22 (epic sums ~11–26), A as ~9–12 (40–60 developer-days), and adjusted all timelines to match."
+  },
+  {
+   "severity": "medium",
+   "problem": "Prosody is 'stored only' (6.10), yet D2 says to move to the paid S0 tier 'if F0 lacks prosody'. That means paying for a feature nothing uses. Section 2.7 also says prosody is 'turned on only where it is used', which does not fit 'stored only'.",
+   "fix": "Prosody is now requested only on Check retells and anchors and stored for comparison. D2 moves to S0 only on reaching the audio limit. Whether F0 includes prosody is marked as not affecting the decision."
+  },
+  {
+   "severity": "medium",
+   "problem": "The Azure audio budget was never estimated. The recommended free-speech path (transcript first, then scripted assessment) sends each retell twice. Build-time TTS contrast checks, the validation sittings and re-scoring can add 2–4 audio hours in some months, so F0's 5 hours can run out. F0's single request slot (checked: not adjustable) is also shared between laptop tools and the phone.",
+   "fix": "Added an audio budget to 2.7: about 6 minutes of audio per 10-minute session and about 2.5 hours a month in practice. Laptop tools run on a separate S0 resource or are spread over months. Updated the S0 cost ranges ($3–8 for B), the usage warning and the risks."
+  },
+  {
+   "severity": "medium",
+   "problem": "Held-out items cannot cover 5 Checks. There are 5 Checks (weeks 0, 4, 8, 12, 16) but only 4 stress forms, and each form has 30 words while a Check uses 20. The /uː–ʊ/ set holds out only 8 pairs (16 words), but Checks need 10 words per contrast each time, 50 in total. /æ–ʌ–ɑ/ and /h/ are also short.",
+   "fix": "Added 5 forms (A = baseline to E = week 16). Stress held-out is now 150 items (20 for speaking, 10 for listening, per form). Speaking probes use any word containing the sound (50 per target). Listening pairs may repeat across Checks in new test voices."
+  },
+  {
+   "severity": "medium",
+   "problem": "Section 6.3 lets the baseline alone skip a block ('already fine'). Brief §7 cap. 2 says onboarding findings are only candidates. The document's own evidence gate needs 15–20 instances, from 5 words, over 3 sessions.",
+   "fix": "A block is now skipped only after probe slots meet the evidence gate, with the upper end of the error range below 0.20."
+  },
+  {
+   "severity": "medium",
+   "problem": "Clusters are 'monitored only', and Brief §5.1 is cited as support. In fact Brief §5.1 ranks keeping consonants in initial and medial clusters first for international listeners [Moderate; correlational]. The addendum's last-place rank covers only word-final clusters and is [Not searched].",
+   "fix": "Section 2.3 and the evidence map now state the conflict and call it a judgement call. Check probes cover initial, medial and final clusters with 50 held-out words, and the data decide."
+  },
+  {
+   "severity": "medium",
+   "problem": "'It covers every ranked capability in Brief §7 that fits a phone' is an overclaim. The design leaves out the chunk phrase bank (cap. 8), covers cap. 9 only through retells, and covers cap. 12 only in part.",
+   "fix": "Rewrote the evidence-fit statement to list which capabilities are covered and which are not."
+  },
+  {
+   "severity": "medium",
+   "problem": "The backup design ignores platform limits. Weekly snapshots that include 150–250 MB of rolling practice audio exceed the Worker's 100 MB request-body limit on the free plan (checked). Section 6.11 also offers KV for rate counters, but free KV allows only 1,000 writes a day and is slow to update across locations (checked).",
+   "fix": "Backups now hold data plus baseline, Check and anchor audio only, uploaded in encrypted parts under 100 MB (API and roadmap updated). Tokens and counters go in D1, not KV. Also noted that R2 asks for a payment method (secondary)."
+  },
+  {
+   "severity": "medium",
+   "problem": "The first-attempt rule contradicts itself. 'Only first attempts count' conflicts with 'a correct retry … counts as a self-correction' and with the evidence map's 'self-corrections weigh more'.",
+   "fix": "Self-corrections are now logged as a separate sign of progress and never enter the error estimate. Labelled as a design inference from Brief §3.2."
+  },
+  {
+   "severity": "low",
+   "problem": "Two sections handle 'no verdict' results differently. Section 2.6 #10 says the audio is 'scored later, for statistics only'. Section 6.5 and the target model say it is left out of statistics.",
+   "fix": "Both now say the audio may be scored later for validation but never enters the target model or any statistic."
+  },
+  {
+   "severity": "low",
+   "problem": "Several evidence claims are stronger than the brief. 'Nobody has published test–retest data' (the brief says none was *found*). 'No study shows…' (the brief says no *controlled* study was found). The De Fino finding is widened from L2 French to all L2 speech. 'The evidence requires everything'. Checks 'separate' real change (they help separate it). 'A short delay is fine' (the lab evidence says a few seconds' delay may help).",
+   "fix": "Reworded each claim to match the research files."
+  },
+  {
+   "severity": "low",
+   "problem": "G2's evidence label covers only producing clear speech on demand. It leaves out that keeping it at normal speed and through a retell is Weak.",
+   "fix": "Added Add. §3.3 #3, #5 [Weak] to G2."
+  },
+  {
+   "severity": "low",
+   "problem": "The priority weights are said to 'follow the addendum's rank order only', but they do not. Fluency (rank 4) ties /iː–ɪ/ and sits above /h/, and clusters (rank 7) sit above weak forms and intonation.",
+   "fix": "The document now names both exceptions and the Brief §5.1 reason for them."
+  },
+  {
+   "severity": "low",
+   "problem": "Two session timings do not fit. The 5-minute session puts 24 trials in 100 s, faster than the stated 12 trials a minute. The listening-only session puts '60 block trials plus stress trials' in 5 minutes, but 60 trials alone fill 5 minutes at that rate.",
+   "fix": "Re-timed the 5-minute session. The listening-only session now has about 60 trials: 45 on the block contrast and 15 on stress."
+  },
+  {
+   "severity": "low",
+   "problem": "Three things disagree. The comeback session (3 minutes) counts toward the target, but Appendix B says 'counting 3-minute sessions' was dropped. The weekly target is 5 in 6.2 but 4 in 6.8 and D8. Anchors are 'recorded at every Check' in Terms but retaken only at weeks 8 and 16, while the brief says twice at onboarding and monthly.",
+   "fix": "The comeback session is now the one named exception. The weekly target is 4 everywhere, with 5 planned slots. Anchors are recorded twice at every Check."
+  },
+  {
+   "severity": "low",
+   "problem": "Option A says 'the server has no database', yet its device tokens can be revoked, which needs stored state.",
+   "fix": "The Worker now stores only hashed device tokens and rate counters in D1."
+  },
+  {
+   "severity": "low",
+   "problem": "Option C is listed with 3 staggered targets in an 8-week cycle, but three 4-week blocks need 12 weeks. C's hosting cost is also stale. Hetzner CX33 (4 vCPU, 8 GB) is €8.49 before VAT and IPv4 (secondary). MFA reportedly wants at least 8 GB of memory (secondary), so CX23 is probably too small. The Section 1 cost ranges also differed from section 3 (B '$0–5' vs '$3–6').",
+   "fix": "C now adopts B's 12-week program. Its cost is now €12–18 and its VPS at least 8 GB. Cost ranges now match across sections 1, 3 and 4."
+  },
+  {
+   "severity": "low",
+   "problem": "Audio rule 4's heading ('Never record while model audio plays') did not match its content, which was only about setting the audio-session type. Whether 'play-and-record' keeps loudspeaker output is unknown. The 15-minute extension's extra Hear trials also ran after the mic had opened.",
+   "fix": "Rewrote the rule as 'playback and recording never overlap', with 'playback' in Hear stages and 'play-and-record' at the mic. Routing is marked unverified and tested in V1. Extra Hear trials now run before the mic opens."
+  },
+  {
+   "severity": "low",
+   "problem": "The trust-level validation has limits the document does not state. Deliberate errors are cleaner than natural ones, so V4 probably overstates precision. κ measured on 40 items is imprecise (about ±0.25).",
+   "fix": "Added both caveats to 6.5 and V4/V5, and recommended 60 items where possible."
+  },
+  {
+   "severity": "low",
+   "problem": "Three evidence points were missing. The spacing intervals are fixed in code, but Brief §3.5 says not to fix one interval. Brief §3.4 advises a first-language pause baseline, and the design did not use one. Mixing US, British and Australian stress voices ignores words whose stress differs by variety.",
+   "fix": "Intervals now live in a settings file. The French baseline retell serves as the first-language pause reference. The content validator voices variety-dependent stress words in one variety only, or leaves them out."
+  },
+  {
+   "severity": "low",
+   "problem": "Some technical details were wrong or missing. The architecture diagram lists fr-FR speech-to-text only, but fr-FR pronunciation assessment is also used. MediaRecorder fallback takes need decoding to PCM before scoring. The OPFS rationale ignores `createSyncAccessHandle` (Safari 15.2, in Web Workers). The REST 'no spoken phonemes' claim rests on the documented keys only.",
+   "fix": "Corrected the diagram and 6.10. Added PCM decoding. Rewrote the OPFS reason (checked). Marked undocumented REST keys as unverified."
+  },
+  {
+   "severity": "low",
+   "problem": "Several technical tags were out of date after re-checking. Now checked: the August 2026 en-US/fr-FR model update; Microsoft's recommendation to transcribe first, then assess; en-US-only features; the SDK options and token sign-in; token 10/9 minutes; prosody add-on charge; Safari support for audioSession, Wake Lock (home-screen apps from 18.4), OPFS, persist() and AudioWorklet; the SDK bundle size (~378 KB minified, ~76 KB gzipped); SSML markup billed as characters; Azure keeps no audio from real-time speech-to-text or pronunciation assessment; pronunciation assessment in fr-FR, fr-CA and every speech-to-text region; the issue #1327 details; Cloudflare Workers, R2 and KV limits. Some items were over-tagged: WebKit bug 215884's resolution is secondary only (tracker blocked), and the Azure price page was unreachable.",
+   "fix": "Updated every tag in the body, D13 and Appendix A. Removed items from the 'Unverified' list that are now checked, and added new unverified items."
+  },
+  {
+   "severity": "low",
+   "problem": "Style problems. Many terms were never defined: IPA, LLM, prosody, schwa, weak forms, liaison, formants, DSP, VAD, SNR, FFT, LPC, ADR, SUBTLEX-US, Lexique. 'F0' is ambiguous, since the addendum uses it for pitch. 'Worker' (Cloudflare) and 'Web Worker' were mixed up. Some sentences used the passive voice and hid who acts. Two citations were missing or wrong: 'tap the beat' had none, and 'gently shrinking limits' cited Suzuki & Hanzawa instead of Tran & Saito's 4/3/2 study.",
+   "fix": "Added terms to the table and defined others on first use. Rewrote passive sentences where the actor mattered. Fixed both citations."
+  }
+ ]
+}

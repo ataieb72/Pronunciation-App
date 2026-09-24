@@ -38,6 +38,7 @@ All project knowledge lives in `docs/`:
 | `docs/database-schema.md` | Data model |
 | `docs/backlog/` | Task tracking (dashboard + epics F1–F6) |
 | `docs/research/` | Evidence base for the redesign (literature review + learner profile) |
+| `docs/redesign/` | v2 design options and the owner's decision |
 
 ## Pre-Commit Verification
 1. Build succeeds (zero errors).
