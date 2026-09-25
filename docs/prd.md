@@ -1,60 +1,60 @@
-# Pronunciation Coach — Product Requirements Document
+# Pronunciation Coach v2 — Product Requirements
 
-**Version:** 1.0 · **Owner:** Ahmed · **Status:** Approved for build
+**Version:** 2.0 · **Owner:** Ahmed · **Status:** approved for build (2026-09-25)
+**Sources:** `docs/redesign/elocution-focus.md` (accepted revision) and `docs/redesign/design-options.md` (Option B). Evidence: `docs/research/`.
 
-## 1. Problem & Goal
+## 1. Problem
 
-Ahmed wants to improve both **pronunciation** (producing the right sounds — phoneme accuracy) and **articulation** (clarity and mechanics of delivery — crisp consonants, pacing, rhythm, stress) in **French and English**. Existing apps focus on vocabulary or generic "repeat after me" without phoneme-level feedback or articulation training.
+The owner mumbles in everyday talk, in French (first language) and in English. Speech feels mechanical, and the tongue and lips feel heavy. Listeners miss words. v1 trained accent-style pronunciation with methods that lack evidence, and its scoring loop did not work.
 
-**Goal:** a single-user web app with a tight practice loop — pick an exercise → hear a native reference → record → get phoneme + prosody scores → drill weak sounds → track progress.
+**Terms:**
+- **Articulation:** forming sounds crisply: clear consonants, full vowels, finished word endings.
+- **Elocution:** articulation plus volume, pace, pauses, emphasis and pitch variation.
+- **Mumbling:** speaking with too little effort for the listener: small mouth movements, low volume, run-together words, dropped endings, a voice that fades at the end of phrases.
+- **Habitual speech:** how you speak when nobody asks you to be clear.
 
-## 2. Users
+## 2. User
 
-One user (the developer). No accounts, no multi-tenancy, no sharing.
+One adult, French first language, English second language. Practises on a **Pixel 10 Pro XL (Android, Chrome)**, in sessions of 5–15 minutes, at least 4 times a week. No accounts. No other users.
 
-## 3. Scoring model (two dimensions, one engine)
+## 3. Goals
 
-- **Pronunciation** → Azure Pronunciation Assessment per-phoneme accuracy scores.
-- **Articulation** → Azure fluency + prosody scores (pacing, stress, pauses) combined with **speed ladders**: the same text scored at increasing tempo; accuracy under speed = articulation quality.
+| # | Goal | Evidence |
+|---|---|---|
+| G1 | **Clear habitual speech in both languages.** Listeners catch more words the first time, at normal pace, including with background noise. | No study shows lasting change in habitual speech [None found]. The app measures it honestly. |
+| G2 | **Clear speech on demand**, kept through a 60–90 second talk, at normal pace (±10%). | Producing clear speech on request [Moderate] |
+| G3 | **English sounds that block clarity:** word stress and the vowel pairs that make listeners mishear. | [Moderate] |
+| G4 | **Habit:** at least 4 sessions a week in most weeks. | Adherence predicts staying with an app [Weak] |
 
-## 4. Features (mapped to backlog epics)
+Not goals: a native accent; high practice scores.
 
-| Epic | Feature | Summary |
-|------|---------|---------|
-| F1 | Project scaffold | Monorepo, SQLite schema, health check |
-| F2 | Recording | Mic capture → 16 kHz mono WAV → upload → stored attempt |
-| F3 | Azure integration | Pronunciation Assessment (phoneme granularity + prosody) and Neural TTS reference audio, cached |
-| F4 | Feedback UI | Per-word/per-phoneme color-coded scores, IPA, articulation panel (rate vs. reference, pauses, stress), replay attempt vs. reference |
-| F5 | Language packs | Three tracks per language (see §5), exercise picker with filters |
-| F6 | Drills & progress | Weak-sound progression engine, speed ladders, progress charts + articulation index |
+## 4. Core product
 
-## 5. Exercise design — three tracks per language
+1. **Clear-speech pairs.** Say a sentence your usual way, then "big and clear" (open the jaw, full vowels, finish every ending), with one cue. Judge the pair yourself; the app summarises what changed after each block.
+2. **Machine listener in noise.** The phone mixes café noise into a take. Speech recognition reports what it heard. Retry missed words.
+3. **Short talks.** 45–60 second everyday retells or opinions, 2–3 rounds. Round 1 shows habitual speech.
+4. **English support.** Word stress and the vowel pairs that cause mishearing, when the data show a need.
+5. **Clarity profile.** Level, fade at phrase ends, articulation rate, pauses, pitch range, word endings, machine listener in noise. Each measure is compared with the owner's own baseline. There is never one "clarity score".
+6. **Progress Checks every 4 weeks.** Habitual speech first, with no cue. Practice scores never count as progress.
+7. **Habit support.** Weekly target, if-then plans, comeback sessions, a weekly unprompted voice note. No streaks.
 
-Every exercise is tagged: `track` (phoneme | articulation | prosody), `focus` (target phoneme(s), cluster, or prosody feature), `difficulty` (1–3), `level` (word | sentence | passage).
+Details: `docs/product-design.md`.
 
-**Track A — Phoneme accuracy (pronunciation).** Speech-therapy progression: isolate → word → sentence → connected speech. Minimal pairs (three/tree, vin/vent), loaded sentences ("thirty-three thick thistles"), passages dense in the target sound. Advance a level only at ≥85 on the current one.
+## 5. Left out, with reasons
 
-**Track B — Articulation (clarity & mechanics).** Tongue twisters and consonant-cluster drills as speed ladders ("strengths", "les chaussettes de l'archiduchesse", "je ne le lui redemanderai pas"), over-articulation drills, long-passage reads scored for completeness (dropped syllables = mumbling signal).
+Tongue twisters and speed drills; cork or pen drills; mouth exercises without speech; "just slow down" as a goal; a dB meter as a target; streaks and points; an LLM as a pronunciation judge. See `docs/redesign/elocution-focus.md` §3.
 
-**Track C — Prosody (rhythm & stress).** English: stress-timing, vowel reduction, contrastive stress. French: liaison and enchaînement, even-syllable rhythm. Both: shadowing the TTS reference at matched pace.
+## 6. Success criteria
 
-## 6. Language coverage
+Written down before practice week 1 (`docs/redesign/design-options.md` §6.7, adapted in `elocution-focus.md` §7). A flat G1 result at week 12 is possible and counts as useful information.
 
-`fr-FR` and `en-US` at launch. One shared engine + config-driven language packs under `client/src/languages/{locale}/`; adding a language later = adding a folder. French pack targets nasal vowels /ɑ̃ ɛ̃ ɔ̃/, uvular R, u/ou contrast, liaison. English pack targets /θ ð/, vowel pairs /ɪ iː/ and /æ ʌ/, consonant clusters, stress-timing.
+## 7. Constraints
 
-## 7. Success metrics
+- The Azure Speech key never reaches the phone. The phone uses 10-minute tokens from the Worker.
+- HTTPS only. Uncompressed 16 kHz audio. Mic auto-gain, noise suppression and echo cancellation off where the phone allows.
+- Data lives on the phone first. Encrypted backups later (R5).
+- Budget: start on free tiers (Azure F0, Cloudflare free). Ceiling about $10 a month.
 
-- Per-phoneme score trend visible after 5 attempts on a sound.
-- Weak-sound engine correctly serves the 5 lowest-scoring phonemes (min 3 attempts each).
-- Speed-ladder tier advances only at ≥85 accuracy at the current tempo.
-- End-to-end latency record → feedback under 5 seconds on a normal connection.
+## 8. Health note
 
-## 8. Non-goals (v1)
-
-Accounts/auth · mobile apps · gamification/streaks · social features · more than 2 languages · offline scoring · production hosting.
-
-## 9. Constraints
-
-- Azure Speech free tier (F0): 5 audio hours/month — sufficient for personal use; no quota handling needed beyond a clear error message.
-- `AZURE_SPEECH_KEY` lives server-side only; the client never sees it.
-- Audio files stay on local disk; SQLite for all persistence.
+The app trains a speaking habit. It cannot tell a habit from a medical cause. If the heaviness in the tongue or lips is new, getting worse, or comes with other changes (slurred speech, trouble swallowing, drooling, facial weakness), a doctor should check it first.

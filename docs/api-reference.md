@@ -1,29 +1,26 @@
-# Pronunciation Coach — API Reference
+# Pronunciation Coach v2 — API Reference
 
-Base URL: http://localhost:3001 (Express). All endpoints unauthenticated (localhost, single user). JSON unless noted.
+**Base URL:** the Worker's HTTPS origin (the same origin that serves the app). All bodies are JSON.
+**Auth:** endpoints marked "device" need `Authorization: Bearer <deviceToken>`.
 
-## GET /api/health
-→ 200 `{ "status": "ok", "db": true }`
+Status legend: ✅ built · ⬚ planned (epic in brackets).
 
-## POST /api/attempts
-multipart/form-data: `audio` (WAV file), `language` (e.g. "en-US"), `exercise_id`.
-Saves WAV to server/audio/{yyyy-mm}/, inserts attempts row (scores null until F3).
-→ 201 `{ "id": 42, "language": "en-US", "exercise_id": "en-001", "audio_path": "server/audio/2026-07/..." }`
+## GET /api/health ⬚ (R1)
+No auth. → `200 {"status":"ok","db":true}`. If D1 is unreachable → `503 {"status":"degraded","db":false}`.
 
-## POST /api/assess
-JSON: `{ "attemptId": 42, "referenceText": "...", "language": "fr-FR" }`.
-Runs Azure Pronunciation Assessment (granularity Phoneme, prosody enabled) on the stored WAV; writes scores + full JSON to the attempt; updates phoneme_stats (transaction); if tempo_tier set, applies ladder rule (advance at accuracy ≥85).
-→ 200 `{ "overall": 82, "accuracy": 80, "fluency": 88, "prosody": 76, "words": [ { "word": "...", "score": 91, "phonemes": [ { "phoneme": "...", "score": 74 } ] } ], "ladder": { "tier": 1, "advanced": false } }`
-Errors: 404 unknown attempt · 502 Azure failure (attempt kept, scores null) · 429 quota with readable message.
+## POST /api/pair ⬚ (R1)
+No auth. Body `{"pairingCode":"..."}`.
+- `201 {"deviceToken":"<43-char base64url>"}` — the token is shown once. The server stores only its SHA-256 hash.
+- `400` malformed body · `401 {"error":"invalid_code"}` · `403 {"error":"device_limit"}` when the maximum number of active devices is reached · `429 {"error":"rate_limited"}` after too many failed attempts.
 
-## GET /api/tts?text=...&lang=fr-FR&rate=1.0
-Neural TTS reference audio. Voices: fr-FR-DeniseNeural, en-US-JennyNeural. `rate` ∈ {0.75, 1.0, 1.25} maps to SSML prosody rate. Disk cache keyed by sha256(text+voice+rate). Returns audio/mpeg with `X-Reference-Duration` header (ms). Second call is cache hit (no Azure call).
+## DELETE /api/pair ⬚ (R1)
+Device. Revokes the calling device. → `204`.
 
-## GET /api/weak-phonemes?lang=fr-FR
-5 lowest avg_score phonemes with attempt_count ≥ 3. → 200 `{ "phonemes": [ { "phoneme": "...", "avgScore": 61, "attempts": 7 } ] }`
+## POST /api/speech/token ⬚ (R1)
+Device. No body.
+- `200 {"token":"<Azure access token>","region":"<azure region>","expiresAt":"<ISO time, 10 minutes ahead>"}`
+- `401` missing or unknown device token · `429 {"error":"rate_limited","retryAfter":<seconds>}` above 30 an hour or 200 a day · `502 {"error":"azure_unavailable"}` when Azure's token service fails or times out.
 
-## GET /api/progress?lang=fr-FR
-Aggregates for the Progress screen: daily average scores, phoneme×week matrix, articulation index series (mean of accuracy × tier multiplier; multipliers 0.9/1.0/1.15 for tiers 0/1/2).
+## Later epics
 
-## GET /api/attempts/:id/audio
-→ the stored WAV (for "play my attempt").
+Backups (`/api/backup/*`, R5) and listener panels (`/api/panels/*`, `/l/:token`, R10) follow `docs/redesign/design-options.md` §6.12.

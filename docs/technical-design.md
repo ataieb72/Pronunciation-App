@@ -1,67 +1,81 @@
-# Pronunciation Coach — Technical Design
+# Pronunciation Coach v2 — Technical Design
 
-**Version:** 1.0
+**Version:** 2.0 · **Status:** approved (2026-09-25) · **Decision record:** `docs/adr/001-v2-rewrite.md` · **Detail:** `docs/redesign/design-options.md` §2.6–2.8, §6.9–6.13.
 
 ## 1. Architecture
 
 ```
-┌──────────────────────┐        ┌───────────────────────────┐        ┌─────────────────┐
-│  React + Vite client │  HTTP  │  Node/Express server      │  SDK   │  Azure Speech   │
-│  MediaRecorder → WAV │ ─────▶ │  key holder, thin proxy   │ ─────▶ │  Pron. Assess.  │
-│  recharts, plain CSS │ ◀───── │  better-sqlite3, fs audio │ ◀───── │  Neural TTS     │
-└──────────────────────┘        └───────────────────────────┘        └─────────────────┘
+PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker)
++--------------------------------------------+   HTTPS   +------------------------------+
+| UI: Pair, Today, Session, Check, Progress   |---------->| Static assets: the PWA       |
+| packages/core: session builder, scheduler,  |           | /api/health                  |
+|   target model, statistics (pure TS)        |           | /api/pair        (D1)        |
+| packages/dsp: resampler, WAV, VAD, quality  |<----------| /api/speech/token (D1 + Azure)|
+|   gate, level, fade, pitch, pauses (pure TS)|  10-min   | /api/backup/*   (R2, from R5) |
+| Scorer: Azure JS SDK | Fixture scorer       |  token    +------------------------------+
+| IndexedDB (Dexie): sessions, takes, audio   |                       |
++----------------------+---------------------+                        v
+                       | WebSocket + token                 Azure token service
+                       v                                   (key stays in the Worker)
+      Azure Speech: en-US / fr-FR speech-to-text and pronunciation assessment
 ```
 
-- Monorepo: `/client` (Vite React), `/server` (Express). Root `package.json` with npm workspaces; `npm run dev` runs both (concurrently).
-- The server exists for exactly three reasons: hold `AZURE_SPEECH_KEY`, run assessments/TTS via `microsoft-cognitiveservices-speech-sdk`, persist attempts/stats in SQLite. No business logic in the client beyond UI state.
-- No auth, binds to localhost.
+- **One Worker** serves the static PWA and the API from the same origin. There is no CORS to manage.
+- **The Azure key lives only in a Worker secret.** The phone gets a 10-minute token and calls Azure directly through the browser SDK.
+- **Phone-side measures** run in TypeScript, so they work offline and cost nothing.
 
-## 2. Audio pipeline (the riskiest part — build and test first in F2)
+## 2. Workspace
 
-1. `navigator.mediaDevices.getUserMedia({ audio: true })`.
-2. MediaRecorder produces webm/opus in Chrome — Azure needs WAV PCM 16 kHz 16-bit mono. Convert client-side with an AudioContext + OfflineAudioContext resample → hand-rolled WAV encoder (small util, ~60 lines, unit-tested against known fixtures).
-3. Upload as multipart to `POST /api/attempts`; server stores under `server/audio/{yyyy-mm}/{id}.wav`.
-4. Assessment reads the file server-side via a push audio input stream into the Speech SDK.
+| Path | What | Added in |
+|---|---|---|
+| `apps/worker` | Cloudflare Worker: API + static asset serving. D1 migrations. | R1 |
+| `apps/pwa` | Vite + React + TypeScript PWA | R1 |
+| `packages/dsp` | Pure TypeScript audio code: resampler, WAV encoder, VAD, quality gate, measures | R1 (spike), R2 |
+| `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
+| `scripts/` | Repo tools, including the bundle key scan | R1 |
 
-Fallback: if MediaRecorder mime negotiation fails, use `audio/wav` where supported, else record webm and convert. Never send webm to Azure.
+- **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
+- TypeScript strict mode everywhere. ESLint with warnings treated as errors.
 
-## 3. Azure integration
+## 3. Audio pipeline (R2; a throwaway version in the R1 spike)
 
-- SDK: `microsoft-cognitiveservices-speech-sdk` (server only).
-- Pronunciation Assessment config: reference text from the exercise, grading system HundredMark, granularity Phoneme, `enableProsodyAssessment: true`, phoneme alphabet IPA.
-- Locales: `fr-FR`, `en-US`. Prosody assessment availability differs by locale — treat prosody score as nullable everywhere.
-- TTS: `fr-FR-DeniseNeural`, `en-US-JennyNeural`; SSML `<prosody rate>` for ladder tempos (0.75×/1×/1.25×); cache MP3 on disk keyed by sha256(text+voice+rate); record the reference audio duration in the cache index (used for speaking-rate comparison in the feedback UI).
-- Config via `.env`: `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`. Startup fails fast with a clear message if missing.
+1. One AudioContext and one mic stream per session. Request `autoGainControl`, `noiseSuppression` and `echoCancellation` off; store the settings the phone actually applied.
+2. An AudioWorklet posts frames; the app resamples to 16 kHz mono 16-bit PCM and keeps a 300 ms pre-roll.
+3. VAD stops a take 0.8 s after speech ends. Caps: words 8 s, sentences 15 s, talk rounds 60 s.
+4. Quality gate: clipping > 0.1%, peak < −35 dBFS, SNR < ~15 dB, or speech < 250 ms → retake. Test V3 tunes the thresholds.
+5. WAV to IndexedDB with metadata (device, browser, applied settings, noise level, SNR).
+6. Close tracks and the AudioContext at the end of the session.
 
-## 4. Language packs (config-driven, engine stays generic)
+## 4. Scoring and measures
 
-```
-client/src/languages/
-  fr-FR/ { phonemes.json, exercises.json }
-  en-US/ { phonemes.json, exercises.json }
-```
+| Measure | Computed by | Where |
+|---|---|---|
+| Level (relative), fade at phrase ends, articulation rate, pauses, pitch range | `packages/dsp` | Phone |
+| Word timings | Azure speech-to-text (en-US, fr-FR) | Azure |
+| Machine listener in noise | Phone mixes babble at a personal SNR; Azure speech-to-text counts keywords | Phone + Azure |
+| English word endings, stress, vowel pairs | Azure en-US pronunciation assessment (IPA, spoken phonemes, syllables) + phone measures | Azure + phone |
 
-- `phonemes.json`: inventory with IPA symbol, display name, example word, difficulty note.
-- `exercises.json`: array of `{ id, track, text, focus[], difficulty, level, speedLadder?, shadowing? }` per PRD §5.
-- The engine imports packs dynamically by locale; NOTHING outside these folders is language-specific. Adding a language = adding a folder + two voices in a server-side voice map.
+- Every scorer sits behind one `SpeechScorer` interface. A `FixtureScorer` replays recorded results in tests.
+- Azure SDK calls use callbacks or promise wrappers correctly, compare result reasons with SDK enums, and have timeouts. v1's bugs become named tests (R4).
+- Scores store provider, locale, SDK version, model date ("era") and device.
 
-## 5. Drill engines (server-side, pure functions, heavily unit-tested)
+## 5. Security
 
-- **Weak-sound engine:** query phoneme_stats (≥3 attempts, 5 lowest) → build a session: minimal pairs whose focus intersects the weak set, then loaded sentences, then passages; level advances at ≥85 average over the level's attempts.
-- **Speed ladder:** per (exercise, language) tier in ladder_progress; attempt at current tier with accuracy ≥85 advances the tier (max 2). Tier multipliers 0.9/1.0/1.15 feed the articulation index.
-- **Articulation index:** mean(accuracy × tier multiplier) over speed-ladder attempts per day — a single number that only rises when clarity survives speed.
+- Pairing: `POST /api/pair` with a code held as a Worker secret returns a random device token. D1 stores only its SHA-256 hash. Failed pairing attempts are rate-limited.
+- `POST /api/speech/token` needs a device token. Limits: 30 an hour, 200 a day per device.
+- The CI key scan fails the build if a bundle contains the key value or the name `AZURE_SPEECH_KEY`, or if app code calls `fromSubscription` or sets the subscription-key header. It skips the Azure SDK's own chunk, which contains that header name.
 
-## 6. Testing strategy (TDD)
+## 6. Testing (TDD)
 
-- WAV encoder: golden-file tests (fixed input buffer → expected header/bytes).
-- Drill engines + ladder rule + rolling average: pure-function unit tests, edge cases (exactly 85, <3 attempts, tier at max).
-- API: integration tests with the Azure SDK mocked (record one real response JSON as fixture).
-- UI: component tests for score coloring thresholds (85/60 boundaries) with Vitest + Testing Library.
-- One manual E2E script per epic (documented in the epic's acceptance criteria).
+| Layer | How |
+|---|---|
+| Worker | Vitest with `@cloudflare/vitest-pool-workers` (real `workerd` runtime, local D1). Azure's token endpoint is mocked. |
+| PWA | Vitest + jsdom + React Testing Library |
+| `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests |
+| Key scan | Vitest over fixture bundles |
+| Live Azure | `npm run test:live`, by hand only, never in CI (from R4) |
+| On the phone | A manual checklist on the Pixel for every audio change |
 
-## 7. Decisions (mini-ADRs)
+## 7. Deployment
 
-1. **Azure over SpeechAce/self-hosted:** phoneme-level scores for both locales, free tier, one vendor for scoring + TTS.
-2. **Client-side WAV conversion over server-side ffmpeg:** no native deps, keeps server thin; cost is a small tested util.
-3. **SQLite over JSON files:** transactional stats updates, easy aggregation for progress queries.
-4. **Speed ladders as articulation proxy:** Azure has no "clarity" score; accuracy-under-tempo is the standard speech-therapy proxy and is measurable with the tools we have.
+`apps/worker/wrangler.jsonc` defines the Worker, its static assets (`apps/pwa/dist`) and the D1 binding. Secrets: `AZURE_SPEECH_KEY`, `PAIRING_CODE`. Variable: `AZURE_SPEECH_REGION`. Steps: `docs/deployment-guide.md` (R1-T06).

@@ -3,13 +3,13 @@
 > Master configuration for the Agent Smith dev workflow. The agent reads this each session.
 
 ## Project Overview
-- **Name:** Pronunciation Coach
-- **Description:** Single-user web app to improve pronunciation (phoneme accuracy) AND articulation (clarity, pacing, stress) in French and English. Record → Azure phoneme/prosody scoring → targeted drills → speed ladders → progress tracking. See `docs/prd.md`.
-- **Stage:** Greenfield — docs and backlog pre-authored (epics F1–F6); no code yet
-- **Platform:** Web (desktop browser first, Chrome/Edge for MediaRecorder reliability)
-- **Stack:** React + Vite (client), Node.js + Express (server), SQLite via better-sqlite3
-- **Cloud / hosting:** None for v1 — runs locally. External API: Azure Speech (Pronunciation Assessment + Neural TTS)
-- **Auth strategy:** No accounts — single user, all data local
+- **Name:** Pronunciation Coach (v2)
+- **Description:** Single-user phone app that trains **articulation and elocution** in French and English, aimed at the owner's main problem: **mumbling** in everyday talk. Core practice: clear-speech pairs (usual → "big and clear"), a machine listener in noise, and short everyday talks, measured against the owner's own baseline. See `docs/prd.md`.
+- **Stage:** v2 rewrite in progress (epic R1). v1 is retired (`docs/adr/001-v2-rewrite.md`, docs in `docs/archive/v1/`). The v1 code in `client/` and `server/` is inert and awaits the owner's confirmation to delete; do not build on it.
+- **Platform:** Installable web app (PWA), phone-first. Target device: Pixel 10 Pro XL, Android Chrome.
+- **Stack:** React + TypeScript + Vite (PWA) · one Cloudflare Worker (static assets + small API, D1) · Azure Speech via the browser JS SDK with 10-minute tokens · on-phone DSP in TypeScript · IndexedDB via Dexie
+- **Cloud / hosting:** Cloudflare Workers (free plan). External API: Azure Speech (speech-to-text and pronunciation assessment).
+- **Auth strategy:** No accounts. The phone pairs once with a code; the Worker stores only a hash of the device token.
 - **Team:** Solo (minimal ceremony, but keep docs + backlog current)
 
 ## Working Style
@@ -17,14 +17,18 @@
 - Test-Driven Development (TDD) is the default: Red → Green → Refactor.
 - Update documentation in the same change as the code it describes.
 - One task in progress at a time (solo cadence).
+- Every product claim carries its evidence label from `docs/research/` ([Strong] / [Moderate] / [Weak] / [Mixed] / [None found]). Never present weak evidence as strong.
 
 ## Build & Test Commands
-From the project root (monorepo: `/client`, `/server`):
-- Install deps: `npm install` (root workspace installs both)
-- Dev (both): `npm run dev`
-- Lint: `npm run lint` (must be clean)
-- Tests: `npm test` (Vitest client, node:test or Vitest server)
-- Env: copy `.env.example` → `.env`, set `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`
+From the project root (npm workspaces: `apps/*`, `packages/*`). **Use npm 11** (`packageManager` is pinned; npm 10.9 fails on Vitest 4 peer dependencies). If the system npm is older, prefix commands with `npx -y npm@11`.
+- Install deps: `npm install`
+- Dev: `npm run dev` (Worker with static assets + PWA dev server)
+- Type check: `npm run typecheck`
+- Lint: `npm run lint` (warnings are errors)
+- Tests: `npm test` (Vitest in every workspace; the Worker runs in the real `workerd` runtime)
+- Build: `npm run build`
+- Key scan: `npm run scan:keys` (after build)
+- Secrets: Worker secrets `AZURE_SPEECH_KEY`, `PAIRING_CODE`; variable `AZURE_SPEECH_REGION`. For local dev, put them in `apps/worker/.dev.vars` (git-ignored). See `docs/deployment-guide.md`.
 
 ## Documentation Strategy
 All project knowledge lives in `docs/`:
@@ -32,24 +36,28 @@ All project knowledge lives in `docs/`:
 | Doc | Purpose |
 |-----|---------|
 | `docs/prd.md` | Product Requirements (what & why) |
-| `docs/product-design.md` | UX/UI specification |
+| `docs/product-design.md` | Screens, session, feedback rules |
 | `docs/technical-design.md` | Architecture & implementation |
-| `docs/api-reference.md` | API documentation |
-| `docs/database-schema.md` | Data model |
-| `docs/backlog/` | Task tracking (dashboard + epics F1–F6) |
-| `docs/research/` | Evidence base for the redesign (literature review + learner profile) |
-| `docs/redesign/` | v2 design options and the owner's decision |
+| `docs/api-reference.md` | Worker API |
+| `docs/database-schema.md` | D1 tables and IndexedDB stores |
+| `docs/deployment-guide.md` | Cloudflare + Azure setup and deploy |
+| `docs/backlog/` | Task tracking (dashboard + epics R1–R11) |
+| `docs/adr/` | Architecture decision records |
+| `docs/research/` | Evidence base (literature review, learner profile, mumbling note) |
+| `docs/redesign/` | v2 design options and the owner's accepted revision |
+| `docs/validation/` | Validation reports on the owner's voice and phone |
+| `docs/archive/v1/` | Retired v1 docs (read-only) |
 
 ## Pre-Commit Verification
-1. Build succeeds (zero errors).
-2. Lint clean (warnings treated as errors).
-3. All tests pass.
-4. Manual check for UI changes (run the app in the browser).
-5. Relevant docs updated.
-6. `AZURE_SPEECH_KEY` never appears in client code or client bundles.
+1. `npm run typecheck` and `npm run build` succeed (zero errors).
+2. `npm run lint` clean (warnings treated as errors).
+3. `npm test` passes.
+4. `npm run scan:keys` passes: `AZURE_SPEECH_KEY` never appears in client code or bundles.
+5. For audio or UI changes: check on the Pixel (or Chrome with a fake mic) and note it in the task.
+6. Relevant docs updated.
 
 ## Backlog Conventions
-- Epics: `docs/backlog/epics/F{n}-*.md`; tasks `F{n}-T{NN}`.
+- Epics: `docs/backlog/epics/R{n}-*.md`; tasks `R{n}-T{NN}`.
 - Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
-- Dependency order: F1 → F2 → F3 → {F4, F5} → F6.
-- After completing a task, run the unblock check and update `docs/backlog/README.md`.
+- Order: R1 → R2 → R3 (first practice slice) → R4 → … → R11.
+- After completing a task, update the epic file and `docs/backlog/README.md`.

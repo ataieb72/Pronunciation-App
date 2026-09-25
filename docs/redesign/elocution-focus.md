@@ -1,6 +1,6 @@
 # Revision: articulation and elocution first
 
-**Date:** 25 September 2026 · **Status:** draft for the owner's review · **Amends:** `design-options.md` · **Evidence:** `docs/research/` (brief, addendum, and `mumbling-note.md`)
+**Date:** 25 September 2026 · **Status:** accepted by the owner (2026-09-25) · **Amends:** `design-options.md` · **Evidence:** `docs/research/` (brief, addendum, and `mumbling-note.md`)
 
 ## 1. The owner's decision
 
@@ -172,7 +172,7 @@ The technical base does not change: an installed web app (PWA), a small Cloudfla
 | R8 Trust levels and validation | Trustworthy hints | Detectors move up as they pass validation |
 | R9 Check analysis and Progress | Honest progress | Re-scoring, ranges, Progress screen |
 | R10 Panel and habit tools | Human judgement; staying with it | Listener panel, weekly voice note, if-then plan, comeback session |
-| R11 Experiments (optional) | Test open questions on you | Pitch line, SpeechSuper pilot, Capacitor wrap if needed |
+| R11 Experiments (optional) | Test open questions on you | Front-camera jaw and lip feedback, pitch line, SpeechSuper pilot, Capacitor wrap if needed |
 
 ## 10. Main risks of this focus
 
@@ -185,15 +185,28 @@ The technical base does not change: an installed web app (PWA), a small Cloudfla
 | The fade detector means nothing for listeners | It stays a hint, never a goal, until a listener check supports it |
 | Bluetooth earbuds switch to a poor microphone | Noisy-room mode is off by default and tested in R1 with wired earbuds |
 
-## 11. Decisions still open
+## 11. Decisions
 
-| # | Decision | Recommended default |
+**Owner's answers (2026-09-25):**
+
+| # | Decision | Answer |
 |---|---|---|
-| D1 | Which option | **B**, built in the order above |
-| D3 | Platform, and which phone | PWA, confirmed by the R1 phone test. **Please send your phone model and OS version.** |
-| D4 | French variety | fr-FR, unless you speak Québec French |
+| D1 | Which option | **B**, built in the order of section 9 |
+| D3 | Platform, and which phone | **PWA on a Pixel 10 Pro XL (Android, Chrome).** The R1 phone test confirms it. If web audio fails, the fallback is a Capacitor Android app, which needs no Mac and no Apple fee. iOS-only work (audio session type, iOS Wake Lock quirks) drops to low priority, but the code stays standards-based. |
+| D15 | Where clarity matters most | **Everyday talk.** Talk topics are everyday conversation: what you did, plans, short opinions, answers to quick questions. Delivery rehearsals for talks drop to an optional extension. |
+
+**What the owner reported:** speech "looks mechanical" and the tongue and lips feel "heavy".
+- This fits the low-effort pattern in section 3: small jaw, lip and tongue movements. The main cue, "big and clear", targets exactly this, through speech itself.
+- It does not change the plan against mouth exercises without speech. They have no evidence of benefit (section 3).
+- **Health note.** The app cannot tell a speaking habit from a medical cause. If the heaviness is new, getting worse, or comes with other changes (slurred speech, trouble swallowing, drooling, facial weakness, unusual tiredness when speaking), a doctor should check it first. A speech-language therapist (orthophoniste) can also assess articulation in one visit.
+- Added to R11 as an optional experiment: front-camera feedback on jaw and lip opening. [Weak / research-grade] (Mumble §8)
+
+**Defaults in force until the owner changes them:**
+
+| # | Decision | Default |
+|---|---|---|
+| D4 | French variety | fr-FR |
 | D6 | Human listeners | Friends if possible, at weeks 0 and 12. The app works without them. |
-| D7 | English/French split | **50/50**, alternating days |
-| D15 | Where you most need clarity | Meetings, calls, presentations, or everyday talk. This chooses the talk topics and the delivery rehearsals. |
+| D7 | English/French split | 50/50, alternating days |
 
 Other decisions in `design-options.md` §8 keep their defaults.
