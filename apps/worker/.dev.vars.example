@@ -1,0 +1,5 @@
+# Local development only. Copy to .dev.vars (git-ignored) and fill in.
+# Never commit real values. Production secrets live in GitHub and Cloudflare (docs/deployment-guide.md).
+AZURE_SPEECH_KEY=
+AZURE_SPEECH_REGION=uksouth
+PAIRING_CODE=local-dev-pairing-code

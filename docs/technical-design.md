@@ -33,6 +33,7 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 | `packages/dsp` | Pure TypeScript audio code: resampler, WAV encoder, VAD, quality gate, measures | R1 (spike), R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
+| `tools/deploy` | Deploy helpers: settings check, D1 id, secrets file | R1 |
 
 - **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
 - TypeScript 6.0 strict mode everywhere, with `noUncheckedIndexedAccess`. ESLint 10 with typescript-eslint `strictTypeChecked` (type-aware rules such as `await-thenable` and `no-floating-promises`); warnings are errors.
@@ -80,4 +81,4 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 
 ## 7. Deployment
 
-`apps/worker/wrangler.jsonc` defines the Worker, its static assets (`apps/pwa/dist`) and the D1 binding. Secrets: `AZURE_SPEECH_KEY`, `PAIRING_CODE`. Variable: `AZURE_SPEECH_REGION`. Steps: `docs/deployment-guide.md` (R1-T06).
+`apps/worker/wrangler.jsonc` defines the Worker, its static assets (`apps/pwa/dist`, single-page-app fallback, `/api/*` to the Worker first) and the D1 binding (the committed id is a placeholder; the deploy writes the real id). Secrets: `AZURE_SPEECH_KEY`, `PAIRING_CODE` (uploaded with each deploy). Variable: `AZURE_SPEECH_REGION`. The manual GitHub Actions workflow `.github/workflows/deploy.yml` runs all checks, prepares D1, deploys, and checks `/api/health` live. Steps: `docs/deployment-guide.md`.

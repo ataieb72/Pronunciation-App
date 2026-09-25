@@ -25,3 +25,4 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 - Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
 - Create a Free F0 Speech resource (UK South or France Central) under the new pay-as-you-go subscription (`docs/deployment-guide.md`). Budget alert: done (2026-09-25).
 - Create a Cloudflare account with a workers.dev subdomain (`docs/deployment-guide.md` Part 2).
+- Add the GitHub secrets and run the first deploy (`docs/deployment-guide.md` Part 3). Then install the app on the Pixel and pair it.

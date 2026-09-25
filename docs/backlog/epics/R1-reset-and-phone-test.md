@@ -77,7 +77,7 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 **Completed (2026-09-25):** 32 PWA tests (API client status mapping, device-token storage with blocked-storage fallback, Pair screen: success, wrong code, rate limit in minutes, device limit, offline, remembered pairing, unpair, offline unpair keeps the token; health badge online/degraded/offline). `vite-plugin-pwa` builds the manifest (standalone, portrait, 192/512 icons and a maskable icon) and a Workbox service worker that never serves `/api/*`. Icons are drawn by `apps/pwa/scripts/make_icons.py` (standard library only). Visual check in Chromium at 412×915 (light and dark, mocked API): layout and messages correct. The dev server proxies `/api` to the local Worker on port 8787.
 
-### R1-T06: Deployment ⬚
+### R1-T06: Deployment 🔄 (waiting on the owner's first deploy)
 **Type:** infra | **Effort:** S | **Depends on:** R1-T05 | **Priority:** high
 
 #### What to Build
@@ -89,6 +89,8 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 #### Testing Requirements
 - Deployed smoke check: `GET /api/health` returns 200
+
+**Built (2026-09-25):** `wrangler.jsonc` serves `apps/pwa/dist` as assets (single-page-app fallback; `/api/*` runs the Worker first) with the D1 binding. `.github/workflows/deploy.yml` (manual): settings check → typecheck, lint, test, build, key scan → find or create D1 (Western Europe) and apply migrations → `wrangler deploy --secrets-file` (secrets file removed on exit) with the region as a variable → live `/api/health` check → address in the run summary. `tools/deploy` (18 tests) holds the pure helpers. The Worker's `build` is a Wrangler dry run, so CI checks the bundle and config. Local run of the real Worker (built app, local D1): health, `/` and app routes, manifest, pairing, unpairing and the speech-token config check all behaved as specified. Guide: `docs/deployment-guide.md` Part 3. **Remaining:** the owner adds the GitHub secrets and runs the first deploy; then the install check on the Pixel.
 
 ### R1-T07: Phone test spike (throwaway) ⬚
 **Type:** spike | **Effort:** M | **Depends on:** R1-T06 | **Priority:** high

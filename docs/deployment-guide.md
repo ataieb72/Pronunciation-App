@@ -1,6 +1,6 @@
 # Deployment Guide
 
-**Status:** Part 1 ready (2026-09-25). Part 3 lands with task R1-T06.
+**Status:** complete for R1 (2026-09-25).
 
 Never paste a key or token into a chat, an issue, a commit, or any file in this repository. Keep it in a password manager until a step below tells you where it goes.
 
@@ -63,6 +63,85 @@ v1 runs on Render with no login and passes any text to Azure's text-to-speech. A
 
 Stop here. Part 3 adds an API token with the exact permissions the deploy needs.
 
-## Part 3 — First deploy (R1-T06, coming)
+## Part 3 — First deploy
 
-Covers: a Cloudflare API token for GitHub Actions, GitHub repository secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `AZURE_SPEECH_KEY`, `PAIRING_CODE`), the region variable, the first deploy from the GitHub web page, and pairing your phone.
+The deploy runs in GitHub Actions (`.github/workflows/deploy.yml`). You only need a browser. It:
+1. checks that every setting below exists (it names missing ones and never prints values);
+2. runs the type check, lint, tests, build and key scan;
+3. finds or creates the D1 database `pronunciation-coach` (Western Europe) and applies its migrations;
+4. uploads the Worker, the app and the two secrets;
+5. calls `/api/health` on the live app and shows its address in the run summary.
+
+### 3a. Choose a pairing code
+
+Your phone sends this code once to prove it is yours.
+- Use at least 12 characters. A phrase of 4 random words works well (a password manager can generate one).
+- Save it in your password manager. You will type it on your phone in step 3f.
+
+### 3b. Create a Cloudflare API token
+
+1. In the Cloudflare dashboard, select the profile icon (top right) → **Profile** → **API Tokens** → **Create Token**.
+2. Next to **Edit Cloudflare Workers**, select **Use template**.
+3. Under **Permissions**, select **+ Add more** and add: **Account** → **D1** → **Edit**. (The deploy creates the database and applies migrations; the template does not include D1.)
+4. Under **Account Resources**, choose **Include** → your account.
+5. Under **Zone Resources**, choose **All zones**. You have no zones, so this grants nothing extra.
+6. Select **Continue to summary** → **Create Token**. Copy the token now; Cloudflare shows it only once.
+
+### 3c. Find your Cloudflare Account ID
+
+**Workers & Pages** → the **Account ID** on the right side of the page (32 characters).
+
+### 3d. Add the settings to GitHub
+
+In the repository on GitHub: **Settings** → **Secrets and variables** → **Actions**.
+
+On the **Secrets** tab, select **New repository secret** four times:
+
+| Name | Value |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | the token from 3b |
+| `CLOUDFLARE_ACCOUNT_ID` | the ID from 3c |
+| `AZURE_SPEECH_KEY` | KEY 1 of your Speech resource (Part 1) |
+| `PAIRING_CODE` | the code from 3a |
+
+On the **Variables** tab, select **New repository variable**:
+
+| Name | Value |
+|---|---|
+| `AZURE_SPEECH_REGION` | your Speech resource's region, for example `uksouth` or `francecentral` |
+
+GitHub hides secret values in logs. The app never sends them to your phone.
+
+### 3e. Run the deploy
+
+- **If the workflow is on the default branch** (`master`): **Actions** → **Deploy** → **Run workflow** → **Run workflow**.
+- **While v2 lives only on its development branch,** GitHub shows no button. Ask Claude to start the deploy on that branch, or merge the branch into `master` first.
+
+The run takes about 3 minutes. Open it and read the **Summary**: it shows the app address, for example `https://pronunciation-coach.<your-subdomain>.workers.dev`.
+
+### 3f. Install and pair on your phone
+
+1. Open the address in **Chrome** on the phone.
+2. Chrome menu (⋮) → **Install app** (or **Add to home screen** → **Install**).
+3. Open the app from the home screen.
+4. Type your pairing code and select **Pair this phone**. You should see **Paired ✓** and **Server: online**.
+
+### Troubleshooting
+
+| What you see | What to do |
+|---|---|
+| "Check settings" fails with names of settings | Add the missing secret or variable in 3d. Check `PAIRING_CODE` has 12+ characters and the region is a plain name like `uksouth`. |
+| Cloudflare "Authentication error" | The API token lacks a permission. Recreate it with the template plus **D1 → Edit** (3b), and check the Account ID. |
+| "You need a workers.dev subdomain" | Set one in Part 2, step 6. |
+| The app says "Server: degraded" | The database is unreachable. Run the deploy again; it re-applies migrations safely. |
+| Pairing says "Pairing is off on the server" | `PAIRING_CODE` is missing or too short. Fix it in 3d and deploy again. |
+| "Too many wrong codes" | Wait for the time shown (pairing locks for the rest of the hour after 10 wrong codes). |
+
+To change a secret later, update it in GitHub and run the deploy again.
+
+## Local development (optional)
+
+1. `cp apps/worker/.dev.vars.example apps/worker/.dev.vars` and fill it in (the file is git-ignored).
+2. `npm run build` (the Worker serves the built app).
+3. `npm run db:migrate:local --workspace=apps/worker`
+4. `npm run dev --workspace=apps/worker` → <http://localhost:8787>. For live app reloading, also run `npm run dev` (Vite on port 5173 forwards `/api` to 8787).
