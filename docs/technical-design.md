@@ -35,7 +35,9 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 | `scripts/` | Repo tools, including the bundle key scan | R1 |
 
 - **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
-- TypeScript strict mode everywhere. ESLint with warnings treated as errors.
+- TypeScript 6.0 strict mode everywhere, with `noUncheckedIndexedAccess`. ESLint 10 with typescript-eslint `strictTypeChecked` (type-aware rules such as `await-thenable` and `no-floating-promises`); warnings are errors.
+- Vitest 4.1 in every workspace (`@cloudflare/vitest-pool-workers` 0.22 requires Vitest 4.1).
+- The Worker's `compatibility_date` must not be newer than the date the test runtime supports (2026-08-22 with pool-workers 0.22). Raise it when the pool package updates.
 
 ## 3. Audio pipeline (R2; a throwaway version in the R1 spike)
 

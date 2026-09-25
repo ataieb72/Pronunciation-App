@@ -17,18 +17,20 @@ ADR 001. Move v1 docs to `docs/archive/v1/`. Write the v2 PRD, product design, t
 
 **Completed (2026-09-25):** ADR 001; v2 PRD, product design, technical design, API reference, data model, deployment guide (parts 1–2), backlog R1–R11; v1 docs archived; CLAUDE.md, agent instructions and coding standards rewritten; v1 code deleted with the owner's approval.
 
-### R1-T02: Workspace scaffold ⬚
+### R1-T02: Workspace scaffold ✅
 **Type:** infra | **Effort:** S | **Depends on:** R1-T01 | **Priority:** high
 
 #### What to Build
 Root `package.json` with npm 11 workspaces `apps/*` and `packages/*`, pinned `packageManager`. Shared strict `tsconfig.base.json`. ESLint flat config (typescript-eslint, react-hooks), warnings as errors. Root scripts: `typecheck`, `lint`, `test`, `build`, `dev`.
 
 #### Acceptance Criteria
-- [ ] `npm install` with npm 11 succeeds from a clean clone
-- [ ] `npm run typecheck`, `npm run lint`, `npm test` and `npm run build` all pass
+- [x] `npm install` with npm 11 succeeds from a clean clone
+- [x] `npm run typecheck`, `npm run lint`, `npm test` and `npm run build` all pass
 
 #### Testing Requirements (TDD — write these FIRST)
 - Each workspace has at least one passing test
+
+**Completed (2026-09-25):** npm 11 workspaces with `apps/worker` and `apps/pwa`; strict `tsconfig.base.json` (with `noUncheckedIndexedAccess`); ESLint 10 flat config with typescript-eslint `strictTypeChecked` (checked: it rejects `await` on a non-promise, v1's main bug) and React hooks rules. Worker: a small router, `GET /api/health`, JSON helpers, tests in the real `workerd` runtime (4 tests). PWA: Vite 8 + React 19 shell, phone-first base styles with dark mode (1 test). Versions: TypeScript 6.0 (typescript-eslint supports < 6.1), Vitest 4.1 (required by `@cloudflare/vitest-pool-workers` 0.22). The Worker's `compatibility_date` is 2026-08-20, because the test runtime supports dates up to 2026-08-22.
 
 ### R1-T03: Key scan and CI ⬚
 **Type:** infra | **Effort:** S | **Depends on:** R1-T02 | **Priority:** high

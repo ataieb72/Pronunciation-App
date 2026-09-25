@@ -1,0 +1,17 @@
+{
+  "name": "@pc/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20260925.2",
+    "vitest": "~4.1.11",
+    "wrangler": "^4.141.0"
+  }
+}

@@ -22,7 +22,7 @@
 ## Build & Test Commands
 From the project root (npm workspaces: `apps/*`, `packages/*`). **Use npm 11** (`packageManager` is pinned; npm 10.9 fails on Vitest 4 peer dependencies). If the system npm is older, prefix commands with `npx -y npm@11`.
 - Install deps: `npm install`
-- Dev: `npm run dev` (Worker with static assets + PWA dev server)
+- Dev: `npm run dev` (PWA dev server; the Worker's local dev with static assets arrives in R1-T06)
 - Type check: `npm run typecheck`
 - Lint: `npm run lint` (warnings are errors)
 - Tests: `npm test` (Vitest in every workspace; the Worker runs in the real `workerd` runtime)
