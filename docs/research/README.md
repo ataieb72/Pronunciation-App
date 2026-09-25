@@ -8,6 +8,7 @@
 |------|---------------|
 | `evidence-brief.md` | General review: what works for adult pronunciation and articulation training in English and French. 13 topics, 145 verified findings. |
 | `learner-profile-addendum.md` | The same evidence applied to this learner: French first language, English as the main target, clearer native French, phone sessions of 5–15 minutes. 29 verified findings. |
+| `mumbling-note.md` | Focused check on mumbling (2026-09-25): what it is, which cues work ("big and clear" > "loud" > "slow"), carry-over, and what a phone can measure. Sources checked through abstracts only. |
 | `data/verified-findings.json` | The raw findings behind both briefs, with citations, strength labels, and checker verdicts. Also lists findings the checkers dropped. |
 
 ## How the review worked
