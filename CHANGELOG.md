@@ -10,7 +10,10 @@
 
 ### Changed
 - Focus moves from accent-style pronunciation to articulation and elocution in both languages, aimed at mumbling.
-- v1 docs moved to `docs/archive/v1/`. v1 code is retired and awaits removal.
+- v1 docs moved to `docs/archive/v1/`.
+
+### Removed
+- v1 code: `client/`, `server/`, `render.yaml`, v1 package files (last v1 commit: `20b075a`).
 
 ## v1 (retired)
 

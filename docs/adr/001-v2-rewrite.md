@@ -19,7 +19,7 @@
    - speech measures (level, pauses, pitch, rate) computed on the phone in TypeScript;
    - IndexedDB (through Dexie) as the main data store, on the phone.
 3. **Workspace:** npm workspaces `apps/pwa`, `apps/worker`, `packages/core`, `packages/dsp`. The project pins **npm 11**, because npm 10.9 fails to resolve Vitest 4's peer dependencies.
-4. **v1 code will be deleted once the owner confirms** (`client/`, `server/`, `render.yaml`, the v1 root package files). Commit `20b075a` on this branch is the last v1 commit, so git history keeps v1 in full. v1 docs move to `docs/archive/v1/`. `docs/research/` and `docs/redesign/` stay.
+4. **v1 code is deleted** (`client/`, `server/`, `render.yaml`, the v1 root package files), with the owner's approval on 2026-09-25. Commit `20b075a` on this branch is the last v1 commit, so git history keeps v1 in full. v1 docs move to `docs/archive/v1/`. `docs/research/` and `docs/redesign/` stay.
 5. The backlog restarts as epics **R1–R11**, with tasks named `R{n}-T{NN}`.
 
 ## Consequences

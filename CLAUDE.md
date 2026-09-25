@@ -5,7 +5,7 @@
 ## Project Overview
 - **Name:** Pronunciation Coach (v2)
 - **Description:** Single-user phone app that trains **articulation and elocution** in French and English, aimed at the owner's main problem: **mumbling** in everyday talk. Core practice: clear-speech pairs (usual → "big and clear"), a machine listener in noise, and short everyday talks, measured against the owner's own baseline. See `docs/prd.md`.
-- **Stage:** v2 rewrite in progress (epic R1). v1 is retired (`docs/adr/001-v2-rewrite.md`, docs in `docs/archive/v1/`). The v1 code in `client/` and `server/` is inert and awaits the owner's confirmation to delete; do not build on it.
+- **Stage:** v2 rewrite in progress (epic R1). v1 is retired (`docs/adr/001-v2-rewrite.md`, docs in `docs/archive/v1/`). The v1 code was deleted on 2026-09-25; commit `20b075a` holds it in git history.
 - **Platform:** Installable web app (PWA), phone-first. Target device: Pixel 10 Pro XL, Android Chrome.
 - **Stack:** React + TypeScript + Vite (PWA) · one Cloudflare Worker (static assets + small API, D1) · Azure Speech via the browser JS SDK with 10-minute tokens · on-phone DSP in TypeScript · IndexedDB via Dexie
 - **Cloud / hosting:** Cloudflare Workers (free plan). External API: Azure Speech (speech-to-text and pronunciation assessment).

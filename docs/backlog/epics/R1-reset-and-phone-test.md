@@ -2,18 +2,20 @@
 
 **Goal:** a clean v2 workspace, a deployed Worker that pairs the phone and issues Azure tokens, and a go/no-go test of web audio and Azure on the Pixel. **Depends on:** —
 
-### R1-T01: Retire v1 ⬚
+### R1-T01: Retire v1 ✅
 **Type:** docs/infra | **Effort:** S | **Priority:** high
 
 #### What to Build
 ADR 001. Move v1 docs to `docs/archive/v1/`. Write the v2 PRD, product design, technical design, API reference, data model and backlog. Delete the v1 code (`client/`, `server/`, `render.yaml`, v1 root `package.json` and `package-lock.json`, `.env.example`) **after the owner confirms**. Update `CLAUDE.md`, the agent instruction files and the session bootstrap scripts.
 
 #### Acceptance Criteria
-- [ ] No v1 code remains; `docs/archive/v1/` holds the v1 docs
-- [ ] `CLAUDE.md` describes the v2 stack, commands and pre-commit checks
+- [x] No v1 code remains; `docs/archive/v1/` holds the v1 docs
+- [x] `CLAUDE.md` describes the v2 stack, commands and pre-commit checks
 
 #### Testing Requirements
 - None (no code).
+
+**Completed (2026-09-25):** ADR 001; v2 PRD, product design, technical design, API reference, data model, deployment guide (parts 1–2), backlog R1–R11; v1 docs archived; CLAUDE.md, agent instructions and coding standards rewritten; v1 code deleted with the owner's approval.
 
 ### R1-T02: Workspace scaffold ⬚
 **Type:** infra | **Effort:** S | **Depends on:** R1-T01 | **Priority:** high

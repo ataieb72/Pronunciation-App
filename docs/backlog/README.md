@@ -23,6 +23,5 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 **Owner actions outstanding:**
 - ~~Rotate the Azure key~~ — not needed: Microsoft deleted the old subscription on 2026-09-11, so the v1 key is dead.
 - Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
-- Create a pay-as-you-go Azure subscription and a Free F0 Speech resource in France Central (`docs/deployment-guide.md`).
+- Create a Free F0 Speech resource (UK South or France Central) under the new pay-as-you-go subscription (`docs/deployment-guide.md`). Budget alert: done (2026-09-25).
 - Create a Cloudflare account with a workers.dev subdomain (`docs/deployment-guide.md` Part 2).
-- Confirm deletion of the v1 code (`client/`, `server/`, `render.yaml`, v1 package files) so R1-T02 can start.
