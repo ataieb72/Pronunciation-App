@@ -8,6 +8,8 @@ Never paste a key or token into a chat, an issue, a commit, or any file in this 
 
 v1 runs on Render with no login and passes any text to Azure's text-to-speech. Anyone who finds its address can use your Azure quota. Kill the key first, then remove the service.
 
+> **Owner's status (2026-09-25):** Microsoft deleted the owner's free-trial subscription on 11 September 2026, with all its resources. The v1 key is already dead, so step 1a is not needed. Step 1b (delete the Render service) is still good hygiene. For v2, follow "Create a subscription and a free Speech resource" below, using **pay-as-you-go**.
+
 ### 1a. Regenerate the Azure keys (kills the old key at once)
 
 1. Open <https://portal.azure.com> and sign in.
@@ -26,8 +28,8 @@ v1 runs on Render with no login and passes any text to Azure's text-to-speech. A
 4. If you find no working subscription anywhere, the old key cannot work. Skip to step 1b, then create a subscription for v2 (below).
 
 **Create a subscription and a free Speech resource for v2:**
-1. On the Speech services page, select **Start with an Azure free trial** (or reactivate a disabled subscription by upgrading it). Azure asks for a phone number and a card to check your identity.
-2. Within 30 days, when Azure asks, upgrade to **pay-as-you-go**. Free services keep running. A **Free F0** Speech resource never bills; charges come only from paid tiers.
+1. Azure offers the free trial **only once per person**. If you had one before, sign up for **pay-as-you-go** directly: <https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account> → **Pay as you go**. Azure asks for a phone number and a card. (First-time users can take the free trial instead, then upgrade to pay-as-you-go within 30 days.)
+2. On pay-as-you-go you pay only for paid resources. A **Free F0** Speech resource never bills (5 audio hours a month; one F0 Speech resource per subscription).
 3. Set a safety budget: search **Budgets** → **Add** → amount 5 → an alert at 80% to your email.
 4. Create the resource: **Speech services** → **Create** → your subscription → resource group `pronunciation-coach` (new) → region **France Central** or **West Europe** → a name → pricing tier **Free F0** → **Review + create** → **Create**.
 5. Open the new resource → **Keys and Endpoint**. Save **KEY 1** in your password manager, and note the **Location/Region** (for example `francecentral`).

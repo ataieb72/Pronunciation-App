@@ -25,6 +25,6 @@
 ## Consequences
 
 - Nothing from v1 carries risk into v2. The WAV encoder idea returns, rewritten test-first, in `packages/dsp`.
-- The v1 Render service holds an open text-to-speech proxy. **The owner must shut it down and rotate the Azure key.** This cannot be done from the repository.
+- The v1 Render service holds an open text-to-speech proxy. Its Azure key died when Microsoft deleted the owner's expired free-trial subscription (2026-09-11). The owner should still delete the Render service.
 - Deployment needs a Cloudflare account and an Azure Speech resource. Secrets live only in Worker secrets and CI secrets.
 - The first practice slice needs no cloud scoring. This lowers early risk.

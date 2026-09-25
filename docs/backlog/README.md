@@ -21,5 +21,8 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 **Order:** R1 → R2 → R3 (first practice slice) → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11. Each epic's tasks are detailed when it starts.
 
 **Owner actions outstanding:**
-- Shut down the v1 Render service and rotate the Azure key (v1 exposes an open text-to-speech proxy).
-- R1-T06: create a Cloudflare account and a new Azure Speech resource (see the deployment guide when it lands).
+- ~~Rotate the Azure key~~ — not needed: Microsoft deleted the old subscription on 2026-09-11, so the v1 key is dead.
+- Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
+- Create a pay-as-you-go Azure subscription and a Free F0 Speech resource in France Central (`docs/deployment-guide.md`).
+- Create a Cloudflare account with a workers.dev subdomain (`docs/deployment-guide.md` Part 2).
+- Confirm deletion of the v1 code (`client/`, `server/`, `render.yaml`, v1 package files) so R1-T02 can start.
