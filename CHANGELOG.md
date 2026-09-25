@@ -8,6 +8,8 @@
 - ADR 001: rewrite as an elocution-first phone app.
 - v2 docs: PRD, product design, technical design, API reference, data model, backlog R1–R11.
 
+- R1: v2 workspace (npm 11, TypeScript 6, ESLint 10 strict type-checked), bundle key scan and CI, Worker API (health, pairing, speech tokens) with D1, installable PWA shell with pairing.
+
 ### Changed
 - Focus moves from accent-style pronunciation to articulation and elocution in both languages, aimed at mumbling.
 - v1 docs moved to `docs/archive/v1/`.

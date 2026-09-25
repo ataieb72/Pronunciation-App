@@ -8,7 +8,7 @@ Phone-first. One-handed. Large tap targets. French and English alternate by day 
 
 | Screen | Main elements | Epic |
 |---|---|---|
-| **Pair** | Pairing-code field, "Paired ✓" state, server health | R1 |
+| **Pair** ✅ | Pairing-code field (hidden input), "Pair this phone"; "Paired ✓" with "Unpair this phone"; plain error messages (wrong code, too many tries with minutes to wait, phone limit, pairing off, no connection); server health badge | R1 |
 | **Today** | "Start · 10 min" (5 and 15 as options), language of the day, weekly dots (●●●○), next reminder | R3 |
 | **Session** | One stage at a time: Warm-up → Say → Listen → Use → Wrap. Big record button, level light, stage progress | R3–R6 |
 | **Pair compare** | Usual and clear takes, play each, "Which would your listener catch better?" | R3 |

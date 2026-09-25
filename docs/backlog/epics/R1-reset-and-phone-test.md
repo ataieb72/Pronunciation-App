@@ -62,18 +62,20 @@ A Worker with `GET /api/health`, `POST /api/pair`, `DELETE /api/pair` and `POST 
 
 **Completed (2026-09-25):** 37 tests in the real `workerd` runtime with local D1 (migration `0001_init.sql`): the planned tests plus malformed bodies, pairing disabled for weak codes, revoked devices freeing slots, unpairing, daily limit, Azure network errors, and region validation. Azure's token endpoint is mocked with a `fetch` spy. D1 column renamed `window` → `bucket` (`window` is an SQL keyword). Known limit: two pairings at the same instant could exceed the device cap by one; acceptable for one user.
 
-### R1-T05: PWA shell with pairing ⬚
+### R1-T05: PWA shell with pairing ✅
 **Type:** frontend | **Effort:** S | **Depends on:** R1-T04 | **Priority:** high
 
 #### What to Build
 Vite + React + TypeScript app with a web manifest and a service worker (installable on Android). A Pair screen: code field → `POST /api/pair` → device token stored on the phone → "Paired ✓", plus server health.
 
 #### Acceptance Criteria
-- [ ] Chrome on Android offers "Install app"
-- [ ] Pairing survives an app restart
+- [ ] Chrome on Android offers "Install app" — checked on the Pixel after the first deploy (R1-T06)
+- [x] Pairing survives an app restart
 
 #### Testing Requirements (TDD — write these FIRST)
 - PairScreen_ValidCode_ShowsPaired · PairScreen_WrongCode_ShowsError · PairScreen_TokenStored_StartsPaired · HealthBadge_ServerDown_ShowsOffline
+
+**Completed (2026-09-25):** 32 PWA tests (API client status mapping, device-token storage with blocked-storage fallback, Pair screen: success, wrong code, rate limit in minutes, device limit, offline, remembered pairing, unpair, offline unpair keeps the token; health badge online/degraded/offline). `vite-plugin-pwa` builds the manifest (standalone, portrait, 192/512 icons and a maskable icon) and a Workbox service worker that never serves `/api/*`. Icons are drawn by `apps/pwa/scripts/make_icons.py` (standard library only). Visual check in Chromium at 412×915 (light and dark, mocked API): layout and messages correct. The dev server proxies `/api` to the local Worker on port 8787.
 
 ### R1-T06: Deployment ⬚
 **Type:** infra | **Effort:** S | **Depends on:** R1-T05 | **Priority:** high
