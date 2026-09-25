@@ -19,6 +19,19 @@ v1 runs on Render with no login and passes any text to Azure's text-to-speech. A
 7. Note the **Location/Region** shown on the same page (for example `eastus` or `francecentral`). You will need it later.
 8. Copy the new **KEY 1** into your password manager. Do not share it.
 
+**If the Speech services page says "Welcome to Azure! Don't have a subscription?"**, this sign-in has no active subscription in the current directory. Then:
+1. Select your profile icon (top right) → **Switch directory**. If another directory is listed, switch to it and open **Speech services** again.
+2. In the top search bar, type **Subscriptions**. If a subscription shows **Disabled** or **Expired** (common after a free trial ends), its resources no longer work, so the old key is already dead.
+3. If you used a different Microsoft account for v1, sign in with that one and check again.
+4. If you find no working subscription anywhere, the old key cannot work. Skip to step 1b, then create a subscription for v2 (below).
+
+**Create a subscription and a free Speech resource for v2:**
+1. On the Speech services page, select **Start with an Azure free trial** (or reactivate a disabled subscription by upgrading it). Azure asks for a phone number and a card to check your identity.
+2. Within 30 days, when Azure asks, upgrade to **pay-as-you-go**. Free services keep running. A **Free F0** Speech resource never bills; charges come only from paid tiers.
+3. Set a safety budget: search **Budgets** → **Add** → amount 5 → an alert at 80% to your email.
+4. Create the resource: **Speech services** → **Create** → your subscription → resource group `pronunciation-coach` (new) → region **France Central** or **West Europe** → a name → pricing tier **Free F0** → **Review + create** → **Create**.
+5. Open the new resource → **Keys and Endpoint**. Save **KEY 1** in your password manager, and note the **Location/Region** (for example `francecentral`).
+
 **Why regenerate instead of delete:** Azure allows only one free (F0) Speech resource per subscription. A deleted resource stays "soft-deleted" for up to 48 hours and still blocks that free slot.
 
 **Optional — move to an EU region later.** A region near you (France Central or West Europe) gives slightly faster responses. To move:
