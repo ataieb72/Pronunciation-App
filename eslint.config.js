@@ -39,6 +39,11 @@ export default tseslint.config(
     },
   },
   {
+    // AudioWorklet modules run in their own global scope.
+    files: ['apps/pwa/public/worklets/**/*.js'],
+    languageOptions: { globals: globals.audioWorklet },
+  },
+  {
     files: ['apps/pwa/**/*.{ts,tsx}'],
     plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
     languageOptions: { globals: globals.browser },

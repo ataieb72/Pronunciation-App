@@ -35,6 +35,16 @@ export default defineConfig(({ mode }) => ({
           },
         }),
   ],
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          // The key scan (tools/key-scan) exempts this chunk name from the header and method rules.
+          groups: [{ name: 'azure-speech-sdk', test: /[\\/]node_modules[\\/]microsoft-cognitiveservices-speech-sdk[\\/]/ }],
+        },
+      },
+    },
+  },
   server: {
     // `npm run dev` in apps/worker serves the API on port 8787.
     proxy: { '/api': 'http://127.0.0.1:8787' },

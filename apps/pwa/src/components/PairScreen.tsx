@@ -62,6 +62,9 @@ export function PairScreen() {
       <section aria-labelledby="pair-title" className="card">
         <h2 id="pair-title">Paired ✓</h2>
         <p>This phone can now use speech scoring.</p>
+        <p>
+          <a href="/spike">Run the phone test</a>
+        </p>
         {message !== null && (
           <p role="alert" className="alert">
             {message}

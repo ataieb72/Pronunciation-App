@@ -122,6 +122,85 @@ input:focus-visible {
   outline-offset: 2px;
 }
 
+a {
+  color: var(--accent);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+th {
+  width: 38%;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+select {
+  width: 100%;
+  font: inherit;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.75rem;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+label.inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  margin: 0.35rem 0;
+}
+
+label.inline input {
+  width: auto;
+  margin: 0;
+}
+
+.spike .card {
+  margin-bottom: 1rem;
+}
+
+.spike .card button + button {
+  margin-top: 0.5rem;
+}
+
+.reference {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status {
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
 .alert {
   color: var(--danger);
   font-weight: 600;

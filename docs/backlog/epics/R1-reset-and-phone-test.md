@@ -92,7 +92,7 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 **Built (2026-09-25):** `wrangler.jsonc` serves `apps/pwa/dist` as assets (single-page-app fallback; `/api/*` runs the Worker first) with the D1 binding. `.github/workflows/deploy.yml` (manual): settings check → typecheck, lint, test, build, key scan → find or create D1 (Western Europe) and apply migrations → `wrangler deploy --secrets-file` (secrets file removed on exit) with the region as a variable → live `/api/health` check → address in the run summary. `tools/deploy` (18 tests) holds the pure helpers. The Worker's `build` is a Wrangler dry run, so CI checks the bundle and config. Local run of the real Worker (built app, local D1): health, `/` and app routes, manifest, pairing, unpairing and the speech-token config check all behaved as specified. Guide: `docs/deployment-guide.md` Part 3. **Remaining:** the owner adds the GitHub secrets and runs the first deploy; then the install check on the Pixel.
 
-### R1-T07: Phone test spike (throwaway) ⬚
+### R1-T07: Phone test spike (throwaway) 🔄 (built; waiting for the phone run)
 **Type:** spike | **Effort:** M | **Depends on:** R1-T06 | **Priority:** high
 
 #### What to Build
@@ -104,3 +104,5 @@ A hidden `/spike` page: open the mic with processing off and report the applied 
 
 #### Testing Requirements
 - WAV encoder and resampler unit tests in `packages/dsp` (the spike's only kept code)
+
+**Built (2026-09-25):** `packages/dsp` (kept): band-limited resampler (Blackman-windowed sinc; tones above the new Nyquist attenuated by more than 40 dB; pitch and level kept), PCM16/WAV encoder, level measures — 20 tests with synthetic signals. Spike page `/spike` (lazy chunk): AudioWorklet capture with processing requested off and applied settings reported, resampling to 16 kHz, token from the Worker, Azure en-US pronunciation assessment (IPA, 5 "sounded like" candidates, prosody) and fr-FR assessment through the browser SDK (callbacks wrapped in a promise with a timeout; cancelled results become errors), a 60-second continuous round, per-attempt levels and latency, JSON report and WAV download. 8 tests for its pure parts. The SDK lands in the `azure-speech-sdk-*` chunk (369 KB); the main bundle is unchanged. Checked in Chromium with a fake microphone: capture, resampling (30 ms for 2 s), WAV output and the error path all behave as specified; Azure itself is unreachable from the build sandbox. **Remaining:** the owner's run on the Pixel, recorded in `docs/validation/r1-phone-test.md`, and Azure JSON fixtures from the report.

@@ -30,7 +30,7 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 |---|---|---|
 | `apps/worker` | Cloudflare Worker: API + static asset serving. D1 migrations. | R1 |
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
-| `packages/dsp` | Pure TypeScript audio code: resampler, WAV encoder, VAD, quality gate, measures | R1 (spike), R2 |
+| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
 | `tools/deploy` | Deploy helpers: settings check, D1 id, secrets file | R1 |
