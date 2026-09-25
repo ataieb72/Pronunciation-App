@@ -5,6 +5,7 @@
 | File | What it holds |
 |------|---------------|
 | `design-options.md` | **Start here.** Three options (A lean English core · B full phone program, recommended · C server measurement lab), the common core, a comparison, the recommendation, Option B in full detail, and the decisions for the owner. |
+| `elocution-focus.md` | **Draft revision (2026-09-25).** The owner chose articulation and elocution as the focus, with mumbling as the main problem. Replaces the goals, English content order, session plan, and build order of `design-options.md`. Section 3 awaits the focused mumbling review. |
 | `data/designs/*.md` | The four independent source designs (evidence-max, lean-mvp, measurement, learner-ux). |
 | `data/judging.json` | Scores and reports from the three judges (evidence fidelity, feasibility, learner value) and the red-team issue list. |
 
