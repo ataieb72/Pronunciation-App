@@ -4,7 +4,7 @@ Two stores: **D1** on Cloudflare (no learner content) and **IndexedDB** on the p
 
 ## 1. D1 (Worker) — migrations in `apps/worker/migrations/`
 
-### devices ⬚ (R1)
+### devices ✅ (R1, `0001_init.sql`)
 | Column | Type | Notes |
 |---|---|---|
 | id | TEXT PK | random id |
@@ -12,13 +12,14 @@ Two stores: **D1** on Cloudflare (no learner content) and **IndexedDB** on the p
 | created_at | TEXT NOT NULL | ISO time |
 | revoked_at | TEXT | null while active |
 
-### rate_counters ⬚ (R1)
+### rate_counters ✅ (R1, `0001_init.sql`)
 | Column | Type | Notes |
 |---|---|---|
-| scope | TEXT | for example `token:<deviceId>` or `pair:<ip-hash>` |
-| window | TEXT | window key, for example `h:2026-09-25T10` or `d:2026-09-25` |
-| count | INTEGER NOT NULL | |
-| PRIMARY KEY | (scope, window) | old windows are deleted on write |
+| scope | TEXT | `token:<deviceId>` (speech tokens) or `pair-fail` (failed pairings, global) |
+| bucket | TEXT | fixed UTC window, for example `h:2026-09-25T10` or `d:2026-09-25` |
+| count | INTEGER NOT NULL | hits in the window |
+| expires_at | INTEGER NOT NULL | epoch seconds; rows past it are deleted on every write |
+| PRIMARY KEY | (scope, bucket) | |
 
 ## 2. IndexedDB (phone, through Dexie) — planned
 

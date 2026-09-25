@@ -47,18 +47,20 @@ Root `package.json` with npm 11 workspaces `apps/*` and `packages/*`, pinned `pa
 
 **Completed (2026-09-25):** `tools/key-scan` (pure `scanFiles` + CLI `run`, 12 tests, runs on Node's built-in type stripping). Rules: key value (when `AZURE_SPEECH_KEY` is set; never printed), env name, subscription header (case-insensitive) and `fromSubscription` outside the `azure-speech-sdk-*` chunk. Exit 2 when the build folder is missing, so CI cannot pass a scan that did not run. `npm run scan:keys` scans `apps/pwa/dist`. CI (`.github/workflows/ci.yml`): npm 11, `npm ci`, typecheck, lint, test, build, key scan. **Note for R1-T07:** the PWA build must put the Azure SDK in a chunk named `azure-speech-sdk-*`.
 
-### R1-T04: Worker API — health, pairing, speech token ⬚
+### R1-T04: Worker API — health, pairing, speech token ✅
 **Type:** backend | **Effort:** M | **Depends on:** R1-T02 | **Priority:** high
 
 #### What to Build
 A Worker with `GET /api/health`, `POST /api/pair`, `DELETE /api/pair` and `POST /api/speech/token` (see `docs/api-reference.md`). D1 migration for `devices` and `rate_counters`. Pairing compares codes in constant time, stores only token hashes, caps active devices (default 2) and rate-limits failed attempts. The token endpoint calls Azure's `issueToken` with a timeout, and applies 30-an-hour and 200-a-day limits.
 
 #### Acceptance Criteria
-- [ ] All status codes in `docs/api-reference.md` are covered by tests
-- [ ] The Azure key appears in no response and no log line
+- [x] All status codes in `docs/api-reference.md` are covered by tests
+- [x] The Azure key appears in no response and no log line
 
 #### Testing Requirements (TDD — write these FIRST)
 - Health_DbUp_Returns200 · Pair_ValidCode_ReturnsTokenAndStoresHashOnly · Pair_WrongCode_Returns401 · Pair_TooManyFailures_Returns429 · Pair_DeviceLimit_Returns403 · Token_NoAuth_Returns401 · Token_RevokedDevice_Returns401 · Token_Valid_ReturnsAzureTokenRegionExpiry · Token_OverHourlyLimit_Returns429 · Token_AzureFails_Returns502 · Token_AzureTimeout_Returns502
+
+**Completed (2026-09-25):** 37 tests in the real `workerd` runtime with local D1 (migration `0001_init.sql`): the planned tests plus malformed bodies, pairing disabled for weak codes, revoked devices freeing slots, unpairing, daily limit, Azure network errors, and region validation. Azure's token endpoint is mocked with a `fetch` spy. D1 column renamed `window` → `bucket` (`window` is an SQL keyword). Known limit: two pairings at the same instant could exceed the device cap by one; acceptable for one user.
 
 ### R1-T05: PWA shell with pairing ⬚
 **Type:** frontend | **Effort:** S | **Depends on:** R1-T04 | **Priority:** high

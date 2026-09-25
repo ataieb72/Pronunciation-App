@@ -21,7 +21,11 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          // Config files run in Node, not in the Worker runtime, so they sit outside the Worker's tsconfig.
+          allowDefaultProject: ['apps/worker/vitest.config.ts'],
+          defaultProject: 'apps/worker/tsconfig.config.json',
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },

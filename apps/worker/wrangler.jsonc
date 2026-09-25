@@ -2,6 +2,15 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "pronunciation-coach",
   "main": "src/index.ts",
+  // Must not be newer than the date the test runtime supports (see docs/technical-design.md).
   "compatibility_date": "2026-08-20",
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pronunciation-coach",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ]
 }

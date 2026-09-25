@@ -63,8 +63,8 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 
 ## 5. Security
 
-- Pairing: `POST /api/pair` with a code held as a Worker secret returns a random device token. D1 stores only its SHA-256 hash. Failed pairing attempts are rate-limited.
-- `POST /api/speech/token` needs a device token. Limits: 30 an hour, 200 a day per device.
+- Pairing: `POST /api/pair` with a code held as a Worker secret returns a random 32-byte device token. D1 stores only its SHA-256 hash. The code is compared in constant time (both sides hashed, then `crypto.subtle.timingSafeEqual`). Pairing stays off while the code is shorter than 12 characters. After 10 failed attempts in a UTC hour, all pairing waits for the next hour. At most `MAX_DEVICES` (default 2) active devices.
+- `POST /api/speech/token` needs a device token. Limits: 30 an hour and 200 a day per device (fixed UTC windows in D1). The region must be a plain name (`^[a-z0-9]{2,32}$`), so a bad setting cannot send the key to another host. The Azure call has a 5-second timeout. Logs hold only error types and status codes, never the key.
 - The CI key scan (`tools/key-scan`) fails the build if a client file contains the key value or the name `AZURE_SPEECH_KEY`, or if app code calls `fromSubscription` or sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name.
 
 ## 6. Testing (TDD)
