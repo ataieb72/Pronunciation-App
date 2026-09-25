@@ -32,7 +32,7 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
 | `packages/dsp` | Pure TypeScript audio code: resampler, WAV encoder, VAD, quality gate, measures | R1 (spike), R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
-| `scripts/` | Repo tools, including the bundle key scan | R1 |
+| `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
 
 - **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
 - TypeScript 6.0 strict mode everywhere, with `noUncheckedIndexedAccess`. ESLint 10 with typescript-eslint `strictTypeChecked` (type-aware rules such as `await-thenable` and `no-floating-promises`); warnings are errors.
@@ -65,7 +65,7 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 
 - Pairing: `POST /api/pair` with a code held as a Worker secret returns a random device token. D1 stores only its SHA-256 hash. Failed pairing attempts are rate-limited.
 - `POST /api/speech/token` needs a device token. Limits: 30 an hour, 200 a day per device.
-- The CI key scan fails the build if a bundle contains the key value or the name `AZURE_SPEECH_KEY`, or if app code calls `fromSubscription` or sets the subscription-key header. It skips the Azure SDK's own chunk, which contains that header name.
+- The CI key scan (`tools/key-scan`) fails the build if a client file contains the key value or the name `AZURE_SPEECH_KEY`, or if app code calls `fromSubscription` or sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name.
 
 ## 6. Testing (TDD)
 

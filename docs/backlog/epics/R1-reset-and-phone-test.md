@@ -32,18 +32,20 @@ Root `package.json` with npm 11 workspaces `apps/*` and `packages/*`, pinned `pa
 
 **Completed (2026-09-25):** npm 11 workspaces with `apps/worker` and `apps/pwa`; strict `tsconfig.base.json` (with `noUncheckedIndexedAccess`); ESLint 10 flat config with typescript-eslint `strictTypeChecked` (checked: it rejects `await` on a non-promise, v1's main bug) and React hooks rules. Worker: a small router, `GET /api/health`, JSON helpers, tests in the real `workerd` runtime (4 tests). PWA: Vite 8 + React 19 shell, phone-first base styles with dark mode (1 test). Versions: TypeScript 6.0 (typescript-eslint supports < 6.1), Vitest 4.1 (required by `@cloudflare/vitest-pool-workers` 0.22). The Worker's `compatibility_date` is 2026-08-20, because the test runtime supports dates up to 2026-08-22.
 
-### R1-T03: Key scan and CI ⬚
+### R1-T03: Key scan and CI ✅
 **Type:** infra | **Effort:** S | **Depends on:** R1-T02 | **Priority:** high
 
 #### What to Build
 `scripts/check-bundle-secrets.mjs` scans built files: fail on the key value (from `AZURE_SPEECH_KEY` if set), on the name `AZURE_SPEECH_KEY`, and, outside the Azure SDK chunk, on `fromSubscription` or `Ocp-Apim-Subscription-Key`. GitHub Actions CI: install, typecheck, lint, test, build, key scan.
 
 #### Acceptance Criteria
-- [ ] The scan fails on each forbidden pattern and passes on a clean bundle
-- [ ] CI runs on every push
+- [x] The scan fails on each forbidden pattern and passes on a clean bundle
+- [x] CI runs on every push
 
 #### Testing Requirements (TDD — write these FIRST)
 - KeyScan_KeyValueInBundle_Fails · KeyScan_EnvNameInBundle_Fails · KeyScan_SubscriptionHeaderInAppChunk_Fails · KeyScan_SubscriptionHeaderInSdkChunk_Passes · KeyScan_CleanBundle_Passes
+
+**Completed (2026-09-25):** `tools/key-scan` (pure `scanFiles` + CLI `run`, 12 tests, runs on Node's built-in type stripping). Rules: key value (when `AZURE_SPEECH_KEY` is set; never printed), env name, subscription header (case-insensitive) and `fromSubscription` outside the `azure-speech-sdk-*` chunk. Exit 2 when the build folder is missing, so CI cannot pass a scan that did not run. `npm run scan:keys` scans `apps/pwa/dist`. CI (`.github/workflows/ci.yml`): npm 11, `npm ci`, typecheck, lint, test, build, key scan. **Note for R1-T07:** the PWA build must put the Azure SDK in a chunk named `azure-speech-sdk-*`.
 
 ### R1-T04: Worker API — health, pairing, speech token ⬚
 **Type:** backend | **Effort:** M | **Depends on:** R1-T02 | **Priority:** high
