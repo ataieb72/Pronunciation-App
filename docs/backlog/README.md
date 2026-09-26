@@ -1,24 +1,29 @@
-# Pronunciation Coach — Backlog Dashboard
+# Pronunciation Coach v2 — Backlog Dashboard
 
-**Updated:** 2026-07-07 · **Build order:** F1 → F2 → F3 → {F4, F5} → F6
-**F1 Scaffold:** ✅ Fully complete (T01 monorepo + T02 SQLite migrations + T03 Health) — TDD throughout
+**Updated:** 2026-09-26 · **Plan:** `docs/redesign/elocution-focus.md` §9 (Option B, elocution-first) · **v1 backlog:** `docs/archive/v1/backlog/`
 
-| Epic | Tasks | ⬚ Ready | 🚫 Blocked | 🔄 In progress | ✅ Done |
-|------|-------|---------|-----------|----------------|---------|
-| F1 Scaffold | 3 | 0 | 0 | 0 | 3 |
-| F2 Recording | 3 | 0 | 0 | 0 | 3 |
-| F3 Azure integration | 3 | 0 | 0 | 0 | 3 |
-| F4 Feedback UI | 3 | 0 | 0 | 0 | 3 |
-| F5 Language packs | 4 | 0 | 0 | 0 | 4 |
-| F6 Drills + progress | 4 | 0 | 0 | 0 | 4 |
-| **Total** | **20** | **2** | **18** | **0** | **0** |
+Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked. Tasks are named `R{n}-T{NN}`. One task in progress at a time.
 
-**F6 Complete ✅** (drills + progress) | All done!
+| Epic | Goal | Tasks | Status |
+|------|------|-------|--------|
+| [R1](epics/R1-reset-and-phone-test.md) Reset and phone test | Clean v2 workspace; app on GitHub Pages with the Azure key typed on the phone (ADR 002); go/no-go on the Pixel | 7 (5 ✅, 2 waiting on the owner) | 🔄 |
+| [R2](epics/R2-to-R11-outline.md#r2) Audio core + clarity signals | Reliable recording; level, fade, pauses, rate, pitch on the phone, checked against Praat | — | ⬚ |
+| [R3](epics/R2-to-R11-outline.md#r3) Clarity core | **Slice 1:** baselines, clear-speech pairs, block summaries, 5/10-min sessions, both languages, no cloud scoring | — | ⬚ |
+| [R4](epics/R2-to-R11-outline.md#r4) Machine listener in noise | Café noise, personal noise level, Azure speech-to-text, "They heard…" | — | ⬚ |
+| [R5](epics/R2-to-R11-outline.md#r5) Check recording and backup | Progress Check flow; encrypted backup file | — | ⬚ |
+| [R6](epics/R2-to-R11-outline.md#r6) Short talk | Everyday talk rounds; fade and drop measures | — | ⬚ |
+| [R7](epics/R2-to-R11-outline.md#r7) English sound support | Stress, vowel pairs, English word endings | — | ⬚ |
+| [R8](epics/R2-to-R11-outline.md#r8) Trust levels and validation | Measures earn trust before they give hints | — | ⬚ |
+| [R9](epics/R2-to-R11-outline.md#r9) Check analysis and Progress | Honest progress with ranges | — | ⬚ |
+| [R10](epics/R2-to-R11-outline.md#r10) Panel and habit tools | Listener panel; weekly voice note; if-then plans | — | ⬚ |
+| [R11](epics/R2-to-R11-outline.md#r11) Experiments (optional) | Camera jaw/lip feedback; pitch line; vendor pilot | — | ⬚ |
 
-**Per-epic acceptance tests** (run after an epic completes):
-- F1: `npm run dev` serves both; /api/health ok
-- F2: record → playback works; WAV on disk + attempts row
-- F3: live sentence returns real phoneme scores; TTS cached
-- F4: weak phonemes highlighted; articulation panel shows rate/pauses
-- F5: both languages, three tracks selectable; content audits pass
-- F6: drills target lowest phonemes; ladder advances only at ≥85; charts render
+**Order:** R1 → R2 → R3 (first practice slice) → R4 → R5 → R6 → R7 → R8 → R9 → R10 → R11. Each epic's tasks are detailed when it starts.
+
+**Owner actions outstanding:**
+- ~~Rotate the Azure key~~ — not needed: Microsoft deleted the old subscription on 2026-09-11, so the v1 key is dead.
+- Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
+- ~~Create a Free F0 Speech resource~~ — done (2026-09-26). Budget alert: done (2026-09-25).
+- Switch on GitHub Pages and merge v2 into `master` (`docs/deployment-guide.md` Part 2).
+- Install the app on the Pixel and paste the Azure key (`docs/deployment-guide.md` Part 3). Then run the phone test.
+- ~~Cloudflare account, API token, GitHub secrets~~ — not needed since ADR 002 (2026-09-26).

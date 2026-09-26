@@ -1,103 +1,42 @@
-# Coding Standards — Pronunciation Coach
+# Coding Standards — Pronunciation Coach v2
 
-Follow these standards for every code change.
+Follow these standards for every code change. Project rules live in `CLAUDE.md`.
 
 ## Test-Driven Development (MANDATORY)
 
-**Red → Green → Refactor** for every non-trivial change.
+**Red → Green → Refactor** for every non-trivial change. Write the failing test first.
 
-Order of testing priority:
-1. Pure functions / drill engines / WAV conversion utilities (unit tests with fixtures)
-2. Server services and Azure proxy logic (unit + integration with SDK mocked)
-3. API endpoints (integration tests)
-4. Frontend hooks, audio recording logic, and state (Vitest + Testing Library)
-5. UI components (render + user-event interactions)
-
-Write the failing test(s) **first**. Commit only after tests pass and docs are updated.
+Testing priority:
+1. Pure TypeScript in `packages/dsp` (audio) and `packages/core` (domain): synthetic signals, fake clocks, property tests.
+2. Scorer adapters: recorded Azure JSON fixtures; live calls only in `npm run test:live`, never in CI.
+3. PWA hooks and components: Vitest + React Testing Library.
 
 ## Pre-Commit Verification (MANDATORY)
 
-Run from project root before every commit:
-
-```powershell
-npm run build && npm run lint && npm test
+```bash
+npm run typecheck && npm run lint && npm test && npm run build && npm run scan:keys
 ```
 
-For any UI or recording flow change:
-- `npm run dev`
-- Manual smoke test in browser (record → score → feedback)
+Lint warnings are errors. For audio or UI changes, also check on the phone (or Chrome with a fake microphone).
 
-Treat lint warnings as errors.
+## Conventions
 
-## Technology Conventions
+### Workspace
+- npm 11 workspaces: `apps/pwa`, `packages/dsp`, `packages/core`, `tools/key-scan`. No server (`docs/adr/002-no-server.md`).
+- TypeScript strict mode everywhere. No `any`; for SDK interop, narrow with a typed wrapper.
 
-### Monorepo & Tooling
-- Root `package.json` uses npm workspaces for `client` and `server`.
-- Shared scripts at root when possible (concurrently for dev).
-- TypeScript strict mode everywhere. No `any` except for Azure SDK interop (then `// @ts-expect-error` with comment).
+### PWA (`apps/pwa`)
+- Functional components + hooks. Local state, context where needed. No global store until needed.
+- Pages use the URL hash (`#/spike`); GitHub Pages has no deep-link fallback. Paths to public files use `import.meta.env.BASE_URL`.
+- Every outbound call has a timeout.
+- Audio code lives in `packages/dsp`; the PWA only wires it to browser APIs.
 
-### Backend (server/)
-- Thin Express routes → dedicated service modules.
-- Use `better-sqlite3` with prepared statements.
-- All I/O is async.
-- Environment config loaded once at startup; fail fast and loudly if required vars missing.
-- Audio files stored under `server/audio/...`; never commit audio.
-- Never expose raw DB rows to API — always map to DTOs.
+### Audio & Azure
+- Audio is uncompressed 16 kHz mono PCM. Mic auto-gain, noise suppression and echo cancellation are requested off; the applied settings are stored.
+- The Azure key comes only from `azureSettings` (typed by the owner on the phone). Never put a key in code, config, tests with real values, logs or error messages. Never widen the content security policy in `apps/pwa/vite.config.ts` beyond the app and Azure Speech.
+- Azure SDK results: compare reasons with SDK enums; wrap callback APIs correctly; set timeouts.
+- Every score stores provider, locale, SDK version, era and device.
 
-### Frontend (client/)
-- Functional components + hooks only.
-- Centralized API client in `client/src/lib/api.ts` (or equivalent).
-- Audio handling isolated in small, well-tested utilities.
-- State: local React state + context where needed. No heavy global store for v1.
-- Prefer native browser APIs; polyfills only when justified.
-
-### Audio & Azure Specific
-- WAV conversion (sample rate, bit depth, mono, header) must have golden file tests.
-- All Azure calls happen on the server. Client never receives the speech key.
-- Reference texts and exercise data live in language packs under `client/src/languages/{locale}/`.
-- Keep TTS cache logic deterministic (content-addressed).
-
-### Database & Schema
-- Use migrations (numbered SQL files + schema_version table).
-- Every table has `created_at`, `updated_at`.
-- Indexes on foreign keys and common query columns (phoneme, exercise_id, date).
-
-## Git & Branching
-
-- Branch naming: `feature/f1-scaffold`, `fix/wav-conversion`, etc.
-- Commits follow Conventional Commits: `feat(server): add health endpoint`, `test(client): golden wav fixtures`.
-- One logical change per commit.
-- Update the relevant epic file status (`⬚` → `🔄` → `✅`) and backlog dashboard when work progresses.
-
-## Security & Secrets
-
-- `AZURE_SPEECH_KEY` and any secrets **only** in `.env` (server-side).
-- `.env`, `server/data/`, `server/audio/` are gitignored.
-- No PII logging.
-- Validate all user input at API boundary.
-- Audio is personal only; no upload to third parties except Azure for the current request.
-
-## Documentation Updates (with the code)
-
-When you change behavior or structure, update in the same PR/commit:
-
-- API surface → `docs/api-reference.md`
-- Schema → `docs/database-schema.md`
-- New setup or scripts → `docs/developer-guide.md`
-- User visible → `docs/user-guide.md`
-- Architecture decisions → `docs/adr/` + technical-design
-- Backlog tasks → mark in the epic + update `docs/backlog/README.md`
-
-## Style Notes
-
-- Clear, readable code over clever.
-- Small focused functions.
-- Error messages should be actionable for a solo developer.
-- When in doubt, add a test and a short comment explaining "why".
-
-## When to Use Agent Smith Skills
-
-- Before implementing: review backlog epic and technical-design.
-- For new major feature: consider spec-agent.
-- Hard bug or test gap: use debugging skill.
-- After significant work: run review + audit skills.
+### Evidence
+- User-facing claims and feedback rules must match `docs/research/` and `docs/redesign/elocution-focus.md`.
+- Do not add tongue twisters, speed drills, non-speech mouth exercises, streaks, or a single "clarity score".

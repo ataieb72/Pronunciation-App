@@ -1,45 +1,29 @@
-# Pronunciation Coach — Database Schema (SQLite)
+# Pronunciation Coach v2 — Data Model
 
-Single file `server/data/app.db`, accessed via better-sqlite3. Migrations = numbered SQL files in `server/migrations/`, applied at startup, tracked in `schema_version`.
+Everything lives on the phone (`docs/adr/002-no-server.md`). There is no server database. The Cloudflare D1 tables built in R1-T04 were removed with the Worker (commit `8fd3a99` holds them).
 
-## attempts
-| Column | Type | Notes |
-|--------|------|-------|
-| id | INTEGER PK AUTOINCREMENT | |
-| language | TEXT | 'fr-FR' or 'en-US' |
-| exercise_id | TEXT | matches language-pack exercise id |
-| audio_path | TEXT | relative path under server/audio/ |
-| overall_score | REAL | Azure PronScore (null until assessed) |
-| accuracy_score | REAL | |
-| fluency_score | REAL | |
-| prosody_score | REAL | nullable (not all locales/modes) |
-| phoneme_json | TEXT | full Azure result JSON |
-| tempo_tier | INTEGER | null unless speed-ladder attempt (0 slow, 1 normal, 2 fast) |
-| created_at | TEXT | ISO 8601 |
+## 1. localStorage (phone) ✅
 
-Indexes: (language, created_at), (exercise_id).
+| Key | Value | Written by |
+|---|---|---|
+| `pc.azure` | `{"key": "<Azure key>", "region": "<region>"}`. Checked on read: key 32–128 letters and digits, region `^[a-z0-9]{2,32}$` | "Connect to Azure" screen (R1) |
+| `pc.spike.attempts` | Phone test attempts (throwaway, R1-T07) | Phone test page |
 
-## phoneme_stats
-| Column | Type | Notes |
-|--------|------|-------|
-| language | TEXT | |
-| phoneme | TEXT | Azure phoneme label |
-| avg_score | REAL | rolling average |
-| attempt_count | INTEGER | |
-| updated_at | TEXT | |
+Clearing Chrome's site data for the app removes both.
 
-PK (language, phoneme). Updated in the same transaction as the attempt row: new_avg = (avg_score*attempt_count + score) / (attempt_count+1).
+## 2. IndexedDB (phone, through Dexie) — planned
 
-## ladder_progress
-| Column | Type | Notes |
-|--------|------|-------|
-| exercise_id | TEXT | |
-| language | TEXT | |
-| tier | INTEGER | current tier 0–2 |
-| best_score_at_tier | REAL | |
-| updated_at | TEXT | |
+Adapted from `docs/redesign/design-options.md` §6.11 for the elocution focus.
 
-PK (exercise_id, language). Tier increments only when an attempt at the current tier scores accuracy ≥85.
+| Store | Key fields | Epic |
+|---|---|---|
+| `profile` | languages split, weekly target, if-then plan, reminder, French variety | R3 |
+| `sessions` | id, start, end, length, language, stages done, counts toward target | R3 |
+| `takes` | id, session id, item id, kind (usual / clear / talk round / check), audio id, quality results, applied mic settings, clarity measures, scorer provenance, self-judgement, dispute | R3 |
+| `audio` | id, WAV blob, kind (practice / check / anchor / baseline), keep-until, starred | R3 |
+| `summaries` | block summaries shown, features changed / not changed, cue chosen | R3 |
+| `checks` | id, week, parts done, audio ids, results per era | R5 |
+| `eras` | id, start, reason (model update / new phone / drift), SDK version | R4 |
+| `backups` | last backup file made: date, size, parts | R5 |
 
-## schema_version
-Single row: version INTEGER.
+Retention: practice audio 30 days unless starred or disputed; baseline, Check and anchor audio kept for good.

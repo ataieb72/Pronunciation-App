@@ -1,59 +1,39 @@
-# Pronunciation Coach
+# Pronunciation Coach v2
 
-Single-user web application to improve **pronunciation** (phoneme-level accuracy) and **articulation** (clarity, pacing, rhythm, stress) for French and English.
+A single-user phone app that trains **articulation and elocution** in French and English. It targets **mumbling** in everyday talk.
 
-Record your speech → receive detailed Azure-powered feedback (per-phoneme + prosody) → practice targeted drills and speed ladders → track progress over time.
+Each session practises three things, in both languages:
+- **Clear-speech pairs:** say a sentence your usual way, then "big and clear" (open the jaw, full vowels, finish every ending). Judge the pair yourself; the app summarises what changed.
+- **A machine listener in noise:** the phone mixes café noise into your take, and speech recognition shows what it heard.
+- **Short everyday talks:** 45–60 seconds, 2–3 rounds.
 
-## Quick Start
+Progress comes from Progress Checks every 4 weeks, on habitual speech, compared with your own baseline. The methods and their limits come from a source-checked literature review in `docs/research/`.
 
-```powershell
-npm install
+## Status
 
-# 1. Set up environment (required for server)
-copy .env.example .env
-# Edit .env and provide your Azure Speech key + region
+v2 rewrite in progress. Current epic: **R1 — Reset and phone test** (`docs/backlog/`). The v1 code was removed; git history keeps it at commit `20b075a`.
 
-npm run dev
-```
+To install it on your phone, follow `docs/deployment-guide.md`.
 
-- Client (Vite): http://localhost:5173
-- Server (Express): http://localhost:3001
+## Stack
 
-**Important:** The server will exit with a clear error until `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are set.
+Installable web app (React, TypeScript, Vite) on GitHub Pages, with no server · Azure Speech through the browser SDK, with a key you type once on the phone · speech measures computed on the phone · IndexedDB storage. See `docs/technical-design.md` and `docs/adr/002-no-server.md`.
 
-See `docs/prd.md` for full product requirements.
+## Start here
 
-## Available Commands
+| Doc | What |
+|-----|------|
+| `CLAUDE.md` | Project rules, commands, pre-commit checks |
+| `docs/prd.md` | What and why |
+| `docs/product-design.md` | Screens and session |
+| `docs/technical-design.md` | Architecture |
+| `docs/backlog/README.md` | Task status |
+| `docs/redesign/elocution-focus.md` | The accepted plan and its evidence |
+| `docs/research/` | The evidence base |
 
-| Command       | Description                     |
-|---------------|---------------------------------|
-| `npm run dev` | Start client + server (concurrently) |
-| `npm run build` | Build both workspaces         |
-| `npm test`    | Run all tests (client + server) |
-| `npm run lint` | Lint / type-check             |
+## Health note
 
-See `scripts/session-bootstrap.ps1` for session start.
-
-## Project Structure (planned)
-
-```
-/client          # React + Vite frontend
-/server          # Node + Express backend + SQLite
-/docs            # All project documentation + backlog
-/scripts         # session-bootstrap.ps1 etc.
-```
-
-## Documentation
-
-Start here:
-- `docs/backlog/README.md` — current task status
-- `docs/prd.md` — what we're building and why
-- `docs/technical-design.md` — architecture
-- `.github/copilot-instructions.md` — agent workflow rules
-
-## Onboarding Status
-
-✅ Onboarded with Agent Smith workflow (copilot-instructions, coding standards, bootstrap scripts, docs structure).
+The app trains a speaking habit. It cannot tell a habit from a medical cause. If heaviness in the tongue or lips is new, getting worse, or comes with other changes (slurred speech, trouble swallowing, drooling, facial weakness), see a doctor first.
 
 ## License
 

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm 10.9 fails on Vitest 4 peer dependencies (see docs/adr/001-v2-rewrite.md).
+      - name: Use npm 11
+        run: npm install -g npm@11.20.0
+
+      - name: Install
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # The key never goes to GitHub (ADR 002), so CI checks the name and header rules.
+      # To check the value too, run the scan locally with AZURE_SPEECH_KEY set in your shell.
+      - name: Key scan
+        run: npm run scan:keys

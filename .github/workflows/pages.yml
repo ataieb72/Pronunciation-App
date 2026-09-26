@@ -1,0 +1,77 @@
+name: Deploy to GitHub Pages
+
+# ADR 002: the app is static files on GitHub Pages. No server, no secrets.
+# Every push to master deploys; "Run workflow" on the Actions tab deploys again by hand.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; never cancel one halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm 10.9 fails on Vitest 4 peer dependencies (see docs/adr/001-v2-rewrite.md).
+      - name: Use npm 11
+        run: npm install -g npm@11.20.0
+
+      - name: Install
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      # Fails with a clear message if Pages is not switched on (docs/deployment-guide.md, Part 2).
+      - name: Set up Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        run: npm run build
+        env:
+          # The app lives at https://<owner>.github.io/<repository>/, so its paths need that folder.
+          PC_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - name: Key scan
+        run: npm run scan:keys
+
+      - name: Upload the app
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/pwa/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

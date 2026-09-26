@@ -3,13 +3,13 @@
 > Master configuration for the Agent Smith dev workflow. The agent reads this each session.
 
 ## Project Overview
-- **Name:** Pronunciation Coach
-- **Description:** Single-user web app to improve pronunciation (phoneme accuracy) AND articulation (clarity, pacing, stress) in French and English. Record → Azure phoneme/prosody scoring → targeted drills → speed ladders → progress tracking. See `docs/prd.md`.
-- **Stage:** Greenfield — docs and backlog pre-authored (epics F1–F6); no code yet
-- **Platform:** Web (desktop browser first, Chrome/Edge for MediaRecorder reliability)
-- **Stack:** React + Vite (client), Node.js + Express (server), SQLite via better-sqlite3
-- **Cloud / hosting:** None for v1 — runs locally. External API: Azure Speech (Pronunciation Assessment + Neural TTS)
-- **Auth strategy:** No accounts — single user, all data local
+- **Name:** Pronunciation Coach (v2)
+- **Description:** Single-user phone app that trains **articulation and elocution** in French and English, aimed at the owner's main problem: **mumbling** in everyday talk. Core practice: clear-speech pairs (usual → "big and clear"), a machine listener in noise, and short everyday talks, measured against the owner's own baseline. See `docs/prd.md`.
+- **Stage:** v2 rewrite in progress (epic R1). v1 is retired (`docs/adr/001-v2-rewrite.md`, docs in `docs/archive/v1/`). The v1 code was deleted on 2026-09-25; commit `20b075a` holds it in git history. The Cloudflare Worker was removed on 2026-09-26 (`docs/adr/002-no-server.md`); commit `8fd3a99` holds it.
+- **Platform:** Installable web app (PWA), phone-first. Target device: Pixel 10 Pro XL, Android Chrome.
+- **Stack:** React + TypeScript + Vite (PWA) · static hosting on GitHub Pages, no server · Azure Speech via the browser JS SDK, with the key the owner types on the phone · on-phone DSP in TypeScript · IndexedDB via Dexie
+- **Cloud / hosting:** GitHub Pages (free; the repository must stay public on the free GitHub plan). External API: Azure Speech on the **Free F0** tier (speech-to-text and pronunciation assessment).
+- **Auth strategy:** No accounts and no server. The owner types the Azure key and region once on the phone; they stay in that browser's storage and go only to Azure.
 - **Team:** Solo (minimal ceremony, but keep docs + backlog current)
 
 ## Working Style
@@ -17,14 +17,19 @@
 - Test-Driven Development (TDD) is the default: Red → Green → Refactor.
 - Update documentation in the same change as the code it describes.
 - One task in progress at a time (solo cadence).
+- Every product claim carries its evidence label from `docs/research/` ([Strong] / [Moderate] / [Weak] / [Mixed] / [None found]). Never present weak evidence as strong.
 
 ## Build & Test Commands
-From the project root (monorepo: `/client`, `/server`):
-- Install deps: `npm install` (root workspace installs both)
-- Dev (both): `npm run dev`
-- Lint: `npm run lint` (must be clean)
-- Tests: `npm test` (Vitest client, node:test or Vitest server)
-- Env: copy `.env.example` → `.env`, set `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`
+From the project root (npm workspaces: `apps/*`, `packages/*`, `tools/*`). Node ≥ 22.18 (the key scan runs TypeScript through Node's type stripping). **Use npm 11** (`packageManager` is pinned; npm 10.9 fails on Vitest 4 peer dependencies). If the system npm is older, prefix commands with `npx -y npm@11`.
+- Install deps: `npm install`
+- Dev: `npm run dev` (PWA dev server). To test a build under the Pages folder: `PC_BASE_PATH=/Pronunciation-App/ npm run build`, then `npx vite preview` in `apps/pwa` with the same variable.
+- Type check: `npm run typecheck`
+- Lint: `npm run lint` (warnings are errors)
+- Tests: `npm test` (Vitest in every workspace)
+- Build: `npm run build`
+- Key scan: `npm run scan:keys` (after build)
+- Secrets: none in the repository, the build or GitHub. The Azure key is typed on the phone at run time. To let the key scan check the value too, set `AZURE_SPEECH_KEY` in your local shell only. See `docs/deployment-guide.md`.
+- Deploy: every push to `master` publishes to GitHub Pages (`.github/workflows/pages.yml`).
 
 ## Documentation Strategy
 All project knowledge lives in `docs/`:
@@ -32,22 +37,28 @@ All project knowledge lives in `docs/`:
 | Doc | Purpose |
 |-----|---------|
 | `docs/prd.md` | Product Requirements (what & why) |
-| `docs/product-design.md` | UX/UI specification |
+| `docs/product-design.md` | Screens, session, feedback rules |
 | `docs/technical-design.md` | Architecture & implementation |
-| `docs/api-reference.md` | API documentation |
-| `docs/database-schema.md` | Data model |
-| `docs/backlog/` | Task tracking (dashboard + epics F1–F6) |
+| `docs/database-schema.md` | Phone storage (localStorage and IndexedDB) |
+| `docs/deployment-guide.md` | Azure setup, GitHub Pages deploy, phone install |
+| `docs/backlog/` | Task tracking (dashboard + epics R1–R11) |
+| `docs/adr/` | Architecture decision records |
+| `docs/research/` | Evidence base (literature review, learner profile, mumbling note) |
+| `docs/redesign/` | v2 design options and the owner's accepted revision |
+| `docs/validation/` | Validation reports on the owner's voice and phone |
+| `docs/archive/v1/` | Retired v1 docs (read-only) |
+| `docs/archive/worker/` | Retired Worker API reference (read-only, ADR 002) |
 
 ## Pre-Commit Verification
-1. Build succeeds (zero errors).
-2. Lint clean (warnings treated as errors).
-3. All tests pass.
-4. Manual check for UI changes (run the app in the browser).
-5. Relevant docs updated.
-6. `AZURE_SPEECH_KEY` never appears in client code or client bundles.
+1. `npm run typecheck` and `npm run build` succeed (zero errors).
+2. `npm run lint` clean (warnings treated as errors).
+3. `npm test` passes.
+4. `npm run scan:keys` passes: the Azure key and the name `AZURE_SPEECH_KEY` never appear in client code or bundles. The key reaches the app only when the owner types it on the phone.
+5. For audio or UI changes: check on the Pixel (or Chrome with a fake mic) and note it in the task.
+6. Relevant docs updated.
 
 ## Backlog Conventions
-- Epics: `docs/backlog/epics/F{n}-*.md`; tasks `F{n}-T{NN}`.
+- Epics: `docs/backlog/epics/R{n}-*.md`; tasks `R{n}-T{NN}`.
 - Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
-- Dependency order: F1 → F2 → F3 → {F4, F5} → F6.
-- After completing a task, run the unblock check and update `docs/backlog/README.md`.
+- Order: R1 → R2 → R3 (first practice slice) → R4 → … → R11.
+- After completing a task, update the epic file and `docs/backlog/README.md`.
