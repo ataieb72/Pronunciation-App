@@ -101,7 +101,7 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 **Changed (2026-09-26, ADR 002):** `apps/worker`, `tools/deploy` (18 tests) and `deploy.yml` are removed. `.github/workflows/pages.yml` runs on every push to `master` (and by hand): type check, lint, tests, build with `PC_BASE_PATH` from `actions/configure-pages`, key scan, then publish `apps/pwa/dist`. The build sets the manifest scope, service worker and worklet path to `/Pronunciation-App/`, and adds a content security policy (meta tag; scripts only from the app; network only to the app and Azure Speech). CI no longer reads an `AZURE_SPEECH_KEY` secret. Guide rewritten: 3 parts, about 15 minutes, no Cloudflare. ~~**Remaining:** the owner switches on Pages and merges the branch into `master`~~ — done 2026-09-26. **Remaining:** the install check on the Pixel.
 
-### R1-T07: Phone test spike (throwaway) 🔄 (built; waiting for the phone run)
+### R1-T07: Phone test spike (throwaway) 🔄 (run 1 partial; waiting for the full run)
 **Type:** spike | **Effort:** M | **Depends on:** R1-T06 | **Priority:** high
 
 #### What to Build
