@@ -11,9 +11,38 @@ Everything lives on the phone (`docs/adr/002-no-server.md`). There is no server 
 
 Clearing Chrome's site data for the app removes both.
 
-## 2. IndexedDB (phone, through Dexie) — planned
+## 2. IndexedDB (phone, through Dexie)
 
-Adapted from `docs/redesign/design-options.md` §6.11 for the elocution focus.
+Database `pronunciation-coach`, version 1 (`apps/pwa/src/audio/takeStore.ts`). The first save asks the browser to keep the data (`navigator.storage.persist()`).
+
+### takes ✅ (R2, first fields)
+| Field | Notes |
+|---|---|
+| id | auto-increment key |
+| createdAt | ISO time (indexed) |
+| kind | `word` / `sentence` / `talk` (indexed) |
+| stopReason | `silence` (stopped by itself after speech), `cap`, `manual` |
+| durationS, sampleRate | kept audio: 16 kHz mono |
+| startOffsetS | silence dropped before the 300 ms pre-roll |
+| speech | speech stretches from the detector, relative to the kept audio |
+| noiseFloorDb | the detector's room noise level (dBFS) |
+| audioId | row in `audio` |
+| mic | label, requested and applied settings, capabilities, context sample rate |
+| device | the browser's user agent |
+| language, prompt | the prompt's language and text, when there was one (R2-T07) |
+| readings | quality verdict and test readings: level, pitch, pauses, syllables, rate, fade (R2-T07) |
+
+### audio ✅ (R2)
+| Field | Notes |
+|---|---|
+| id | auto-increment key |
+| kind | `practice` for now |
+| createdAt | ISO time |
+| wav | 16-bit mono PCM WAV, as an ArrayBuffer |
+
+### Planned stores and fields
+
+Adapted from `docs/redesign/design-options.md` §6.11 for the elocution focus. The fields planned for `takes` and `audio` below come in later epics.
 
 | Store | Key fields | Epic |
 |---|---|---|

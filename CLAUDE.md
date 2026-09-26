@@ -28,6 +28,7 @@ From the project root (npm workspaces: `apps/*`, `packages/*`, `tools/*`). Node 
 - Tests: `npm test` (Vitest in every workspace)
 - Build: `npm run build`
 - Key scan: `npm run scan:keys` (after build)
+- Praat golden fixtures: `python3 packages/dsp/golden/make_golden.py` (needs espeak-ng 1.51 and `packages/dsp/golden/requirements.txt`; outputs are committed; see its README)
 - Secrets: none in the repository, the build or GitHub. The Azure key is typed on the phone at run time. To let the key scan check the value too, set `AZURE_SPEECH_KEY` in your local shell only. See `docs/deployment-guide.md`.
 - Deploy: every push to `master` publishes to GitHub Pages (`.github/workflows/pages.yml`).
 

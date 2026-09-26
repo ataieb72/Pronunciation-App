@@ -3,6 +3,8 @@
 Each epic gets its own file with full tasks (What to Build, Acceptance Criteria, TDD tests, Docs) when it starts. Source: `docs/redesign/elocution-focus.md` §9 and `docs/redesign/design-options.md` §6.16–6.17.
 
 ## R2
+Detailed in [R2-audio-core.md](R2-audio-core.md) (started 2026-09-26).
+
 **Audio core + clarity signals.** AudioWorklet capture; resampler and WAV encoder; VAD; quality gate; locked mic settings with applied-settings record; distance check; one AudioContext per session; interruption handling; IndexedDB audio store with `storage.persist()`. Measures: relative level, fade at phrase ends, articulation rate, pauses, pitch range in semitones — checked against Praat on golden fixtures (V1, V3, V7).
 
 ## R3

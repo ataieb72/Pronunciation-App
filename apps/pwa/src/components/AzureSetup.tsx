@@ -52,9 +52,6 @@ export function AzureSetup() {
           Key ending in {maskKey(saved.key)} · region {saved.region}
         </p>
         <p>The key stays on this phone. The app sends it only to Azure.</p>
-        <p>
-          <a href="#/spike">Run the phone test</a>
-        </p>
         <button type="button" className="secondary" onClick={onRemove}>
           Remove the key from this phone
         </button>

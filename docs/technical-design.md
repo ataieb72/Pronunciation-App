@@ -25,14 +25,15 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 - **No server** (`docs/adr/002-no-server.md`). GitHub Pages serves static files over HTTPS. The service worker caches them, so the app opens offline.
 - **The owner types the Azure key and region once on the phone.** They stay in `localStorage` on that phone. The SDK sends the key only to Azure (`SpeechConfig.fromSubscription`).
 - **Phone-side measures** run in TypeScript, so they work offline and cost nothing.
-- **Pages use the URL hash** (`#/spike`), because GitHub Pages has no fallback for deep links.
+- **Pages use the URL hash** (`#/record`), because GitHub Pages has no fallback for deep links.
 
 ## 2. Workspace
 
 | Path | What | Added in |
 |---|---|---|
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
-| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
+| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures, voice activity detection (streaming), quality gate, FFT, Praat-style pitch tracker, intensity, silences, syllable nuclei, pauses, articulation rate, speech level and fade at phrase ends (all checked against Praat) | R1, R2 |
+| `packages/dsp/golden` | Praat reference: synthetic EN/FR test recordings (espeak-ng) and the values Praat measures on them (Parselmouth). Python, run by hand; outputs are committed | R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
 
@@ -41,14 +42,15 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 - Vitest 4.1 in every workspace.
 - The build reads `PC_BASE_PATH` for the app's folder (`/Pronunciation-App/` on GitHub Pages; `/` by default). The manifest's `start_url` and `scope`, the service worker and the worklet path follow it.
 
-## 3. Audio pipeline (R2; a throwaway version in the R1 spike)
+## 3. Audio pipeline (R2; code in `apps/pwa/src/audio/`)
 
-1. One AudioContext and one mic stream per session. Request `autoGainControl`, `noiseSuppression` and `echoCancellation` off; store the settings the phone actually applied.
-2. An AudioWorklet posts frames; the app resamples to 16 kHz mono 16-bit PCM and keeps a 300 ms pre-roll.
-3. VAD stops a take 0.8 s after speech ends. Caps: words 8 s, sentences 15 s, talk rounds 60 s.
-4. Quality gate: clipping > 0.1%, peak < −35 dBFS, SNR < ~15 dB, or speech < 250 ms → retake. Test V3 tunes the thresholds.
-5. WAV to IndexedDB with metadata (device, browser, applied settings, noise level, SNR).
-6. Close tracks and the AudioContext at the end of the session.
+1. One AudioContext and one mic stream per session (`microphone.ts`). Request `autoGainControl`, `noiseSuppression` and `echoCancellation` off; store the settings the phone actually applied.
+2. An AudioWorklet posts batches of 1024 samples at the mic's rate. The speech detector runs on them directly, on the main thread (it needs only 10 ms frame energies). When the take ends, the app keeps the audio from 300 ms before the first speech and resamples it once to 16 kHz mono (`takeRecorder.ts`).
+3. The detector stops a take 0.8 s after speech ends (4 s for talk rounds, where thinking pauses are normal). Caps: words 8 s, sentences 15 s, talk rounds 60 s. A sound held steady for more than about 3 s counts as background, because the detector follows the room's level; real speech dips between syllables. `takeController.ts` keeps the screen awake while recording and discards the take if the page is hidden.
+4. After a take, `record/analysis.worker.ts` (a Web Worker, so the screen stays responsive) runs the quality gate and the measures from `packages/dsp`; the take and its readings go to IndexedDB.
+5. Quality gate: clipping > 0.1%, peak < −35 dBFS, SNR < ~15 dB, or speech < 250 ms → retake. Test V3 tunes the thresholds.
+6. WAV to IndexedDB with metadata (device, browser, applied settings, noise level, SNR).
+7. Close tracks and the AudioContext when the screen closes.
 
 ## 4. Scoring and measures
 
@@ -70,14 +72,14 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 - **Content security policy** (a meta tag, added in builds only): scripts, styles and images only from the app itself; network only to the app and Azure Speech (`*.api.cognitive.microsoft.com`, `*.stt.speech.microsoft.com`); no plug-ins. This limits where injected code could send the key.
 - **The SDK's timer worker is off** (`PropertyId.WebWorkerLoadType` = `off`). The SDK loads it from a `data:` URL, which the policy blocks; without it, sending stalled after 5 s of audio. The SDK uses the page's timers instead, so keep the page open while a take is scored.
 - **Known limits** (ADR 002): code running in the app can read the key; the Speech SDK puts the key in its WebSocket address (encrypted by WSS); every GitHub Pages project of the same owner shares the origin `https://<owner>.github.io` and its storage.
-- **The key scan** (`tools/key-scan`) fails the build if a client file contains the key value (when `AZURE_SPEECH_KEY` is set in the shell) or the name `AZURE_SPEECH_KEY`, or if app code sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name. App code may call `fromSubscription`: the key arrives at run time.
+- **The key scan** (`tools/key-scan`) fails the build if a client file contains the key value (when `AZURE_SPEECH_KEY` is set in the shell) or the name `AZURE_SPEECH_KEY`, or if app code sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name. Since R2-T07 nothing imports the SDK wrapper (`src/azure/speech.ts`, kept for R4), so the SDK is not in the build at all. App code may call `fromSubscription`: the key arrives at run time.
 
 ## 6. Testing (TDD)
 
 | Layer | How |
 |---|---|
 | PWA | Vitest + jsdom + React Testing Library |
-| `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests |
+| `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests; golden fixtures checked against Praat (`packages/dsp/golden/`) |
 | Key scan | Vitest over fixture bundles |
 | Live Azure | `npm run test:live`, by hand only, never in CI (from R4) |
 | On the phone | A manual checklist on the Pixel for every audio change |

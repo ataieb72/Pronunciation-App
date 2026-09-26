@@ -62,11 +62,10 @@ describe('AzureSetup', () => {
     expect(screen.queryByRole('heading', { name: 'Azure key saved ✓' })).not.toBeInTheDocument();
   });
 
-  it('Setup_SavedEarlier_StartsSavedWithTestLink', () => {
+  it('Setup_SavedEarlier_StartsSaved', () => {
     saveAzureSettings({ key: KEY, region: 'uksouth' });
     render(<AzureSetup />);
     expect(screen.getByRole('heading', { name: 'Azure key saved ✓' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Run the phone test' })).toHaveAttribute('href', '#/spike');
   });
 
   it('Setup_RemoveConfirmed_ClearsKey', async () => {

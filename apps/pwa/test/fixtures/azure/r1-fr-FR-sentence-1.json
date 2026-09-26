@@ -1,0 +1,411 @@
+{
+ "RecognitionStatus": "Success",
+ "Offset": 5200000,
+ "Duration": 19100000,
+ "Channel": 0,
+ "DisplayText": "Le ministre a pris la table du fond.",
+ "SNR": 19.744812,
+ "NBest": [
+  {
+   "Confidence": 0.904423,
+   "Lexical": "Le ministre a pris la table du fond",
+   "ITN": "Le ministre a pris la table du fond",
+   "MaskedITN": "le ministre a pris la table du fond",
+   "Display": "Le ministre a pris la table du fond.",
+   "PronunciationAssessment": {
+    "AccuracyScore": 97,
+    "FluencyScore": 100,
+    "CompletenessScore": 100,
+    "PronScore": 98.2
+   },
+   "Words": [
+    {
+     "Word": "Le",
+     "Offset": 5200000,
+     "Duration": 3100000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 94,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "le",
+       "PronunciationAssessment": {
+        "AccuracyScore": 90
+       },
+       "Offset": 5200000,
+       "Duration": 3100000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 85
+       },
+       "Offset": 5200000,
+       "Duration": 2100000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 7400000,
+       "Duration": 900000
+      }
+     ]
+    },
+    {
+     "Word": "ministre",
+     "Offset": 8400000,
+     "Duration": 4500000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 88,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "mi",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 8400000,
+       "Duration": 1300000
+      },
+      {
+       "Syllable": "",
+       "Grapheme": "nis",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 9800000,
+       "Duration": 1900000
+      },
+      {
+       "Syllable": "",
+       "Grapheme": "tre",
+       "PronunciationAssessment": {
+        "AccuracyScore": 91
+       },
+       "Offset": 11800000,
+       "Duration": 1100000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 8400000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 9000000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 9800000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 10600000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 11400000,
+       "Duration": 300000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 11800000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 73
+       },
+       "Offset": 12600000,
+       "Duration": 300000
+      }
+     ]
+    },
+    {
+     "Word": "a",
+     "Offset": 13000000,
+     "Duration": 1200000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "a",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 13000000,
+       "Duration": 1200000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 13000000,
+       "Duration": 1200000
+      }
+     ]
+    },
+    {
+     "Word": "pris",
+     "Offset": 14300000,
+     "Duration": 2000000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "pris",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 14300000,
+       "Duration": 2000000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 14300000,
+       "Duration": 600000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 15000000,
+       "Duration": 600000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 15700000,
+       "Duration": 600000
+      }
+     ]
+    },
+    {
+     "Word": "la",
+     "Offset": 16400000,
+     "Duration": 1300000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "la",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 16400000,
+       "Duration": 1300000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 16400000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 17000000,
+       "Duration": 700000
+      }
+     ]
+    },
+    {
+     "Word": "table",
+     "Offset": 17800000,
+     "Duration": 3500000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "table",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 17800000,
+       "Duration": 3500000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 17800000,
+       "Duration": 900000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 18800000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 19600000,
+       "Duration": 600000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 20300000,
+       "Duration": 1000000
+      }
+     ]
+    },
+    {
+     "Word": "du",
+     "Offset": 21400000,
+     "Duration": 1200000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 97,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "du",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94
+       },
+       "Offset": 21400000,
+       "Duration": 1200000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 80
+       },
+       "Offset": 21400000,
+       "Duration": 200000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 21700000,
+       "Duration": 600000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 95
+       },
+       "Offset": 22400000,
+       "Duration": 200000
+      }
+     ]
+    },
+    {
+     "Word": "fond",
+     "Offset": 22700000,
+     "Duration": 1600000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None"
+     },
+     "Syllables": [
+      {
+       "Syllable": "",
+       "Grapheme": "fond",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 22700000,
+       "Duration": 1600000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 22700000,
+       "Duration": 1200000
+      },
+      {
+       "Phoneme": "",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 24000000,
+       "Duration": 300000
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

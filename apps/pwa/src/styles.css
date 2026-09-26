@@ -183,12 +183,56 @@ label.inline input {
   margin: 0;
 }
 
-.spike .card {
+.app > .card,
+.record .card {
   margin-bottom: 1rem;
 }
 
-.spike .card button + button {
+.card button + button,
+.card .reference + button,
+.card p + button {
   margin-top: 0.5rem;
+}
+
+.note {
+  border-left: 4px solid var(--accent);
+  padding-left: 0.75rem;
+}
+
+.readings small {
+  color: var(--muted);
+}
+
+.takes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.takes li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+button.small {
+  width: auto;
+  min-height: 2.5rem;
+  padding: 0 0.8rem;
+  font-size: 0.9rem;
+}
+
+.card button.small + button.small {
+  margin-top: 0;
 }
 
 .reference {

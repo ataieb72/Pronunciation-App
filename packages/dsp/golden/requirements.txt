@@ -1,0 +1,3 @@
+# Versions used to make the committed fixtures (Praat 6.1.38 inside Parselmouth 0.4.7). Also needs espeak-ng 1.51.
+praat-parselmouth==0.4.7
+numpy==2.4.6

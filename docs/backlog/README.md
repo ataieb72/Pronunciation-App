@@ -6,8 +6,8 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 
 | Epic | Goal | Tasks | Status |
 |------|------|-------|--------|
-| [R1](epics/R1-reset-and-phone-test.md) Reset and phone test | Clean v2 workspace; app on GitHub Pages with the Azure key typed on the phone (ADR 002); go/no-go on the Pixel | 7 (5 ✅, 2 waiting on the owner) | 🔄 |
-| [R2](epics/R2-to-R11-outline.md#r2) Audio core + clarity signals | Reliable recording; level, fade, pauses, rate, pitch on the phone, checked against Praat | — | ⬚ |
+| [R1](epics/R1-reset-and-phone-test.md) Reset and phone test | Clean v2 workspace; app on GitHub Pages with the Azure key typed on the phone (ADR 002); go/no-go on the Pixel | 7 ✅ | ✅ |
+| [R2](epics/R2-audio-core.md) Audio core + clarity signals | Reliable recording; level, fade, pauses, rate, pitch on the phone, checked against Praat | 8 (T01–T06 ✅; T07 built; T08 waits on the owner) | 🔄 |
 | [R3](epics/R2-to-R11-outline.md#r3) Clarity core | **Slice 1:** baselines, clear-speech pairs, block summaries, 5/10-min sessions, both languages, no cloud scoring | — | ⬚ |
 | [R4](epics/R2-to-R11-outline.md#r4) Machine listener in noise | Café noise, personal noise level, Azure speech-to-text, "They heard…" | — | ⬚ |
 | [R5](epics/R2-to-R11-outline.md#r5) Check recording and backup | Progress Check flow; encrypted backup file | — | ⬚ |
@@ -25,5 +25,5 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 - Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
 - ~~Create a Free F0 Speech resource~~ — done (2026-09-26). Budget alert: done (2026-09-25).
 - ~~Switch on GitHub Pages and merge v2 into `master`~~ — done (2026-09-26); first deploy green.
-- Install the app on the Pixel and paste the Azure key (`docs/deployment-guide.md` Part 3). Then run the phone test.
+- ~~Install the app on the Pixel, paste the Azure key and run the phone test~~ — done (2026-09-26); PWA confirmed.
 - ~~Cloudflare account, API token, GitHub secrets~~ — not needed since ADR 002 (2026-09-26).

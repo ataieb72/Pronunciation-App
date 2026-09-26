@@ -14,7 +14,7 @@ You need two accounts you already have: **Azure** and **GitHub**. The whole setu
 
 ## Part 1 — Azure Speech key (Free F0)
 
-> **Owner's status (2026-09-26):** Parts 1 and 2 done: Free F0 Speech resource created, Pages switched on, v2 merged into `master` ([ataieb72/Pronunciation-App#1](https://github.com/ataieb72/Pronunciation-App/pull/1)), first deploy green. Next: Part 3.
+> **Owner's status (2026-09-26):** all three parts done: Free F0 Speech resource, Pages switched on, v2 merged into `master` ([ataieb72/Pronunciation-App#1](https://github.com/ataieb72/Pronunciation-App/pull/1)), first deploy green, app installed on the Pixel with the key saved.
 
 1. Azure offers the free trial **only once per person**. If you had one before, sign up for **pay-as-you-go** directly: <https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account> → **Pay as you go**. Azure asks for a phone number and a card.
 2. On pay-as-you-go you pay only for paid resources. A **Free F0** Speech resource never bills (5 audio hours a month; one F0 Speech resource per subscription).
@@ -62,7 +62,7 @@ This replaces the v1 files on `master` with v2. Git history keeps v1.
 3. Open **Coach** from the home screen.
 4. In Chrome, open <https://portal.azure.com> → your Speech resource → **Keys and Endpoint**. Tap the copy button next to **KEY 1**. (Or copy it from your password manager.)
 5. Back in the app, paste the key into **Azure key**. Type the region into **Region**, for example `uksouth`. Select **Save on this phone**.
-6. You should see **Azure key saved ✓** with the last 4 characters of the key. Select **Run the phone test** (`docs/validation/r1-phone-test.md`).
+6. You should see **Azure key saved ✓** with the last 4 characters of the key. The recorder is on the start page: **Open the recorder**.
 
 The key stays in the app's storage on this phone. The app sends it only to Azure. It is not in GitHub, the app files, or anywhere else.
 
@@ -82,7 +82,7 @@ The key stays in the app's storage on this phone. The app sends it only to Azure
 | No **Install app** in the Chrome menu | Reload the page once and wait a few seconds. Make sure you are in Chrome, not a browser inside another app. |
 | "That does not look like an Azure key" | Copy **KEY 1** again. Paste it without extra text. |
 | "Check the region" | Type the **Location/Region** value from **Keys and Endpoint**, for example `uksouth`. "UK South" also works. |
-| The phone test shows "ConnectionFailure" | Check your internet. Then check the key and region, and that the resource exists on **Free F0**. A new resource can take a few minutes to start. |
+| An Azure feature shows "ConnectionFailure" (from R4) | Check your internet. Then check the key and region, and that the resource exists on **Free F0**. A new resource can take a few minutes to start. |
 | The app still shows the old version after an update | Close the app fully and open it again. It updates itself on the next start. |
 
 ## Privacy
