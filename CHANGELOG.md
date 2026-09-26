@@ -17,6 +17,8 @@
 
 - R2 done (2026-09-26). The owner-voice check (R2-T08) moves to R3 and runs on normal practice takes, with no separate test session.
 
+- R3 started (2026-09-26): `packages/core` with everyday sentence banks in English and French (40 practice and 8 held-out baseline sentences each, loaded with word endings), the block summary for clear-speech pairs, the language of the day, the session plan and the weekly target.
+
 ### Removed
 - The R1 phone-test page (`#/spike`); its Azure code moved to `apps/pwa/src/azure/` for R4.
 

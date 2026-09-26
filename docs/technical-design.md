@@ -34,7 +34,7 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
 | `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures, voice activity detection (streaming), quality gate, FFT, Praat-style pitch tracker, intensity, silences, syllable nuclei, pauses, articulation rate, speech level and fade at phrase ends (all checked against Praat) | R1, R2 |
 | `packages/dsp/golden` | Praat reference: synthetic EN/FR test recordings (espeak-ng) and the values Praat measures on them (Parselmouth). Python, run by hand; outputs are committed | R2 |
-| `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
+| `packages/core` | Pure TypeScript domain logic. Built: EN and FR sentence banks with target word endings, sentence picker, pair comparison and block summary (cue choice), language of the day, session plan, weekly target | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
 
 - **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
