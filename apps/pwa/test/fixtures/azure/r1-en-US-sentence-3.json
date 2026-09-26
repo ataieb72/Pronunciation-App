@@ -1,0 +1,1279 @@
+{
+ "RecognitionStatus": "Success",
+ "Offset": 2500000,
+ "Duration": 27800000,
+ "Channel": 0,
+ "DisplayText": "I asked her to help me with the world map.",
+ "SNR": 25.699404,
+ "NBest": [
+  {
+   "Confidence": 0.98696053,
+   "Lexical": "i asked her to help me with the world map",
+   "ITN": "i asked her to help me with the world map",
+   "MaskedITN": "i asked her to help me with the world map",
+   "Display": "I asked her to help me with the world map.",
+   "PronunciationAssessment": {
+    "AccuracyScore": 98,
+    "FluencyScore": 100,
+    "ProsodyScore": 86.8,
+    "CompletenessScore": 100,
+    "PronScore": 94.3
+   },
+   "Words": [
+    {
+     "Word": "i",
+     "Offset": 2500000,
+     "Duration": 3300000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 97,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "aɪ",
+       "Grapheme": "i",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97
+       },
+       "Offset": 2500000,
+       "Duration": 3300000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "aɪ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "aɪ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "æ",
+          "Score": 28
+         },
+         {
+          "Phoneme": "s",
+          "Score": 7
+         },
+         {
+          "Phoneme": "oʊ",
+          "Score": 5
+         },
+         {
+          "Phoneme": "ɑ",
+          "Score": 4
+         }
+        ]
+       },
+       "Offset": 2500000,
+       "Duration": 3300000
+      }
+     ]
+    },
+    {
+     "Word": "asked",
+     "Offset": 5900000,
+     "Duration": 4400000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 94,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "æs",
+       "Grapheme": "as",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94
+       },
+       "Offset": 5900000,
+       "Duration": 2900000
+      },
+      {
+       "Syllable": "kt",
+       "Grapheme": "ked",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94
+       },
+       "Offset": 8900000,
+       "Duration": 1400000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "æ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "æ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "aɪ",
+          "Score": 21
+         },
+         {
+          "Phoneme": "s",
+          "Score": 6
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 6
+         },
+         {
+          "Phoneme": "i",
+          "Score": 2
+         }
+        ]
+       },
+       "Offset": 5900000,
+       "Duration": 1900000
+      },
+      {
+       "Phoneme": "s",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "s",
+          "Score": 100
+         },
+         {
+          "Phoneme": "k",
+          "Score": 52
+         },
+         {
+          "Phoneme": "t",
+          "Score": 4
+         },
+         {
+          "Phoneme": "æ",
+          "Score": 4
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 7900000,
+       "Duration": 900000
+      },
+      {
+       "Phoneme": "k",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "k",
+          "Score": 100
+         },
+         {
+          "Phoneme": "t",
+          "Score": 70
+         },
+         {
+          "Phoneme": "s",
+          "Score": 56
+         },
+         {
+          "Phoneme": "d",
+          "Score": 1
+         },
+         {
+          "Phoneme": "p",
+          "Score": 1
+         }
+        ]
+       },
+       "Offset": 8900000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "t",
+       "PronunciationAssessment": {
+        "AccuracyScore": 94,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "t",
+          "Score": 100
+         },
+         {
+          "Phoneme": "h",
+          "Score": 39
+         },
+         {
+          "Phoneme": "k",
+          "Score": 3
+         },
+         {
+          "Phoneme": "d",
+          "Score": 1
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 9500000,
+       "Duration": 800000
+      }
+     ]
+    },
+    {
+     "Word": "her",
+     "Offset": 10400000,
+     "Duration": 2400000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "hɝ",
+       "Grapheme": "her",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 10400000,
+       "Duration": 2400000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "h",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "h",
+          "Score": 100
+         },
+         {
+          "Phoneme": "t",
+          "Score": 68
+         },
+         {
+          "Phoneme": "ɝ",
+          "Score": 46
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 0
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 10400000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "ɝ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ɝ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "t",
+          "Score": 36
+         },
+         {
+          "Phoneme": "h",
+          "Score": 26
+         },
+         {
+          "Phoneme": "d",
+          "Score": 4
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 2
+         }
+        ]
+       },
+       "Offset": 11000000,
+       "Duration": 1800000
+      }
+     ]
+    },
+    {
+     "Word": "to",
+     "Offset": 12900000,
+     "Duration": 1300000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "tu",
+       "Grapheme": "to",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 12900000,
+       "Duration": 1300000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "t",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "t",
+          "Score": 100
+         },
+         {
+          "Phoneme": "u",
+          "Score": 72
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 13
+         },
+         {
+          "Phoneme": "d",
+          "Score": 4
+         },
+         {
+          "Phoneme": "ʊ",
+          "Score": 3
+         }
+        ]
+       },
+       "Offset": 12900000,
+       "Duration": 400000
+      },
+      {
+       "Phoneme": "u",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "u",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 72
+         },
+         {
+          "Phoneme": "h",
+          "Score": 62
+         },
+         {
+          "Phoneme": "oʊ",
+          "Score": 25
+         },
+         {
+          "Phoneme": "t",
+          "Score": 24
+         }
+        ]
+       },
+       "Offset": 13400000,
+       "Duration": 800000
+      }
+     ]
+    },
+    {
+     "Word": "help",
+     "Offset": 14300000,
+     "Duration": 3300000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 97,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "hɛlp",
+       "Grapheme": "help",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97
+       },
+       "Offset": 14300000,
+       "Duration": 3300000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "h",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "h",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 15
+         },
+         {
+          "Phoneme": "u",
+          "Score": 4
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 1
+         },
+         {
+          "Phoneme": "v",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 14300000,
+       "Duration": 900000
+      },
+      {
+       "Phoneme": "ɛ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ɛ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "l",
+          "Score": 16
+         },
+         {
+          "Phoneme": "h",
+          "Score": 7
+         },
+         {
+          "Phoneme": "ʌ",
+          "Score": 1
+         },
+         {
+          "Phoneme": "æ",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 15300000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "l",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "l",
+          "Score": 100
+         },
+         {
+          "Phoneme": "p",
+          "Score": 18
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 6
+         },
+         {
+          "Phoneme": "d",
+          "Score": 0
+         },
+         {
+          "Phoneme": "t",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 15900000,
+       "Duration": 900000
+      },
+      {
+       "Phoneme": "p",
+       "PronunciationAssessment": {
+        "AccuracyScore": 97,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "p",
+          "Score": 100
+         },
+         {
+          "Phoneme": "l",
+          "Score": 28
+         },
+         {
+          "Phoneme": "t",
+          "Score": 21
+         },
+         {
+          "Phoneme": "m",
+          "Score": 9
+         },
+         {
+          "Phoneme": "k",
+          "Score": 4
+         }
+        ]
+       },
+       "Offset": 16900000,
+       "Duration": 700000
+      }
+     ]
+    },
+    {
+     "Word": "me",
+     "Offset": 17700000,
+     "Duration": 1900000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "mi",
+       "Grapheme": "me",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 17700000,
+       "Duration": 1900000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "m",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "m",
+          "Score": 100
+         },
+         {
+          "Phoneme": "p",
+          "Score": 55
+         },
+         {
+          "Phoneme": "i",
+          "Score": 19
+         },
+         {
+          "Phoneme": "t",
+          "Score": 15
+         },
+         {
+          "Phoneme": "k",
+          "Score": 1
+         }
+        ]
+       },
+       "Offset": 17700000,
+       "Duration": 800000
+      },
+      {
+       "Phoneme": "i",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "i",
+          "Score": 100
+         },
+         {
+          "Phoneme": "m",
+          "Score": 49
+         },
+         {
+          "Phoneme": "w",
+          "Score": 1
+         },
+         {
+          "Phoneme": "u",
+          "Score": 1
+         },
+         {
+          "Phoneme": "ɪ",
+          "Score": 1
+         }
+        ]
+       },
+       "Offset": 18600000,
+       "Duration": 1000000
+      }
+     ]
+    },
+    {
+     "Word": "with",
+     "Offset": 19700000,
+     "Duration": 1300000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "wɪð",
+       "Grapheme": "with",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 19700000,
+       "Duration": 1300000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "w",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "w",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ɪ",
+          "Score": 7
+         },
+         {
+          "Phoneme": "i",
+          "Score": 1
+         },
+         {
+          "Phoneme": "u",
+          "Score": 1
+         },
+         {
+          "Phoneme": "b",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 19700000,
+       "Duration": 500000
+      },
+      {
+       "Phoneme": "ɪ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ɪ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ʊ",
+          "Score": 1
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 0
+         },
+         {
+          "Phoneme": "ð",
+          "Score": 0
+         },
+         {
+          "Phoneme": "u",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 20300000,
+       "Duration": 300000
+      },
+      {
+       "Phoneme": "ð",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ð",
+          "Score": 100
+         },
+         {
+          "Phoneme": "d",
+          "Score": 3
+         },
+         {
+          "Phoneme": "v",
+          "Score": 2
+         },
+         {
+          "Phoneme": "t",
+          "Score": 2
+         },
+         {
+          "Phoneme": "n",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 20700000,
+       "Duration": 300000
+      }
+     ]
+    },
+    {
+     "Word": "the",
+     "Offset": 21100000,
+     "Duration": 1500000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 97,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "ðə",
+       "Grapheme": "the",
+       "PronunciationAssessment": {
+        "AccuracyScore": 95
+       },
+       "Offset": 21100000,
+       "Duration": 1500000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "ð",
+       "PronunciationAssessment": {
+        "AccuracyScore": 80,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ð",
+          "Score": 100
+         },
+         {
+          "Phoneme": "d",
+          "Score": 0
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 0
+         },
+         {
+          "Phoneme": "ʌ",
+          "Score": 0
+         },
+         {
+          "Phoneme": "n",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 21100000,
+       "Duration": 300000
+      },
+      {
+       "Phoneme": "ə",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ə",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ʌ",
+          "Score": 47
+         },
+         {
+          "Phoneme": "w",
+          "Score": 19
+         },
+         {
+          "Phoneme": "ð",
+          "Score": 2
+         },
+         {
+          "Phoneme": "n",
+          "Score": 0
+         }
+        ]
+       },
+       "Offset": 21500000,
+       "Duration": 1100000
+      }
+     ]
+    },
+    {
+     "Word": "world",
+     "Offset": 22700000,
+     "Duration": 4100000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "wɝld",
+       "Grapheme": "world",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 22700000,
+       "Duration": 4100000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "w",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "w",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 17
+         },
+         {
+          "Phoneme": "ɔ",
+          "Score": 3
+         },
+         {
+          "Phoneme": "ɝ",
+          "Score": 2
+         },
+         {
+          "Phoneme": "v",
+          "Score": 2
+         }
+        ]
+       },
+       "Offset": 22700000,
+       "Duration": 700000
+      },
+      {
+       "Phoneme": "ɝ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "ɝ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ɔ",
+          "Score": 82
+         },
+         {
+          "Phoneme": "l",
+          "Score": 71
+         },
+         {
+          "Phoneme": "w",
+          "Score": 37
+         },
+         {
+          "Phoneme": "ʊ",
+          "Score": 5
+         }
+        ]
+       },
+       "Offset": 23500000,
+       "Duration": 1500000
+      },
+      {
+       "Phoneme": "l",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "l",
+          "Score": 100
+         },
+         {
+          "Phoneme": "ɹ",
+          "Score": 88
+         },
+         {
+          "Phoneme": "d",
+          "Score": 85
+         },
+         {
+          "Phoneme": "ɪ",
+          "Score": 3
+         },
+         {
+          "Phoneme": "ə",
+          "Score": 1
+         }
+        ]
+       },
+       "Offset": 25100000,
+       "Duration": 200000
+      },
+      {
+       "Phoneme": "d",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "d",
+          "Score": 100
+         },
+         {
+          "Phoneme": "m",
+          "Score": 48
+         },
+         {
+          "Phoneme": "l",
+          "Score": 46
+         },
+         {
+          "Phoneme": "ɹ",
+          "Score": 12
+         },
+         {
+          "Phoneme": "t",
+          "Score": 5
+         }
+        ]
+       },
+       "Offset": 25400000,
+       "Duration": 1400000
+      }
+     ]
+    },
+    {
+     "Word": "map",
+     "Offset": 26900000,
+     "Duration": 3400000,
+     "PronunciationAssessment": {
+      "AccuracyScore": 100,
+      "ErrorType": "None",
+      "Feedback": {
+       "Prosody": {
+        "Break": {
+         "ErrorTypes": [
+          "None"
+         ],
+         "UnexpectedBreak": {
+          "Confidence": 3.9426524e-08
+         },
+         "MissingBreak": {
+          "Confidence": 1
+         },
+         "BreakLength": 0
+        },
+        "Intonation": {
+         "ErrorTypes": [],
+         "Monotone": {
+          "SyllablePitchDeltaConfidence": 0.18949817
+         }
+        }
+       }
+      }
+     },
+     "Syllables": [
+      {
+       "Syllable": "mæp",
+       "Grapheme": "map",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100
+       },
+       "Offset": 26900000,
+       "Duration": 3400000
+      }
+     ],
+     "Phonemes": [
+      {
+       "Phoneme": "m",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "m",
+          "Score": 100
+         },
+         {
+          "Phoneme": "d",
+          "Score": 13
+         },
+         {
+          "Phoneme": "æ",
+          "Score": 9
+         },
+         {
+          "Phoneme": "n",
+          "Score": 1
+         },
+         {
+          "Phoneme": "t",
+          "Score": 1
+         }
+        ]
+       },
+       "Offset": 26900000,
+       "Duration": 900000
+      },
+      {
+       "Phoneme": "æ",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "æ",
+          "Score": 100
+         },
+         {
+          "Phoneme": "p",
+          "Score": 39
+         },
+         {
+          "Phoneme": "ɛ",
+          "Score": 24
+         },
+         {
+          "Phoneme": "n",
+          "Score": 21
+         },
+         {
+          "Phoneme": "ɹ",
+          "Score": 11
+         }
+        ]
+       },
+       "Offset": 27900000,
+       "Duration": 1500000
+      },
+      {
+       "Phoneme": "p",
+       "PronunciationAssessment": {
+        "AccuracyScore": 100,
+        "NBestPhonemes": [
+         {
+          "Phoneme": "p",
+          "Score": 100
+         },
+         {
+          "Phoneme": "n",
+          "Score": 44
+         },
+         {
+          "Phoneme": "ɹ",
+          "Score": 28
+         },
+         {
+          "Phoneme": "b",
+          "Score": 27
+         },
+         {
+          "Phoneme": "æ",
+          "Score": 26
+         }
+        ]
+       },
+       "Offset": 29500000,
+       "Duration": 800000
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

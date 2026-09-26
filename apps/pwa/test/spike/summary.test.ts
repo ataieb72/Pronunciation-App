@@ -64,3 +64,32 @@ describe('summarizeAzureJson', () => {
     expect(summarizeAzureJson('{}')).toBeNull();
   });
 });
+
+// Real results from the R1 phone test (see test/fixtures/azure/README.md).
+const fixtures = import.meta.glob<string>('../fixtures/azure/r1-*.json', { query: '?raw', import: 'default', eager: true });
+const realResults = Object.entries(fixtures).map(([path, json]) => ({ name: path.split('/').at(-1) ?? path, json }));
+
+describe('summarizeAzureJson on real Azure results', () => {
+  it('Fixtures_AreLoaded', () => {
+    expect(realResults).toHaveLength(6);
+  });
+
+  it.each(realResults.filter((r) => r.name.includes('en-US')))('RealEnglish_$name_HasNamedPhonemesAndProsody', ({ json }) => {
+    const summary = summarizeAzureJson(json);
+    expect(summary?.text).toBe('I asked her to help me with the world map.');
+    expect(summary?.words).toBe(10);
+    expect(summary?.phonemes).toBe(27);
+    expect(summary?.phonemesNamed).toBe(true);
+    expect(summary?.scores.prosody).toBeTypeOf('number');
+    expect(summary?.scores.accuracy).toBeGreaterThanOrEqual(0);
+  });
+
+  it.each(realResults.filter((r) => r.name.includes('fr-FR')))('RealFrench_$name_HasScoresButNoPhonemeNamesOrProsody', ({ json }) => {
+    const summary = summarizeAzureJson(json);
+    expect(summary?.text).toBe('Le ministre a pris la table du fond.');
+    expect(summary?.words).toBe(8);
+    expect(summary?.phonemesNamed).toBe(false);
+    expect(summary?.scores.prosody).toBeNull();
+    expect(summary?.scores.accuracy).toBeGreaterThanOrEqual(0);
+  });
+});

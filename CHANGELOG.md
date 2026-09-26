@@ -11,6 +11,8 @@
 - R1: v2 workspace (npm 11, TypeScript 6, ESLint 10 strict type-checked), bundle key scan and CI, installable PWA shell, phone test page (`#/spike`) and `packages/dsp` (resampler, WAV encoder, level measures).
 - ADR 002: no server. The app deploys to GitHub Pages on every push to `master`. The owner types the Azure key and region once on the phone ("Connect to Azure" screen). A content security policy limits the page to itself and Azure Speech.
 
+- R1 done (2026-09-26): phone test on the Pixel confirms the PWA (latency median 0.87 s on Wi-Fi and 1.16 s on 4G). Real Azure results for six test sentences saved as test fixtures, with the owner's approval.
+
 ### Fixed
 - Phone test: takes longer than 5 s (including the 60-second round) timed out, because the content security policy blocked the Speech SDK's timer worker. The SDK now uses the page's timers.
 
