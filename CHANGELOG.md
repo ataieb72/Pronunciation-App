@@ -17,6 +17,9 @@
 
 - R2 done (2026-09-26). The owner-voice check (R2-T08) moves to R3 and runs on normal practice takes, with no separate test session.
 
+- R3 started (2026-09-26): `packages/core` with everyday sentence banks in English and French (40 practice and 8 held-out baseline sentences each, loaded with word endings), the block summary for clear-speech pairs, the language of the day, the session plan and the weekly target.
+- R3 first practice (2026-09-26): the start page is now **Today** (language of the day, Start 10 or 5 minutes, week dots, practice days a week). Sessions: warm-up with the distance check, blocks of clear-speech pairs (usual, then big and clear with one cue), "Which would your listener catch better?", a block summary with the next cue, and a wrap. The first session in each language records the baseline. Takes store their session, sentence and role (database version 2); the ZIP file adds the sessions.
+
 ### Removed
 - The R1 phone-test page (`#/spike`); its Azure code moved to `apps/pwa/src/azure/` for R4.
 

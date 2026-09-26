@@ -1,5 +1,7 @@
 /** Test prompts for the record screen: everyday sentences with word endings mumblers drop (product-design §4). */
-export type Language = 'en' | 'fr';
+import type { Language } from '@pc/core';
+
+export type { Language } from '@pc/core';
 
 export const SENTENCES: Record<Language, readonly string[]> = {
   en: ['I asked her to help me with the world map.', 'The ship left the harbour at eight.', 'Please text me when you get home.'],

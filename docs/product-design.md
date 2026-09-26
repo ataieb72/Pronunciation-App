@@ -10,10 +10,10 @@ Phone-first. One-handed. Large tap targets. French and English alternate by day 
 |---|---|---|
 | **Connect to Azure** ✅ | Azure key field (hidden input) and region field, "Save on this phone"; "Azure key saved ✓" with the last 4 characters and the region, "Remove the key from this phone" (asks first); plain error messages (not a key, bad region, storage blocked) | R1 |
 | **Record and replay** ✅ | A test screen, not practice. Choose a sentence, a held vowel or a short talk (EN or FR); Record; the take stops by itself (or Stop); "Good recording" or "Please record again" with plain reasons; test readings labelled "not scores" (loudness, pitch range, pauses, speaking rate, fade as an experiment); a distance note on the first take of a visit; Replay, Download; the last 5 takes with Replay, Download, Delete; "Download all takes (ZIP)" | R2 |
-| **Today** | "Start · 10 min" (5 and 15 as options), language of the day, weekly dots (●●●○), next reminder | R3 |
-| **Session** | One stage at a time: Warm-up → Say → Listen → Use → Wrap. Big record button, level light, stage progress | R3–R6 |
-| **Pair compare** | Usual and clear takes, play each, "Which would your listener catch better?" | R3 |
-| **Block summary** | "Changed: volume, vowel length. Not changed: endings." Next cue | R3 |
+| **Today** ✅ (R3) | Language of the day with "Switch to …"; "Start · 10 min" and "5 min" (15 from R6); "Record baseline" when a language has none; weekly dots (●●○○) and "Practice days a week" (3–6). Next reminder comes in R10 | R3 |
+| **Session** | One stage at a time: Warm-up → Say → Listen → Use → Wrap. Big record button, level light, stage progress. **R3 ✅:** Warm-up (2 sentences, distance check) → Say (1 or 2 blocks of 4 pairs) → Wrap; "Skip this sentence" and "End session" on every step; the first session in a language is the baseline (8 sentences the usual way, then the same 8 big and clear, no feedback) | R3–R6 |
+| **Pair compare** ✅ | Usual and clear takes, play each, "Which would your listener catch better?" (Usual / Clear / About the same) | R3 |
+| **Block summary** ✅ | "Probably changed: volume. Not changed: pitch movement, fade at phrase ends." A pace note; "Still holding: …" for a feature that held for 3 sessions; next cue. Vowel length and endings come with Azure timings (R4, R7) | R3 |
 | **Noisy listener card** | "They heard: …", missed word highlighted, retry | R4 |
 | **Talk summary** | Pace band, fade at phrase ends, start-vs-end change | R6 |
 | **Check** | Calm, no feedback, habitual part first | R5 |

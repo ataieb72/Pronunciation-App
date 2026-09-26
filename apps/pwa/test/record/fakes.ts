@@ -8,6 +8,19 @@ import { hush, join, MIC_RATE, syllables, withFloor } from '../audio/signals';
 export const speechThenSilence = () => join(hush(0.3), withFloor(syllables(1.5)), hush(1.5, MIC_RATE, 3));
 export const speechOnly = () => join(hush(0.3), withFloor(syllables(1.5)));
 
+/** A microphone that plays the signal every time a listener is set (one take after another). */
+export function repeatingSource(signal: Float32Array): AudioSource {
+  return {
+    ...fakeSource(signal),
+    listen(listener) {
+      if (!listener) return;
+      setTimeout(() => {
+        for (let i = 0; i < signal.length; i += 1024) listener(signal.subarray(i, i + 1024));
+      }, 0);
+    },
+  };
+}
+
 /** A microphone that plays a signal once a listener is set. */
 export function fakeSource(signal: Float32Array): AudioSource {
   let played = false;
@@ -35,7 +48,7 @@ export function memoryStore(initial: Partial<TakeRow>[] = []): TakeStore & { row
     rows,
     save(take, context) {
       const id = nextId++;
-      rows.push({ ...base, kind: take.kind, stopReason: take.stopReason, durationS: take.samples.length / take.sampleRate, speech: [...take.speech], mic: context.mic, device: context.device, id, audioId: id, ...(context.language ? { language: context.language } : {}), ...(context.prompt ? { prompt: context.prompt } : {}) });
+      rows.push({ ...base, kind: take.kind, stopReason: take.stopReason, durationS: take.samples.length / take.sampleRate, speech: [...take.speech], mic: context.mic, device: context.device, id, audioId: id, ...(context.language ? { language: context.language } : {}), ...(context.prompt ? { prompt: context.prompt } : {}), ...(context.sessionId === undefined ? {} : { sessionId: context.sessionId }), ...(context.itemId ? { itemId: context.itemId } : {}), ...(context.role ? { role: context.role } : {}) });
       wavs.set(id, new ArrayBuffer(44));
       return Promise.resolve(id);
     },

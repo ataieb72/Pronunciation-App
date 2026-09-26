@@ -3,6 +3,7 @@ import { openMicrophone, type AudioSource } from '../audio/microphone';
 import { createTakeController, type ControllerEnv, type TakeController } from '../audio/takeController';
 import type { StopReason, TakeKind } from '../audio/takeRecorder';
 import { openTakeStore, type TakeRow, type TakeStore } from '../audio/takeStore';
+import { openSessionStore, type SessionStore } from '../data/sessionStore';
 import type { Readings } from './analysis';
 import { createAnalyzer, type Analyze } from './analyzer';
 import { distanceCheck, type DistanceCheck } from './distance';
@@ -13,6 +14,7 @@ import { SENTENCES, TALK_PROMPTS, VOWEL_PROMPTS, type Language } from './prompts
 export interface RecordDeps {
   openSource(): Promise<AudioSource>;
   store: TakeStore;
+  sessions?: Pick<SessionStore, 'list'>;
   analyze: Analyze;
   env: ControllerEnv;
 }
@@ -21,6 +23,7 @@ function defaultDeps(): RecordDeps {
   return {
     openSource: openMicrophone,
     store: openTakeStore(),
+    sessions: openSessionStore(),
     analyze: createAnalyzer(),
     env: { document, wakeLock: 'wakeLock' in navigator ? navigator.wakeLock : undefined },
   };
@@ -227,7 +230,7 @@ export function RecordScreen({ deps: given }: { deps?: RecordDeps }) {
 
   async function downloadAll() {
     setError(null);
-    const { zip, count } = await exportTakes(deps.store);
+    const { zip, count } = await exportTakes(deps.store, deps.sessions);
     saveFile(`pronunciation-coach-takes-${new Date().toISOString().slice(0, 10)}.zip`, zip, 'application/zip');
     setStatus(`Downloaded: ${String(count)} take${count === 1 ? '' : 's'} in the file.`);
   }
@@ -245,7 +248,7 @@ export function RecordScreen({ deps: given }: { deps?: RecordDeps }) {
   return (
     <main className="app record">
       <p>
-        <a href="#/">← Start page</a>
+        <a href="#/">← Today</a>
       </p>
       <h1>Record and replay</h1>
       <p>Test the recorder. It stops by itself when you finish speaking.</p>

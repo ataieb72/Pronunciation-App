@@ -8,6 +8,8 @@ Detailed in [R2-audio-core.md](R2-audio-core.md) (started 2026-09-26).
 **Audio core + clarity signals.** AudioWorklet capture; resampler and WAV encoder; VAD; quality gate; locked mic settings with applied-settings record; distance check; one AudioContext per session; interruption handling; IndexedDB audio store with `storage.persist()`. Measures: relative level, fade at phrase ends, articulation rate, pauses, pitch range in semitones — checked against Praat on golden fixtures (V1, V3, V7).
 
 ## R3
+Detailed in [R3-clarity-core.md](R3-clarity-core.md) (started 2026-09-26).
+
 **Clarity core — Slice 1 (first real practice).** Baselines (habitual and clear) in English and French; warm-up and distance check; clear-speech pairs with compare player and self-judgement; block summaries with cue choice from unchanged features; everyday sentence banks with word-ending loads; 5- and 10-minute sessions; weekly target; ZIP export. No cloud scoring. Last task: the voice check on the owner's practice takes (R2-T08, moved here on 2026-09-26).
 
 ## R4
