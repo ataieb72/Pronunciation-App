@@ -14,6 +14,10 @@
 
 ## Working Style
 - Step-by-step and decision-driven: present 2–4 options and let the developer choose; never decide architecture unilaterally.
+- **Fewer stops (owner's instruction, 2026-09-26):**
+  - Claude may open its own pull requests into `master` and merge them once all CI checks pass. The owner can withdraw this at any time.
+  - Claude asks the owner only about real choices: what the app does, and big architecture changes. Routine steps go ahead without a question.
+  - No separate test sessions on the phone. Claude checks the measures on the owner's voice from a ZIP of normal practice takes.
 - Test-Driven Development (TDD) is the default: Red → Green → Refactor.
 - Update documentation in the same change as the code it describes.
 - One task in progress at a time (solo cadence).
@@ -30,7 +34,7 @@ From the project root (npm workspaces: `apps/*`, `packages/*`, `tools/*`). Node 
 - Key scan: `npm run scan:keys` (after build)
 - Praat golden fixtures: `python3 packages/dsp/golden/make_golden.py` (needs espeak-ng 1.51 and `packages/dsp/golden/requirements.txt`; outputs are committed; see its README)
 - Secrets: none in the repository, the build or GitHub. The Azure key is typed on the phone at run time. To let the key scan check the value too, set `AZURE_SPEECH_KEY` in your local shell only. See `docs/deployment-guide.md`.
-- Deploy: every push to `master` publishes to GitHub Pages (`.github/workflows/pages.yml`).
+- Deploy: every push to `master` publishes to GitHub Pages (`.github/workflows/pages.yml`). Claude merges its own pull requests once CI is green (see Working Style).
 
 ## Documentation Strategy
 All project knowledge lives in `docs/`:

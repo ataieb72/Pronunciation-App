@@ -15,6 +15,8 @@
 
 - R2 audio core (2026-09-26): Praat golden fixtures (synthetic voices only); speech detection and a quality gate; Praat-style pitch, intensity, pauses, syllable nuclei and articulation rate, speech level and fade, all matching Praat on the golden set; recording that stops by itself, with Wake Lock and a discard on a hidden page; takes saved on the phone (Dexie); a record-and-replay screen with plain verdicts, test readings (not scores), a distance note, replay, download and a ZIP of all takes.
 
+- R2 done (2026-09-26). The owner-voice check (R2-T08) moves to R3 and runs on normal practice takes, with no separate test session.
+
 ### Removed
 - The R1 phone-test page (`#/spike`); its Azure code moved to `apps/pwa/src/azure/` for R4.
 
