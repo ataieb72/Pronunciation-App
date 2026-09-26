@@ -1,19 +1,8 @@
 /** Throwaway capture path for the R1 phone test. R2 replaces it with the real audio core. */
 
-export const REQUESTED_CONSTRAINTS: MediaTrackConstraints = {
-  channelCount: 1,
-  echoCancellation: false,
-  noiseSuppression: false,
-  autoGainControl: false,
-};
+import { REQUESTED_CONSTRAINTS, type MicInfo } from '../audio/microphone';
 
-export interface MicInfo {
-  readonly label: string;
-  readonly requested: MediaTrackConstraints;
-  readonly applied: MediaTrackSettings;
-  readonly capabilities: MediaTrackCapabilities | null;
-  readonly contextSampleRate: number;
-}
+export type { MicInfo };
 
 export interface Recording {
   readonly samples: Float32Array;

@@ -92,19 +92,21 @@ Speech level over speech frames (dBFS). Fade at phrase ends as defined above, pe
 
 **Completed (2026-09-26):** `packages/dsp/src/speechLevel.ts` (energy mean of the intensity over sounding frames, dBFS) and `packages/dsp/src/fade.ts` (last phrase peak minus the median of the other peaks; the final peak added back when voiced with a 2 dB dip; ≥ 3 peaks per phrase). Golden set: level within 0.054 dB of Praat; fade within 0.078 dB over 28 phrases; quiet versions exactly 20 dB lower; fading versions more negative. Synthetic phrases: a last syllable 8 dB softer reads −8 ± 1.5 dB; even syllables read 0 ± 1 dB. 57 new tests (DSP: 292). All five measures now run in `packages/dsp`; none is shown to the owner until R2-T07, and never as a score.
 
-### R2-T06: Audio core in the app ⬚
+### R2-T06: Audio core in the app ✅
 **Type:** frontend/audio | **Effort:** L | **Depends on:** R2-T02
 
 #### What to Build
 A recording session: one AudioContext and one mic stream per session; processing requested off and the applied settings stored with each take; AudioWorklet frames to a Web Worker that resamples to 16 kHz, keeps a 300 ms pre-roll and runs the detector; takes stop by themselves at their cap (word 8 s, sentence 15 s, talk 60 s) or 0.8 s after speech; a hidden page discards the take; Wake Lock while recording. Takes (WAV and metadata) go to IndexedDB through Dexie, with `navigator.storage.persist()`.
 
 #### Acceptance Criteria
-- [ ] Takes stop at their cap without a tap (R1 run 2: the 60-second round ran to 89 s)
-- [ ] A take survives an app restart; storage is marked persistent where the browser allows
-- [ ] Hiding the page mid-take discards it with a message
+- [x] Takes stop at their cap without a tap (R1 run 2: the 60-second round ran to 89 s)
+- [x] A take survives an app restart; storage is marked persistent where the browser allows
+- [x] Hiding the page mid-take discards it (the message comes with the screen in R2-T07)
 
 #### Testing Requirements (TDD)
 - Session_SpeechThenSilence_StopsAfter800ms · Session_Cap_StopsAt60s · Session_PageHidden_DiscardsTake · Session_PreRoll_Keeps300ms · TakeStore_SaveLoad_RoundTrips (fake IndexedDB) · TakeStore_Metadata_HasAppliedSettings
+
+**Completed (2026-09-26):** `apps/pwa/src/audio/`: `microphone.ts` (one AudioContext and stream per session; the R1 phone-test page now shares its settings), `takeRecorder.ts` (pure: streaming detector at the mic rate, stop rules, exact caps, 300 ms pre-roll, one resample to 16 kHz), `takeController.ts` (one take at a time, Wake Lock, discard on a hidden page, progress every 0.1 s) and `takeStore.ts` (Dexie 4: `takes` and `audio` stores, `storage.persist()` on the first save). 22 new tests with synthetic audio and fake IndexedDB (app: 72). **Checked in Chromium** through the dev server, with a synthetic sentence as the fake mic: speech found at 1.0 s (true onset 0.98 s), the take stopped by itself 0.8 s after the speech, 3.3 s kept with the pre-roll, saved and read back; with the default silent fake mic, the word take stopped at its 8 s cap; hiding the page discarded a talk take; no errors. **Known limit:** a sound held steady for more than about 3 s counts as background (the detector follows the room), so R2-T08's held vowels must stay under 3 s.
 
 ### R2-T07: Record-and-replay screen ⬚
 **Type:** frontend | **Effort:** M | **Depends on:** R2-T03 … R2-T06
@@ -123,7 +125,7 @@ A screen to record a sentence or a short talk, replay it, and see the quality ve
 **Type:** validation | **Effort:** S | **Depends on:** R2-T07
 
 #### What to Build
-The owner records 20 steady vowels and 10 sentences in each language on the Pixel, and sends the WAVs in the chat. Claude runs the Praat reference on them and compares the app's readings. Results go to `docs/validation/r2-owner-voice.md`; only numbers are committed, never the audio. Also the earbud check carried from R1.
+The owner records 20 steady vowels (each held about 2 s: longer held sounds count as background, R2-T06) and 10 sentences in each language on the Pixel, and sends the WAVs in the chat. Claude runs the Praat reference on them and compares the app's readings. Results go to `docs/validation/r2-owner-voice.md`; only numbers are committed, never the audio. Also the earbud check carried from R1.
 
 #### Acceptance Criteria
 - [ ] V1: pitch within ±1 semitone of Praat on ≥ 90% of voiced frames, on 20 of 20 steady-vowel takes
