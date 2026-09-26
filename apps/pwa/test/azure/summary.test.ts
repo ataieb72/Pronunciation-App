@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { summarizeAzureJson } from '../../src/spike/summary';
+import { summarizeAzureJson } from '../../src/azure/summary';
 
 // Shape returned by the JS SDK (SpeechServiceResponse_JsonResult): scores nested under PronunciationAssessment.
 const sdkShape = JSON.stringify({

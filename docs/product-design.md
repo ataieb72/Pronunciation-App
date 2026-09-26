@@ -8,7 +8,8 @@ Phone-first. One-handed. Large tap targets. French and English alternate by day 
 
 | Screen | Main elements | Epic |
 |---|---|---|
-| **Connect to Azure** ✅ | Azure key field (hidden input) and region field, "Save on this phone"; "Azure key saved ✓" with the last 4 characters and the region, "Run the phone test", "Remove the key from this phone" (asks first); plain error messages (not a key, bad region, storage blocked) | R1 |
+| **Connect to Azure** ✅ | Azure key field (hidden input) and region field, "Save on this phone"; "Azure key saved ✓" with the last 4 characters and the region, "Remove the key from this phone" (asks first); plain error messages (not a key, bad region, storage blocked) | R1 |
+| **Record and replay** ✅ | A test screen, not practice. Choose a sentence, a held vowel or a short talk (EN or FR); Record; the take stops by itself (or Stop); "Good recording" or "Please record again" with plain reasons; test readings labelled "not scores" (loudness, pitch range, pauses, speaking rate, fade as an experiment); a distance note on the first take of a visit; Replay, Download; the last 5 takes with Replay, Download, Delete; "Download all takes (ZIP)" | R2 |
 | **Today** | "Start · 10 min" (5 and 15 as options), language of the day, weekly dots (●●●○), next reminder | R3 |
 | **Session** | One stage at a time: Warm-up → Say → Listen → Use → Wrap. Big record button, level light, stage progress | R3–R6 |
 | **Pair compare** | Usual and clear takes, play each, "Which would your listener catch better?" | R3 |

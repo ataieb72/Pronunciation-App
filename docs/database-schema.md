@@ -29,6 +29,8 @@ Database `pronunciation-coach`, version 1 (`apps/pwa/src/audio/takeStore.ts`). T
 | audioId | row in `audio` |
 | mic | label, requested and applied settings, capabilities, context sample rate |
 | device | the browser's user agent |
+| language, prompt | the prompt's language and text, when there was one (R2-T07) |
+| readings | quality verdict and test readings: level, pitch, pauses, syllables, rate, fade (R2-T07) |
 
 ### audio ✅ (R2)
 | Field | Notes |

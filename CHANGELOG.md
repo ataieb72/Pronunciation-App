@@ -13,6 +13,11 @@
 
 - R1 done (2026-09-26): phone test on the Pixel confirms the PWA (latency median 0.87 s on Wi-Fi and 1.16 s on 4G). Real Azure results for six test sentences saved as test fixtures, with the owner's approval.
 
+- R2 audio core (2026-09-26): Praat golden fixtures (synthetic voices only); speech detection and a quality gate; Praat-style pitch, intensity, pauses, syllable nuclei and articulation rate, speech level and fade, all matching Praat on the golden set; recording that stops by itself, with Wake Lock and a discard on a hidden page; takes saved on the phone (Dexie); a record-and-replay screen with plain verdicts, test readings (not scores), a distance note, replay, download and a ZIP of all takes.
+
+### Removed
+- The R1 phone-test page (`#/spike`); its Azure code moved to `apps/pwa/src/azure/` for R4.
+
 ### Fixed
 - Phone test: takes longer than 5 s (including the 60-second round) timed out, because the content security policy blocked the Speech SDK's timer worker. The SDK now uses the page's timers.
 

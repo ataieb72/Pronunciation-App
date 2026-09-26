@@ -62,7 +62,7 @@ This replaces the v1 files on `master` with v2. Git history keeps v1.
 3. Open **Coach** from the home screen.
 4. In Chrome, open <https://portal.azure.com> → your Speech resource → **Keys and Endpoint**. Tap the copy button next to **KEY 1**. (Or copy it from your password manager.)
 5. Back in the app, paste the key into **Azure key**. Type the region into **Region**, for example `uksouth`. Select **Save on this phone**.
-6. You should see **Azure key saved ✓** with the last 4 characters of the key. Select **Run the phone test** (`docs/validation/r1-phone-test.md`).
+6. You should see **Azure key saved ✓** with the last 4 characters of the key. The recorder is on the start page: **Open the recorder**.
 
 The key stays in the app's storage on this phone. The app sends it only to Azure. It is not in GitHub, the app files, or anywhere else.
 
@@ -82,7 +82,7 @@ The key stays in the app's storage on this phone. The app sends it only to Azure
 | No **Install app** in the Chrome menu | Reload the page once and wait a few seconds. Make sure you are in Chrome, not a browser inside another app. |
 | "That does not look like an Azure key" | Copy **KEY 1** again. Paste it without extra text. |
 | "Check the region" | Type the **Location/Region** value from **Keys and Endpoint**, for example `uksouth`. "UK South" also works. |
-| The phone test shows "ConnectionFailure" | Check your internet. Then check the key and region, and that the resource exists on **Free F0**. A new resource can take a few minutes to start. |
+| An Azure feature shows "ConnectionFailure" (from R4) | Check your internet. Then check the key and region, and that the resource exists on **Free F0**. A new resource can take a few minutes to start. |
 | The app still shows the old version after an update | Close the app fully and open it again. It updates itself on the next start. |
 
 ## Privacy

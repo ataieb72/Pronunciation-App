@@ -50,7 +50,7 @@ const fake = vi.hoisted(() => {
 
 vi.mock('microsoft-cognitiveservices-speech-sdk', () => fake.sdk);
 
-const { transcribeContinuous } = await import('../../src/spike/azure');
+const { transcribeContinuous } = await import('../../src/azure/speech');
 
 const azure = { key: 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6', region: 'uksouth' };
 

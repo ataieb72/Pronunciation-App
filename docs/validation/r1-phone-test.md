@@ -1,7 +1,7 @@
 # R1 phone test — web audio and Azure on the Pixel
 
 **Status:** ✅ decided 2026-09-26 (run 2): **PWA confirmed** · **Device:** Pixel 10 Pro XL, Android, Chrome (installed app)
-**Page:** `https://ataieb72.github.io/Pronunciation-App/#/spike` (link "Run the phone test" on the start page after you save the Azure key)
+**Page:** `#/spike`, removed in R2-T07 when the record screen replaced it (git history keeps it; its Azure code moved to `apps/pwa/src/azure/`)
 
 ## What to do (about 25 minutes)
 

@@ -11,7 +11,7 @@ Progress comes from Progress Checks every 4 weeks, on habitual speech, compared 
 
 ## Status
 
-v2 rewrite in progress. Current epic: **R1 — Reset and phone test** (`docs/backlog/`). The v1 code was removed; git history keeps it at commit `20b075a`.
+v2 rewrite in progress. Current epic: **R2 — Audio core + clarity signals** (`docs/backlog/`). The v1 code was removed; git history keeps it at commit `20b075a`.
 
 To install it on your phone, follow `docs/deployment-guide.md`.
 

@@ -6,6 +6,8 @@
  */
 import { encodeWav, type SpeechSegment } from '@pc/dsp';
 import Dexie, { type EntityTable } from 'dexie';
+import type { Readings } from '../record/analysis';
+import type { Language } from '../record/prompts';
 import type { MicInfo } from './microphone';
 import type { RecordedTake, StopReason, TakeKind } from './takeRecorder';
 
@@ -23,6 +25,11 @@ export interface TakeRow {
   audioId: number;
   mic: MicInfo;
   device: string;
+  /** Language and text of the prompt, when there was one. */
+  language?: Language;
+  prompt?: string;
+  /** Quality verdict and test readings, added after analysis (R2-T07). */
+  readings?: Readings;
 }
 
 export interface AudioRow {
@@ -36,6 +43,8 @@ export interface TakeContext {
   readonly mic: MicInfo;
   /** The browser's user agent, to tell phones and browsers apart later ("scoring eras"). */
   readonly device: string;
+  readonly language?: Language;
+  readonly prompt?: string;
 }
 
 export interface TakeStore {
@@ -43,6 +52,7 @@ export interface TakeStore {
   /** Newest first, without audio. */
   list(): Promise<TakeRow[]>;
   loadWav(takeId: number): Promise<ArrayBuffer | null>;
+  setReadings(takeId: number, readings: Readings): Promise<void>;
   remove(takeId: number): Promise<void>;
   /** Whether the browser agreed to keep the data; null before the first save or without the API. */
   persisted(): Promise<boolean | null>;
@@ -86,6 +96,8 @@ export function openTakeStore(name = 'pronunciation-coach'): TakeStore {
           audioId,
           mic: context.mic,
           device: context.device,
+          ...(context.language === undefined ? {} : { language: context.language }),
+          ...(context.prompt === undefined ? {} : { prompt: context.prompt }),
         });
       });
     },
@@ -96,6 +108,9 @@ export function openTakeStore(name = 'pronunciation-coach'): TakeStore {
       const row = await db.takes.get(takeId);
       if (!row) return null;
       return (await db.audio.get(row.audioId))?.wav ?? null;
+    },
+    async setReadings(takeId, readings) {
+      await db.takes.update(takeId, { readings });
     },
     async remove(takeId) {
       await db.transaction('rw', db.takes, db.audio, async () => {

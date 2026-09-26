@@ -74,6 +74,17 @@ describe('take store', () => {
     expect(rows[0]).not.toHaveProperty('wav');
   });
 
+  it('TakeStore_SetReadings_StoredWithTake', async () => {
+    const store = freshStore();
+    const id = await store.save(take(), { mic, device: 'a', language: 'fr', prompt: 'Le ministre a pris la table du fond.' });
+    const readings = { quality: { ok: true, reasons: [], peakDbfs: -3, clippedRatio: 0, snrDb: 40, speechMs: 900 }, speechLevelDbfs: -24, pitch: null, pauses: { count: 0, totalS: 0 }, syllables: 9, articulationRate: 4.5, fadeDb: null };
+    await store.setReadings(id, readings);
+    const [row] = await store.list();
+    expect(row?.readings).toEqual(readings);
+    expect(row?.language).toBe('fr');
+    expect(row?.prompt).toBe('Le ministre a pris la table du fond.');
+  });
+
   it('TakeStore_Remove_DeletesTakeAndAudio', async () => {
     const store = freshStore();
     const id = await store.save(take(), { mic, device: 'a' });

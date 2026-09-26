@@ -1,5 +1,6 @@
 /**
- * Throwaway Azure calls for the R1 phone test. The SDK loads on demand into its own
+ * Azure Speech calls, first used by the R1 phone test and kept for R4 (machine listener).
+ * Nothing imports this module until then, so the SDK is not in the build. The SDK loads on demand into its own
  * chunk (named azure-speech-sdk-*, which the key scan expects). The key comes from the
  * owner's settings on this phone (ADR 002); the app sends it only to Azure.
  */

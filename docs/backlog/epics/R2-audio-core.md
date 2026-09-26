@@ -108,24 +108,26 @@ A recording session: one AudioContext and one mic stream per session; processing
 
 **Completed (2026-09-26):** `apps/pwa/src/audio/`: `microphone.ts` (one AudioContext and stream per session; the R1 phone-test page now shares its settings), `takeRecorder.ts` (pure: streaming detector at the mic rate, stop rules, exact caps, 300 ms pre-roll, one resample to 16 kHz), `takeController.ts` (one take at a time, Wake Lock, discard on a hidden page, progress every 0.1 s) and `takeStore.ts` (Dexie 4: `takes` and `audio` stores, `storage.persist()` on the first save). 22 new tests with synthetic audio and fake IndexedDB (app: 72). **Checked in Chromium** through the dev server, with a synthetic sentence as the fake mic: speech found at 1.0 s (true onset 0.98 s), the take stopped by itself 0.8 s after the speech, 3.3 s kept with the pre-roll, saved and read back; with the default silent fake mic, the word take stopped at its 8 s cap; hiding the page discarded a talk take; no errors. **Known limit:** a sound held steady for more than about 3 s counts as background (the detector follows the room), so R2-T08's held vowels must stay under 3 s.
 
-### R2-T07: Record-and-replay screen ⬚
+### R2-T07: Record-and-replay screen 🔄 (built; the Pixel check comes with R2-T08)
 **Type:** frontend | **Effort:** M | **Depends on:** R2-T03 … R2-T06
 
 #### What to Build
 A screen to record a sentence or a short talk, replay it, and see the quality verdict and the first readings (level, pitch range, pauses, rate, fade), labelled "test readings". A distance check: hold the phone a hand-span away; the app compares the warm-up level with your last takes and asks you to adjust if it is far off. The R1 phone-test page is removed when this screen ships.
 
 #### Acceptance Criteria
-- [ ] Record, stop (by tap or by itself), replay, verdict and readings work in Chrome with a fake mic and on the Pixel
-- [ ] Readings never appear as scores or targets; wording follows `docs/product-design.md` §3
+- [ ] Record, stop (by tap or by itself), replay, verdict and readings work in Chrome with a fake mic ✅ and on the Pixel (with R2-T08)
+- [x] Readings never appear as scores or targets; wording follows `docs/product-design.md` §3
 
 #### Testing Requirements (TDD)
 - Recorder_Take_ShowsVerdictAndReadings · Recorder_RetakeReason_Shown · DistanceCheck_FarOff_AsksToAdjust · Replay_PlaysStoredTake
+
+**Built (2026-09-26):** `apps/pwa/src/record/`: `RecordScreen.tsx` at `#/record` (lazy-loaded; linked from the start page): a sentence, a held vowel (for R2-T08) or a short talk in English or French; the take stops by itself; "Good recording" or "Please record again" with plain reasons (`messages.ts`); test readings labelled "not scores"; a distance note on the first take of a visit (`distance.ts`: middle value of the last 10 good takes, needs 3, warns beyond 6 dB — app defaults for V3 to tune); Replay and Download; the last 5 takes with Replay, Download and Delete; "Download all takes (ZIP)" (`exportTakes.ts`, `zip.ts`: stored ZIP with a manifest). `analysis.ts` runs in `analysis.worker.ts`. Takes now keep language, prompt and readings. The R1 phone-test page is removed; its Azure code moved to `src/azure/` for R4 (not bundled until used, so the build dropped from 616 to 371 KB). 40 new tests (app: 94). **Checked in Chromium** on the built app under `/Pronunciation-App/` with a synthetic sentence as the fake mic: "Good recording" 4.4 s after Record, "Stopped by itself"; readings equal Praat's for that sentence after the full capture path (level −21.5 vs −21.45 dBFS; range 2.7 vs 2.67 semitones; rate 4.7 vs 4.72 syllables/s; fade −0.3 vs −0.28 dB); replay, download (16 kHz WAV), survival across a reload, delete, a held-vowel take and a valid ZIP (checked with Python's zipfile); no console errors and no content-security-policy reports.
 
 ### R2-T08: Owner-voice checks on the Pixel (V1) ⬚
 **Type:** validation | **Effort:** S | **Depends on:** R2-T07
 
 #### What to Build
-The owner records 20 steady vowels (each held about 2 s: longer held sounds count as background, R2-T06) and 10 sentences in each language on the Pixel, and sends the WAVs in the chat. Claude runs the Praat reference on them and compares the app's readings. Results go to `docs/validation/r2-owner-voice.md`; only numbers are committed, never the audio. Also the earbud check carried from R1.
+The owner records 20 steady vowels (each held about 2 s: longer held sounds count as background, R2-T06) and 10 sentences in each language on the Pixel, and sends the WAVs in the chat. Claude runs the Praat reference on them and compares the app's readings. Results go to `docs/validation/r2-owner-voice.md` (steps and pass rules written); only numbers are committed, never the audio. Also the earbud check carried from R1.
 
 #### Acceptance Criteria
 - [ ] V1: pitch within ±1 semitone of Praat on ≥ 90% of voiced frames, on 20 of 20 steady-vowel takes
