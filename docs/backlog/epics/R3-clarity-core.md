@@ -63,7 +63,7 @@ A new workspace `packages/core` (pure TypeScript). Everyday sentence banks in En
 
 **Completed (2026-09-26):** `packages/core/src/schedule.ts`: `languageOfTheDay` (only sessions that counted), `planSession` (warm-up and blocks drawn without repeats, avoiding recent sentences; the baseline when a language has none), `weekProgress` (local Monday to Sunday) and `clampTarget`. The tests pass in three time zones. 16 tests (core: 143).
 
-### R3-T04: Session storage ⬚
+### R3-T04: Session storage ✅
 **Type:** data | **Effort:** S | **Depends on:** R3-T03
 
 #### What to Build
@@ -71,6 +71,8 @@ Dexie version 2: `sessions` (language, length, kind practice or baseline, blocks
 
 #### Testing Requirements (TDD)
 - Store_UpgradeFromV1_KeepsTakes · Store_SessionSaveLoad_RoundTrips · Store_TakeRole_Saved · Profile_Defaults
+
+**Completed (2026-09-26):** `apps/pwa/src/data/database.ts` (one Dexie instance per name, versions 1 and 2) and `data/sessionStore.ts` (start, update, get, list, profile). Block summaries live inside each session row, so the planned `summaries` store is not needed. The take store now uses the shared database and saves session, sentence and role. 6 new tests (app: 100).
 
 ### R3-T05: Session screen ⬚
 **Type:** frontend | **Effort:** L | **Depends on:** R3-T02, R3-T04

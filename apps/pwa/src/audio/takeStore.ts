@@ -1,43 +1,17 @@
 /**
- * Takes on the phone, in IndexedDB through Dexie (docs/database-schema.md §2).
+ * Takes on the phone, in IndexedDB through Dexie (docs/database-schema.md §2; `data/database.ts`).
  * `takes` holds the metadata (small, listed often); `audio` holds the 16 kHz WAV files.
  * On the first save the app asks the browser to keep the data (`navigator.storage.persist()`),
  * so Chrome does not clear it when space runs low.
  */
-import { encodeWav, type SpeechSegment } from '@pc/dsp';
-import Dexie, { type EntityTable } from 'dexie';
+import type { Language } from '@pc/core';
+import { encodeWav } from '@pc/dsp';
+import { database, type TakeRole, type TakeRow } from '../data/database';
 import type { Readings } from '../record/analysis';
-import type { Language } from '../record/prompts';
 import type { MicInfo } from './microphone';
-import type { RecordedTake, StopReason, TakeKind } from './takeRecorder';
+import type { RecordedTake } from './takeRecorder';
 
-export interface TakeRow {
-  id: number;
-  createdAt: string;
-  kind: TakeKind;
-  stopReason: StopReason;
-  durationS: number;
-  sampleRate: number;
-  /** Seconds of silence dropped before the 300 ms pre-roll. */
-  startOffsetS: number;
-  speech: SpeechSegment[];
-  noiseFloorDb: number | null;
-  audioId: number;
-  mic: MicInfo;
-  device: string;
-  /** Language and text of the prompt, when there was one. */
-  language?: Language;
-  prompt?: string;
-  /** Quality verdict and test readings, added after analysis (R2-T07). */
-  readings?: Readings;
-}
-
-export interface AudioRow {
-  id: number;
-  kind: 'practice';
-  createdAt: string;
-  wav: ArrayBuffer;
-}
+export type { AudioRow, TakeRole, TakeRow } from '../data/database';
 
 export interface TakeContext {
   readonly mic: MicInfo;
@@ -45,6 +19,9 @@ export interface TakeContext {
   readonly device: string;
   readonly language?: Language;
   readonly prompt?: string;
+  readonly sessionId?: number;
+  readonly itemId?: string;
+  readonly role?: TakeRole;
 }
 
 export interface TakeStore {
@@ -58,18 +35,8 @@ export interface TakeStore {
   persisted(): Promise<boolean | null>;
 }
 
-class CoachDatabase extends Dexie {
-  takes!: EntityTable<TakeRow, 'id'>;
-  audio!: EntityTable<AudioRow, 'id'>;
-
-  constructor(name: string) {
-    super(name);
-    this.version(1).stores({ takes: '++id, createdAt, kind', audio: '++id' });
-  }
-}
-
-export function openTakeStore(name = 'pronunciation-coach'): TakeStore {
-  const db = new CoachDatabase(name);
+export function openTakeStore(name?: string): TakeStore {
+  const db = database(name);
   let persistence: Promise<boolean | null> | null = null;
 
   const askToPersist = (): Promise<boolean | null> => {
@@ -98,6 +65,9 @@ export function openTakeStore(name = 'pronunciation-coach'): TakeStore {
           device: context.device,
           ...(context.language === undefined ? {} : { language: context.language }),
           ...(context.prompt === undefined ? {} : { prompt: context.prompt }),
+          ...(context.sessionId === undefined ? {} : { sessionId: context.sessionId }),
+          ...(context.itemId === undefined ? {} : { itemId: context.itemId }),
+          ...(context.role === undefined ? {} : { role: context.role }),
         });
       });
     },
