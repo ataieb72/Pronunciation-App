@@ -1,8 +1,10 @@
 export { fft } from './fft';
+export { intensityQuantile, intensityTrack, intensityValueAt, minimumBetween, type IntensityOptions, type IntensityTrack } from './intensity';
 export { clippedRatio, peakDbfs, rmsDbfs } from './levels';
-export { percentile, summarizePitch, trackPitch, type PitchOptions, type PitchSummary, type PitchTrack } from './pitch';
+export { percentile, pitchValueAt, summarizePitch, trackPitch, type PitchOptions, type PitchSummary, type PitchTrack } from './pitch';
 export { checkQuality, QUALITY_LIMITS, type QualityVerdict, type RetakeReason } from './quality';
 export { resample } from './resample';
+export { detectSilences, RHYTHM_SETTINGS, syllableNuclei, type IntensityPeak, type Interval, type RhythmResult } from './rhythm';
 export {
   createSpeechDetector,
   detectSpeech,

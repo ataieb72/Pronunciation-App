@@ -13,6 +13,13 @@ export interface PitchOptions {
   readonly timeStep?: number;
   readonly floorHz?: number;
   readonly ceilingHz?: number;
+  /** Praat's advanced settings; the defaults are Praat's. */
+  readonly maxCandidates?: number;
+  readonly silenceThreshold?: number;
+  readonly voicingThreshold?: number;
+  readonly octaveCost?: number;
+  readonly octaveJumpCost?: number;
+  readonly voicedUnvoicedCost?: number;
 }
 
 export interface PitchTrack {
@@ -34,13 +41,16 @@ export interface PitchSummary {
 
 // Praat's standard settings for "To Pitch (ac)" (not "very accurate").
 const PERIODS_PER_WINDOW = 3;
-const MAX_CANDIDATES = 15;
-const SILENCE_THRESHOLD = 0.03;
-const VOICING_THRESHOLD = 0.45;
-const OCTAVE_COST = 0.01;
-const OCTAVE_JUMP_COST = 0.35;
-const VOICED_UNVOICED_COST = 0.14;
 const INTERPOLATION_DEPTH = 0.5;
+const DEFAULTS = {
+  maxCandidates: 15,
+  silenceThreshold: 0.03,
+  voicingThreshold: 0.45,
+  octaveCost: 0.01,
+  octaveJumpCost: 0.35,
+  voicedUnvoicedCost: 0.14,
+};
+type Settings = typeof DEFAULTS;
 
 interface Candidate {
   frequency: number; // 0 = unvoiced
@@ -58,6 +68,14 @@ export function trackPitch(samples: Float32Array, sampleRate: number, options: P
   const timeStep = options.timeStep ?? 0.01;
   const floorHz = options.floorHz ?? 75;
   const ceilingHz = Math.min(options.ceilingHz ?? 600, sampleRate / 2);
+  const settings: Settings = {
+    maxCandidates: options.maxCandidates ?? DEFAULTS.maxCandidates,
+    silenceThreshold: options.silenceThreshold ?? DEFAULTS.silenceThreshold,
+    voicingThreshold: options.voicingThreshold ?? DEFAULTS.voicingThreshold,
+    octaveCost: options.octaveCost ?? DEFAULTS.octaveCost,
+    octaveJumpCost: options.octaveJumpCost ?? DEFAULTS.octaveJumpCost,
+    voicedUnvoicedCost: options.voicedUnvoicedCost ?? DEFAULTS.voicedUnvoicedCost,
+  };
   const dx = 1 / sampleRate;
   const duration = samples.length * dx;
 
@@ -121,20 +139,20 @@ export function trackPitch(samples: Float32Array, sampleRate: number, options: P
         const ri = r[i] ?? 0;
         const prev = r[i - 1] ?? 0;
         const next = r[i + 1] ?? 0;
-        if (!(ri > 0.5 * VOICING_THRESHOLD && ri > prev && ri >= next)) continue;
+        if (!(ri > 0.5 * settings.voicingThreshold && ri > prev && ri >= next)) continue;
         const dr = 0.5 * (next - prev);
         const d2r = 2 * ri - prev - next;
         const lag = i + dr / d2r;
         const frequency = 1 / dx / lag;
         let strength = ri + (0.5 * dr * dr) / d2r;
         if (strength > 1) strength = 1 / strength;
-        insertCandidate(candidates, { frequency, strength }, floorHz);
+        insertCandidate(candidates, { frequency, strength }, floorHz, settings);
       }
     }
     frames.push({ intensity, candidates });
   }
 
-  const path = viterbi(frames, ceilingHz, 0.01 / timeStep);
+  const path = viterbi(frames, ceilingHz, 0.01 / timeStep, settings);
   const f0 = new Float32Array(frameCount);
   path.forEach((c, k) => {
     f0[k] = c.frequency > 0 && c.frequency < ceilingHz ? c.frequency : 0;
@@ -157,9 +175,9 @@ function autocorrelation(signal: Float64Array, fftSize: number): Float64Array {
 }
 
 /** Keeps the strongest candidates; high frequencies get a small bonus (Praat's octave cost). */
-function insertCandidate(candidates: Candidate[], candidate: Candidate, floorHz: number): void {
-  const score = (c: Candidate) => c.strength - OCTAVE_COST * log2(floorHz / c.frequency);
-  if (candidates.length < MAX_CANDIDATES) {
+function insertCandidate(candidates: Candidate[], candidate: Candidate, floorHz: number, settings: Settings): void {
+  const score = (c: Candidate) => c.strength - settings.octaveCost * log2(floorHz / c.frequency);
+  if (candidates.length < settings.maxCandidates) {
     candidates.push(candidate);
     return;
   }
@@ -174,14 +192,15 @@ function insertCandidate(candidates: Candidate[], candidate: Candidate, floorHz:
 }
 
 /** Praat's Pitch_pathFinder: the most probable candidate sequence. */
-function viterbi(frames: readonly Frame[], ceilingHz: number, timeStepCorrection: number): Candidate[] {
-  const jumpCost = OCTAVE_JUMP_COST * timeStepCorrection;
-  const switchCost = VOICED_UNVOICED_COST * timeStepCorrection;
+function viterbi(frames: readonly Frame[], ceilingHz: number, timeStepCorrection: number, settings: Settings): Candidate[] {
+  const jumpCost = settings.octaveJumpCost * timeStepCorrection;
+  const switchCost = settings.voicedUnvoicedCost * timeStepCorrection;
+  const { voicingThreshold, silenceThreshold, octaveCost } = settings;
   const voiced = (f: number) => f > 0 && f < ceilingHz;
 
   const score: number[][] = frames.map((frame) => {
-    const unvoiced = VOICING_THRESHOLD + Math.max(0, 2 - frame.intensity / (SILENCE_THRESHOLD / (1 + VOICING_THRESHOLD)));
-    return frame.candidates.map((c) => (voiced(c.frequency) ? c.strength - OCTAVE_COST * log2(ceilingHz / c.frequency) : unvoiced));
+    const unvoiced = voicingThreshold + Math.max(0, 2 - frame.intensity / (silenceThreshold / (1 + voicingThreshold)));
+    return frame.candidates.map((c) => (voiced(c.frequency) ? c.strength - octaveCost * log2(ceilingHz / c.frequency) : unvoiced));
   });
   const back: number[][] = frames.map((frame) => frame.candidates.map(() => 0));
 
@@ -217,6 +236,28 @@ function viterbi(frames: readonly Frame[], ceilingHz: number, timeStepCorrection
     place = back[k]?.[place] ?? 0;
   }
   return path;
+}
+
+/**
+ * F0 at a time, as Praat's "Get value at time … linear": undefined (NaN) when the nearest frame is
+ * unvoiced; when only the farther frame is unvoiced, the nearest frame's value.
+ */
+export function pitchValueAt(track: PitchTrack, time: number): number {
+  const x = (time - track.t0) / track.timeStep;
+  const left = Math.floor(x);
+  let phase = x - left;
+  let near = left;
+  let far = left + 1;
+  if (phase >= 0.5) {
+    near = left + 1;
+    far = left;
+    phase = 1 - phase;
+  }
+  const fNear = track.f0[near];
+  if (fNear === undefined || fNear <= 0) return Number.NaN;
+  const fFar = track.f0[far];
+  if (fFar === undefined || fFar <= 0) return fNear;
+  return fNear + phase * (fFar - fNear);
 }
 
 /** Percentile with linear interpolation between closest ranks (NumPy's default). */

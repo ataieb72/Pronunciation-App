@@ -62,18 +62,20 @@ An autocorrelation pitch tracker modelled on Praat's (Boersma 1993): 10 ms steps
 
 **Completed (2026-09-26):** `packages/dsp/src/fft.ts` (radix-2 FFT) and `packages/dsp/src/pitch.ts`: Praat's "To Pitch (ac)" rebuilt in TypeScript (same frame grid, Hanning window of 3 floor periods, window-normalised autocorrelation, up to 15 candidates, Praat's silence, voicing and octave costs, Viterbi path), with parabolic peak interpolation where Praat uses sinc. `summarizePitch` gives median, P10, P90 and range in semitones (NumPy-style percentiles). On the golden set: voicing agrees with Praat on 99.9% of frames; 100% of frames voiced in both are within 0.5 semitone; ranges within 0.09 semitone. A regression guard requires ≥ 95% voicing agreement. Speed: 0.64 s for 24 files (about 70 s of audio) in Node. **Caveat:** synthetic voices are smooth and regular; R2-T08 checks the owner's voice (V1). 63 new tests (DSP: 175).
 
-### R2-T04: Pauses, syllable nuclei and articulation rate ⬚
+### R2-T04: Pauses, syllable nuclei and articulation rate ✅
 **Type:** dsp | **Effort:** M | **Depends on:** R2-T02, R2-T03
 
 #### What to Build
 Pauses from the detector's silences (≥ 250 ms, inside the take). Syllable nuclei after de Jong & Wempe (2009): intensity peaks above a threshold, a 2 dB dip between peaks, and voicing at the peak. Articulation rate = nuclei ÷ phonation time.
 
 #### Acceptance Criteria
-- [ ] Pause edges within ±50 ms of Praat's silences; counts exact on clean fixtures
-- [ ] Nuclei counts and rates within ±10% of the Praat reference, in English and French
+- [x] Pause edges within ±50 ms of Praat's silences; counts exact on clean fixtures
+- [x] Nuclei counts and rates within ±10% of the Praat reference, in English and French
 
 #### Testing Requirements (TDD)
 - Pauses_KnownGaps_FoundWithin50ms · Pauses_ShortGap_Ignored · Nuclei_SyntheticSyllables_CountExact · Nuclei_GoldenFixtures_MatchPraat · Rate_SlowAndFastFixtures_OrderedAndWithin10pct
+
+**Completed (2026-09-26):** `packages/dsp/src/intensity.ts`: Praat's "To Intensity" rebuilt (Kaiser–Bessel window of 6.4/min-pitch s, Praat's frame grid, optional mean removal), with Praat's cubic value-at-time, minimum-between and quantile; frames match Praat within 0.05 dB on all 24 golden files. `packages/dsp/src/rhythm.ts`: Praat's "To TextGrid (silences)" and de Jong & Wempe's nuclei (threshold 25 dB below the 99th percentile; 2 dB dips; voiced and sounding; the last peak never counted, as published), pauses ≥ 250 ms and articulation rate. `trackPitch` now takes Praat's advanced settings (the nuclei voicing check uses the script's own), and `pitchValueAt` follows Praat's nearest-frame rule. Golden set: nuclei counts exact on 24 of 24; sounding and pause edges within 10 ms; nucleus times within 5 ms; slow < normal < fast in both languages. **Findings:** Praat's quantile extrapolates slightly past the top value (kept, as Praat does); when no frame is below the silence threshold (10 dB SNR files), Praat 6.1.38 labels the whole take as sounding (checked directly). Speed: 1.1 s for 71 s of audio in Node, mostly the 30 Hz voicing pitch; fine after a take, to be watched on the phone in R2-T06. 60 new tests (DSP: 235).
 
 ### R2-T05: Speech level and fade at phrase ends ⬚
 **Type:** dsp | **Effort:** S | **Depends on:** R2-T04
