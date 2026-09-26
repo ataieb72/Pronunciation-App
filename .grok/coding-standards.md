@@ -35,6 +35,7 @@ Lint warnings are errors. For audio or UI changes, also check on the phone (or C
 - Audio is uncompressed 16 kHz mono PCM. Mic auto-gain, noise suppression and echo cancellation are requested off; the applied settings are stored.
 - The Azure key comes only from `azureSettings` (typed by the owner on the phone). Never put a key in code, config, tests with real values, logs or error messages. Never widen the content security policy in `apps/pwa/vite.config.ts` beyond the app and Azure Speech.
 - Azure SDK results: compare reasons with SDK enums; wrap callback APIs correctly; set timeouts.
+- Every `SpeechConfig` sets `PropertyId.WebWorkerLoadType` to `off`: the content security policy blocks the SDK's `data:` worker, and without this, audio longer than 5 s never finishes sending.
 - Every score stores provider, locale, SDK version, era and device.
 
 ### Evidence
