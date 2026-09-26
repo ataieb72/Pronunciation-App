@@ -32,7 +32,7 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 | Path | What | Added in |
 |---|---|---|
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
-| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
+| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures, voice activity detection (streaming), quality gate. Next: pitch, pauses, rate, level and fade | R1, R2 |
 | `packages/dsp/golden` | Praat reference: synthetic EN/FR test recordings (espeak-ng) and the values Praat measures on them (Parselmouth). Python, run by hand; outputs are committed | R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |

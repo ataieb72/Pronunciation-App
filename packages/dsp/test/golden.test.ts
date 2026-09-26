@@ -10,7 +10,7 @@ describe('golden fixtures (Praat reference)', () => {
     expect(new Set(fixtures.map((f) => f.expected.language))).toEqual(new Set(['en', 'fr']));
   });
 
-  it.each(fixtures)('Golden_$name_LevelsMatchPraat', ({ expected, samples, sampleRate }) => {
+  it.each(fixtures)('Golden_LevelsMatchPraat ($name)', ({ expected, samples, sampleRate }) => {
     expect(sampleRate).toBe(16_000);
     expect(samples.length / sampleRate).toBeCloseTo(expected.duration, 3);
     expect(Math.abs(peakDbfs(samples) - expected.peakDbfs)).toBeLessThan(0.1);

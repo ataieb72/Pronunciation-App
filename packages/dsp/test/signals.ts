@@ -34,3 +34,42 @@ export function zeroCrossingFreq(x: Float32Array, sampleRate: number): number {
   }
   return ((count - 1) * sampleRate) / (last - first);
 }
+
+/** Joins signals end to end. */
+export function concat(...parts: Float32Array[]): Float32Array {
+  const out = new Float32Array(parts.reduce((n, p) => n + p.length, 0));
+  let offset = 0;
+  for (const p of parts) {
+    out.set(p, offset);
+    offset += p.length;
+  }
+  return out;
+}
+
+/** Deterministic white Gaussian noise at a given RMS level (dBFS). */
+export function noise(sampleRate: number, seconds: number, rmsDbfs: number, seed = 1): Float32Array {
+  let state = seed >>> 0;
+  const uniform = () => {
+    // mulberry32
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const sigma = 10 ** (rmsDbfs / 20);
+  const n = Math.round(sampleRate * seconds);
+  const out = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const u = Math.max(uniform(), 1e-12);
+    out[i] = sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * uniform());
+  }
+  return out;
+}
+
+/** Adds b onto a (same length or shorter), returning a new signal. */
+export function mix(a: Float32Array, b: Float32Array): Float32Array {
+  const out = Float32Array.from(a);
+  for (let i = 0; i < Math.min(a.length, b.length); i++) out[i] = (out[i] ?? 0) + (b[i] ?? 0);
+  return out;
+}

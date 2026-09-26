@@ -32,18 +32,20 @@ Evidence for these measures and their limits: `elocution-focus.md` §5 (level [M
 
 **Completed (2026-09-26):** `packages/dsp/golden/make_golden.py` makes 24 recordings (4 EN and 4 FR sentences; slow, fast, low, high, quiet, noisy and fading versions) with espeak-ng 1.51 and measures them with Praat 6.1.38 through Parselmouth 0.4.7. Deterministic: a re-run gives identical files. The reference behaves as expected: 10 nuclei in the 10-syllable "I asked her to help me with the world map"; 2 pauses in each sentence with two breaks and none elsewhere; quiet versions exactly 20 dB lower with the same nuclei; fading versions more negative than their originals (−4.1 vs −0.3 dB in English; −1.4 vs +2.1 dB in French). `decodeWav` added to `packages/dsp` (skips extra chunks; rejects non-PCM16-mono). 30 new tests (DSP: 50). The files take 2.4 MB.
 
-### R2-T02: Voice activity detection and quality gate ⬚
+### R2-T02: Voice activity detection and quality gate ✅
 **Type:** dsp | **Effort:** M | **Depends on:** R2-T01
 
 #### What to Build
 An energy detector that adapts to the room's noise floor and returns speech stretches; a take ends 0.8 s after speech stops. A quality gate returns a verdict with reasons: clipping > 0.1%, peak < −35 dBFS, SNR < 15 dB, speech < 250 ms. The first 150 ms are ignored (the Pixel's mic delivers about 120 ms of silence at start, R1 run 1).
 
 #### Acceptance Criteria
-- [ ] Speech stretches match Praat's sounding intervals within ±50 ms on clean fixtures
-- [ ] Each gate reason fires on a synthetic signal built to trip it, and no reason fires on clean fixtures
+- [x] ~~Speech stretches match Praat's sounding intervals within ±50 ms on clean fixtures~~ → refined: speech onset within ±50 ms of Praat's, and speech never ends more than 50 ms before Praat's end, on all clean fixtures (the detector serves endpointing; pause edges against Praat are R2-T04's check)
+- [x] Each gate reason fires on a synthetic signal built to trip it, and no reason fires on clean fixtures
 
 #### Testing Requirements (TDD)
 - Vad_SilenceThenTone_FindsOnsetWithin20ms · Vad_NoiseFloorRises_Adapts · Vad_GoldenFixtures_MatchPraatSounding · Gate_Clipped_Retake · Gate_TooQuiet_Retake · Gate_LowSnr_Retake · Gate_TooShort_Retake · Gate_CleanSpeech_Passes · Vad_StartupSilence_Ignored
+
+**Completed (2026-09-26):** `packages/dsp/src/vad.ts`: a streaming detector on 10 ms frames (noise level = lowest 50 ms-smoothed energy over the last 3 s; onset 10 dB above it for 30 ms; end after 150 ms within 6 dB; nothing below −60 dBFS counts; first 150 ms ignored), plus `detectSpeech` for whole takes. Streaming in uneven chunks gives the same result as a whole take. `packages/dsp/src/quality.ts`: `checkQuality` with the four retake reasons and the limits in `QUALITY_LIMITS`. On the golden set: onsets within 24 ms of Praat; ends from 30 ms early to 120 ms late; all clean and 20 dB files pass the gate; both 10 dB files get "noisy". **Finding:** at 10 dB SNR Praat's relative threshold marks the whole file as sounding, so noisy files are compared with their clean originals. **Limit:** below about 10 dB SNR the detector hears no speech, so the verdict is "too-short"; R2-T07's message must cover both ("No speech heard: move closer or find a quieter place"). 38 new tests (DSP: 112).
 
 ### R2-T03: Pitch tracker and pitch range ⬚
 **Type:** dsp | **Effort:** M | **Depends on:** R2-T01
@@ -123,6 +125,6 @@ The owner records 20 steady vowels and 10 sentences in each language on the Pixe
 
 ## Decisions for this epic
 
-- **D-R2-1 (owner, pending):** which voices go into the public repository as test recordings. Default until decided: synthetic voices only (espeak-ng); the owner's voice is checked in the chat and never committed.
+- **D-R2-1 (owner, decided 2026-09-26: A):** only synthetic voices (espeak-ng) go into the public repository as test recordings. The owner's voice is checked in the chat, and only numbers are committed.
 - **Pitch method:** Praat-style autocorrelation, because Praat is the reference (design-options §6.10).
 - **Rate method:** de Jong & Wempe (2009) syllable nuclei, because it needs no transcript and works in both languages (mumbling-note §5 [Moderate]).

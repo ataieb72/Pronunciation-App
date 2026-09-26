@@ -74,7 +74,7 @@ describe('summarizeAzureJson on real Azure results', () => {
     expect(realResults).toHaveLength(6);
   });
 
-  it.each(realResults.filter((r) => r.name.includes('en-US')))('RealEnglish_$name_HasNamedPhonemesAndProsody', ({ json }) => {
+  it.each(realResults.filter((r) => r.name.includes('en-US')))('RealEnglish_HasNamedPhonemesAndProsody ($name)', ({ json }) => {
     const summary = summarizeAzureJson(json);
     expect(summary?.text).toBe('I asked her to help me with the world map.');
     expect(summary?.words).toBe(10);
@@ -84,7 +84,7 @@ describe('summarizeAzureJson on real Azure results', () => {
     expect(summary?.scores.accuracy).toBeGreaterThanOrEqual(0);
   });
 
-  it.each(realResults.filter((r) => r.name.includes('fr-FR')))('RealFrench_$name_HasScoresButNoPhonemeNamesOrProsody', ({ json }) => {
+  it.each(realResults.filter((r) => r.name.includes('fr-FR')))('RealFrench_HasScoresButNoPhonemeNamesOrProsody ($name)', ({ json }) => {
     const summary = summarizeAzureJson(json);
     expect(summary?.text).toBe('Le ministre a pris la table du fond.');
     expect(summary?.words).toBe(8);
