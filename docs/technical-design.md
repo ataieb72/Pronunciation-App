@@ -31,7 +31,7 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 
 | Path | What | Added in |
 |---|---|---|
-| `apps/pwa` | Vite + React + TypeScript PWA | R1 |
+| `apps/pwa` | Vite + React + TypeScript PWA. Screens: Today (start page), Session (`#/session/<5|10>/<en|fr>`), Record and replay (`#/record`), Connect to Azure | R1–R3 |
 | `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures, voice activity detection (streaming), quality gate, FFT, Praat-style pitch tracker, intensity, silences, syllable nuclei, pauses, articulation rate, speech level and fade at phrase ends (all checked against Praat) | R1, R2 |
 | `packages/dsp/golden` | Praat reference: synthetic EN/FR test recordings (espeak-ng) and the values Praat measures on them (Parselmouth). Python, run by hand; outputs are committed | R2 |
 | `packages/core` | Pure TypeScript domain logic. Built: EN and FR sentence banks with target word endings, sentence picker, pair comparison and block summary (cue choice), language of the day, session plan, weekly target | R3 |

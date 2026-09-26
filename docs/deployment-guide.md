@@ -62,7 +62,7 @@ This replaces the v1 files on `master` with v2. Git history keeps v1.
 3. Open **Coach** from the home screen.
 4. In Chrome, open <https://portal.azure.com> → your Speech resource → **Keys and Endpoint**. Tap the copy button next to **KEY 1**. (Or copy it from your password manager.)
 5. Back in the app, paste the key into **Azure key**. Type the region into **Region**, for example `uksouth`. Select **Save on this phone**.
-6. You should see **Azure key saved ✓** with the last 4 characters of the key. The recorder is on the start page: **Open the recorder**.
+6. You should see **Azure key saved ✓** with the last 4 characters of the key. The start page shows **Today**: the first session in each language records your baseline.
 
 The key stays in the app's storage on this phone. The app sends it only to Azure. It is not in GitHub, the app files, or anywhere else.
 

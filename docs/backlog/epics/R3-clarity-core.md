@@ -74,7 +74,7 @@ Dexie version 2: `sessions` (language, length, kind practice or baseline, blocks
 
 **Completed (2026-09-26):** `apps/pwa/src/data/database.ts` (one Dexie instance per name, versions 1 and 2) and `data/sessionStore.ts` (start, update, get, list, profile). Block summaries live inside each session row, so the planned `summaries` store is not needed. The take store now uses the shared database and saves session, sentence and role. 6 new tests (app: 100).
 
-### R3-T05: Session screen ⬚
+### R3-T05: Session screen ✅
 **Type:** frontend | **Effort:** L | **Depends on:** R3-T02, R3-T04
 
 #### What to Build
@@ -83,7 +83,9 @@ Dexie version 2: `sessions` (language, length, kind practice or baseline, blocks
 #### Testing Requirements (TDD)
 - Session_WarmUp_ThenPairs · Pair_UsualThenClear_ThenJudge · Pair_FailedTake_AsksRetake · Block_ShowsSummaryAndNextCue · Wrap_ShowsCueAndWeek · Baseline_UsualAllThenClearAll · EndSession_SavesWhatWasDone · PageHidden_DiscardsTake
 
-### R3-T06: Today screen ⬚
+**Completed (2026-09-26):** `apps/pwa/src/session/`: `flow.ts` (the session as a list of steps; where Skip goes), `history.ts` (baseline present, recent sentences, features that held, week log), `SessionScreen.tsx` at `#/session/<5|10>/<en|fr>`. A take that fails the quality check stays on its step with the reasons; a good take moves on by itself. Each change is saved at once, so an app closed mid-session keeps what was done. `audio/playback.ts` plays stored takes. 20 new tests; the session tests use a 1.7 s fake take (7.7 s for the file instead of 28 s).
+
+### R3-T06: Today screen ✅
 **Type:** frontend | **Effort:** M | **Depends on:** R3-T05
 
 #### What to Build
@@ -91,6 +93,10 @@ The start page becomes Today: "Start · 10 min" (5 as an option), the language o
 
 #### Testing Requirements (TDD)
 - Today_ShowsLanguageAndWeek · Today_NoBaseline_OffersBaseline · Today_Start_OpensSession · Settings_TargetChange_Saved · Export_Manifest_HasSessionAndRole
+
+**Completed (2026-09-26):** `apps/pwa/src/today/TodayScreen.tsx` on the start page, above the recorder tool and the Azure card; `components/WeekDots.tsx`. The ZIP file now names each take by its role and adds the sessions (sentences, judgements, block summaries) to the manifest. 8 new tests (app: 128).
+
+**Checked in Chromium** on the built app under `/Pronunciation-App/`, with a synthetic sentence looping as the fake mic: Today offered the English baseline; 16 baseline takes (about 7 s each with that file) → "Baseline saved"; Today then offered Start; a 5-minute session ran warm-up → 4 pairs (cue "Open your jaw") → block summary → wrap. With the same audio in both takes, the summary said "No clear change this block", "About the same pace" and "Next: Reach the back of the room", as it should. Week dots ●○○○ (baseline and session on one day count once). The ZIP held 26 takes named by role and both sessions with their judgements. No console errors and no content-security-policy reports.
 
 ### R3-T07: Voice check on practice takes (was R2-T08) ⬚
 **Type:** validation | **Depends on:** R3-T06 and a few real sessions

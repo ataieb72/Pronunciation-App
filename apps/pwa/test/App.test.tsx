@@ -35,6 +35,24 @@ describe('App', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Pronunciation Coach' })).toBeInTheDocument();
   });
 
+  it('App_SessionHash_ShowsSession', async () => {
+    window.location.hash = '#/session/5/fr';
+    render(<App />);
+    // A new phone has no French baseline yet, so the session records it.
+    expect(await screen.findByRole('heading', { level: 2, name: 'Baseline · Français' })).toBeInTheDocument();
+  });
+
+  it('App_BadSessionHash_ShowsStartPage', () => {
+    window.location.hash = '#/session/7/de';
+    render(<App />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Pronunciation Coach' })).toBeInTheDocument();
+  });
+
+  it('App_StartPage_ShowsToday', async () => {
+    render(<App />);
+    expect(await screen.findByRole('heading', { level: 2, name: 'Today' })).toBeInTheDocument();
+  });
+
   it('App_OldPhoneTestLink_ShowsStartPage', () => {
     window.location.hash = '#/spike';
     render(<App />);

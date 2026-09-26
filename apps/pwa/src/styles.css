@@ -250,3 +250,74 @@ button.small {
   font-weight: 600;
 }
 
+
+h3 {
+  font-size: 1.05rem;
+  margin: 1rem 0 0.35rem;
+}
+
+a.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+a.button.secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.card a.button + a.button,
+.card a.button + button,
+.card p + a.button {
+  margin-top: 0.5rem;
+}
+
+.session .card {
+  margin-bottom: 1rem;
+}
+
+.session .reference {
+  font-size: 1.3rem;
+  line-height: 1.35;
+  margin: 0.75rem 0 1rem;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.choices button {
+  min-height: 3.25rem;
+  padding: 0 0.3rem;
+}
+
+.summary {
+  padding-left: 1.2rem;
+  margin: 0 0 0.75rem;
+}
+
+.summary li + li {
+  margin-top: 0.35rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dots {
+  font-size: 1.6rem;
+  letter-spacing: 0.25rem;
+  margin: 0 0 0.75rem;
+}
