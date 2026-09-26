@@ -4,4 +4,4 @@ Checks run on the owner's voice and phone before the app trusts a measure. Plan:
 
 | Report | Check | Status |
 |---|---|---|
-| [r1-phone-test.md](r1-phone-test.md) | R1-T07: web audio and Azure on the Pixel (V1 capture part, V2 latency) | 🔄 run 1 partial (2026-09-26); full run pending |
+| [r1-phone-test.md](r1-phone-test.md) | R1-T07: web audio and Azure on the Pixel (V1 capture part, V2 latency) | ✅ PWA confirmed (2026-09-26) |

@@ -6,7 +6,7 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 
 | Epic | Goal | Tasks | Status |
 |------|------|-------|--------|
-| [R1](epics/R1-reset-and-phone-test.md) Reset and phone test | Clean v2 workspace; app on GitHub Pages with the Azure key typed on the phone (ADR 002); go/no-go on the Pixel | 7 (5 ✅, 2 waiting on the owner) | 🔄 |
+| [R1](epics/R1-reset-and-phone-test.md) Reset and phone test | Clean v2 workspace; app on GitHub Pages with the Azure key typed on the phone (ADR 002); go/no-go on the Pixel | 7 (6 ✅; T06 waits on the install check) | 🔄 |
 | [R2](epics/R2-to-R11-outline.md#r2) Audio core + clarity signals | Reliable recording; level, fade, pauses, rate, pitch on the phone, checked against Praat | — | ⬚ |
 | [R3](epics/R2-to-R11-outline.md#r3) Clarity core | **Slice 1:** baselines, clear-speech pairs, block summaries, 5/10-min sessions, both languages, no cloud scoring | — | ⬚ |
 | [R4](epics/R2-to-R11-outline.md#r4) Machine listener in noise | Café noise, personal noise level, Azure speech-to-text, "They heard…" | — | ⬚ |

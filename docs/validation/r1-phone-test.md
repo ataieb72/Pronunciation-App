@@ -1,6 +1,6 @@
 # R1 phone test — web audio and Azure on the Pixel
 
-**Status:** 🔄 run 1 done (partial, 2026-09-26); waiting for the full run · **Device:** Pixel 10 Pro XL, Android, Chrome (installed app)
+**Status:** ✅ decided 2026-09-26 (run 2): **PWA confirmed** · **Device:** Pixel 10 Pro XL, Android, Chrome (installed app)
 **Page:** `https://ataieb72.github.io/Pronunciation-App/#/spike` (link "Run the phone test" on the start page after you save the Azure key)
 
 ## What to do (about 25 minutes)
@@ -25,7 +25,7 @@
 | Earbuds | Note whether Bluetooth switches to its own microphone (lower sample rate or level) | |
 | Stability | No page reload, no repeated permission prompt, no stuck "Scoring…" | |
 
-**Decision:** ⬚ PWA confirmed · ⬚ fallback needed (Capacitor Android app). Fill in after the run.
+**Decision:** ✅ PWA confirmed (run 2, 2026-09-26) · ⬚ fallback needed (Capacitor Android app).
 
 If latency fails, the fallback order is: keep the "still checking" flow and lean on instant phone measures, then a Capacitor app, then a server-side SDK relay (which would bring a server back; ADR 002) (`docs/redesign/design-options.md` §6.9).
 
@@ -50,3 +50,23 @@ An earlier try of the 60-second round timed out after 90 s. Cause: the content s
 - The mic delivers about 120 ms of pure silence at start. R2's pre-roll and voice detection should skip it.
 
 **Decision:** not yet. Still needed: the full run (about 50 sentences split across Wi-Fi and mobile data, about 5 in French, one 60-second round on mobile data, earbuds if available), run from the installed app.
+
+## Run 2 — 2026-09-26 (full)
+
+Chrome 154 on the Pixel, phone microphone, 11:05–11:12 UTC. 55 attempts: 54 sentences (48 English, 6 French) and 1 60-second round (French, on mobile data). 27 attempts on Wi-Fi, 28 on mobile data (4G). No errors. Raw report kept by the owner.
+
+| Check | Result | Verdict |
+|---|---|---|
+| Mic settings | Same as run 1: all processing `false`, 48 kHz, mono | ✅ pass |
+| Capture | Sentences: peak −14.4 to −1.0 dBFS, median RMS −29.4 dBFS, no clipping. 60-second round: peak −0.6 dBFS, RMS −22.2 dBFS, no clipping | ✅ sentences · ⚠️ round again just above −1 dBFS (not clipped) |
+| Scoring works | en-US: 48/48 scored, all with IPA phoneme names and a prosody score (median accuracy 98, lowest 81). fr-FR: 6/6 scored (median accuracy 96, lowest 70); no phoneme names and no prosody, as expected | ✅ pass |
+| V2 latency | Wi-Fi: n = 27, median **0.87 s**, 90th percentile **1.14 s**, max 1.22 s. Mobile data: n = 27, median **1.16 s**, 90th percentile **2.44 s**, max 2.70 s. All: median 1.04 s, 90th percentile 2.12 s | ✅ pass on both networks (targets: median ≤ 2.5 s, 90th percentile ≤ 5 s) |
+| Long take | French round on mobile data: talked 89 s; the page keeps the first 60 s (by design); 136 words back, 35.7 s after Stop | ✅ pass |
+| Earbuds | Not run | ⬚ optional; carried to R2's device checks |
+| Stability | 55 attempts, no errors, no reloads, no repeated prompts | ✅ pass |
+
+**Decision: ✅ the PWA is confirmed.** Web audio on the Pixel gives unprocessed audio, and Azure answers well within the V2 targets on Wi-Fi and 4G. No Capacitor fallback is needed.
+
+**Notes for R2 (single observations, not evidence):**
+- In free talk the owner was about 7 dB louder (RMS −22 dBFS) than in read sentences (−29 dBFS), and peaks came close to full scale twice. R2's level guidance should expect louder talk rounds.
+- The 60-second round does not stop by itself at 60 s. R2 should stop takes at their cap.
