@@ -75,12 +75,14 @@ The deploy runs in GitHub Actions (`.github/workflows/deploy.yml`). You only nee
 ### 3a. Choose a pairing code
 
 Your phone sends this code once to prove it is yours.
-- Use at least 12 characters. A phrase of 4 random words works well (a password manager can generate one).
+- Use at least 12 characters (at most 128). A phrase of 4 random words works well, for example the format `word-word-word-word`. Let a password manager's passphrase generator pick the words: people choose predictable words.
+- Use only lowercase letters and hyphens, so it is easy to type on a phone.
 - Save it in your password manager. You will type it on your phone in step 3f.
+- To change it later: update the GitHub secret, deploy again, and pair again. Phones already paired stay paired.
 
 ### 3b. Create a Cloudflare API token
 
-1. In the Cloudflare dashboard, select the profile icon (top right) → **Profile** → **API Tokens** → **Create Token**.
+1. In the Cloudflare dashboard, select the profile icon (top right) → **Profile** → **API Tokens** → **Create Token**. (If your dashboard layout differs, type **API Tokens** in the dashboard search.)
 2. Next to **Edit Cloudflare Workers**, select **Use template**.
 3. Under **Permissions**, select **+ Add more** and add: **Account** → **D1** → **Edit**. (The deploy creates the database and applies migrations; the template does not include D1.)
 4. Under **Account Resources**, choose **Include** → your account.
@@ -95,6 +97,10 @@ Your phone sends this code once to prove it is yours.
 
 In the repository on GitHub: **Settings** → **Secrets and variables** → **Actions**.
 
+On a phone, open GitHub in the browser and switch to the desktop site (browser menu → **Desktop site**); the GitHub app cannot edit these settings.
+
+Names are case-sensitive: type them exactly as below. Paste values without spaces, quotes or a line break at the end. After you save a secret, GitHub never shows its value again; you can only replace it (**Update**).
+
 On the **Secrets** tab, select **New repository secret** four times:
 
 | Name | Value |
@@ -108,7 +114,7 @@ On the **Variables** tab, select **New repository variable**:
 
 | Name | Value |
 |---|---|
-| `AZURE_SPEECH_REGION` | your Speech resource's region, for example `uksouth` or `francecentral` |
+| `AZURE_SPEECH_REGION` | your Speech resource's region code, in lowercase with no spaces, for example `uksouth` or `francecentral`. It is the **Location/Region** value on the resource's **Keys and Endpoint** page. |
 
 GitHub hides secret values in logs. The app never sends them to your phone.
 
