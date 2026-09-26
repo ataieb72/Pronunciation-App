@@ -47,18 +47,20 @@ An energy detector that adapts to the room's noise floor and returns speech stre
 
 **Completed (2026-09-26):** `packages/dsp/src/vad.ts`: a streaming detector on 10 ms frames (noise level = lowest 50 ms-smoothed energy over the last 3 s; onset 10 dB above it for 30 ms; end after 150 ms within 6 dB; nothing below −60 dBFS counts; first 150 ms ignored), plus `detectSpeech` for whole takes. Streaming in uneven chunks gives the same result as a whole take. `packages/dsp/src/quality.ts`: `checkQuality` with the four retake reasons and the limits in `QUALITY_LIMITS`. On the golden set: onsets within 24 ms of Praat; ends from 30 ms early to 120 ms late; all clean and 20 dB files pass the gate; both 10 dB files get "noisy". **Finding:** at 10 dB SNR Praat's relative threshold marks the whole file as sounding, so noisy files are compared with their clean originals. **Limit:** below about 10 dB SNR the detector hears no speech, so the verdict is "too-short"; R2-T07's message must cover both ("No speech heard: move closer or find a quieter place"). 38 new tests (DSP: 112).
 
-### R2-T03: Pitch tracker and pitch range ⬚
+### R2-T03: Pitch tracker and pitch range ✅
 **Type:** dsp | **Effort:** M | **Depends on:** R2-T01
 
 #### What to Build
 An autocorrelation pitch tracker modelled on Praat's (Boersma 1993): 10 ms steps, 75–600 Hz, voicing decision, path smoothing. Pitch range in semitones as defined above.
 
 #### Acceptance Criteria
-- [ ] Sine waves 80–500 Hz within ±0.5 semitone
-- [ ] Golden fixtures: within ±1 semitone of Praat on ≥ 90% of frames voiced in both; range within ±1 semitone
+- [x] Sine waves 80–500 Hz within ±0.5 semitone
+- [x] Golden fixtures: within ±1 semitone of Praat on ≥ 90% of frames voiced in both; range within ±1 semitone
 
 #### Testing Requirements (TDD)
 - Pitch_Sines_WithinHalfSemitone · Pitch_Silence_Unvoiced · Pitch_Noise_MostlyUnvoiced · Pitch_GoldenFixtures_MatchPraat · PitchRange_KnownGlide_Semitones
+
+**Completed (2026-09-26):** `packages/dsp/src/fft.ts` (radix-2 FFT) and `packages/dsp/src/pitch.ts`: Praat's "To Pitch (ac)" rebuilt in TypeScript (same frame grid, Hanning window of 3 floor periods, window-normalised autocorrelation, up to 15 candidates, Praat's silence, voicing and octave costs, Viterbi path), with parabolic peak interpolation where Praat uses sinc. `summarizePitch` gives median, P10, P90 and range in semitones (NumPy-style percentiles). On the golden set: voicing agrees with Praat on 99.9% of frames; 100% of frames voiced in both are within 0.5 semitone; ranges within 0.09 semitone. A regression guard requires ≥ 95% voicing agreement. Speed: 0.64 s for 24 files (about 70 s of audio) in Node. **Caveat:** synthetic voices are smooth and regular; R2-T08 checks the owner's voice (V1). 63 new tests (DSP: 175).
 
 ### R2-T04: Pauses, syllable nuclei and articulation rate ⬚
 **Type:** dsp | **Effort:** M | **Depends on:** R2-T02, R2-T03

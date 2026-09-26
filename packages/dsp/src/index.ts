@@ -1,4 +1,6 @@
+export { fft } from './fft';
 export { clippedRatio, peakDbfs, rmsDbfs } from './levels';
+export { percentile, summarizePitch, trackPitch, type PitchOptions, type PitchSummary, type PitchTrack } from './pitch';
 export { checkQuality, QUALITY_LIMITS, type QualityVerdict, type RetakeReason } from './quality';
 export { resample } from './resample';
 export {
