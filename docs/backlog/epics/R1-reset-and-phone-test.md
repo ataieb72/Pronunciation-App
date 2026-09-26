@@ -84,14 +84,14 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 **Changed (2026-09-26, ADR 002):** the Pair screen, health badge and API client are replaced by `components/AzureSetup.tsx` and `azureSettings.ts`. The key is checked (32–128 letters and digits), the region normalised ("UK South" → `uksouth`) and checked, and both stored in `localStorage` (`pc.azure`). The screen shows only the key's last 4 characters; removing the key asks first; blocked storage shows an error instead of a false "saved". Pages use the URL hash (`#/spike`). The phone test removes the key from error messages before it stores or reports them. 41 PWA tests. Checked in Chromium at 412×915 under `/Pronunciation-App/`: save, masked display, phone-test link, direct `#/spike` load.
 
-### R1-T06: Deployment 🔄 (waiting on the owner: Pages switch and merge)
+### R1-T06: Deployment 🔄 (deployed; waiting on the install check on the Pixel)
 **Type:** infra | **Effort:** S | **Depends on:** R1-T05 | **Priority:** high
 
 #### What to Build
 ~~`wrangler.jsonc` and a Cloudflare deploy workflow with repository secrets~~ → since ADR 002: a GitHub Pages workflow with no secrets. `docs/deployment-guide.md` with the owner's one-time steps: a Free F0 Azure Speech key, switch on Pages, merge to `master`, install on the phone, paste the key.
 
 #### Acceptance Criteria
-- [ ] The owner can deploy from the GitHub web interface alone
+- [x] The owner can deploy from the GitHub web interface alone (2026-09-26: Pages switched on, pull request #1 merged, "Deploy to GitHub Pages" run #1 green in 52 s)
 - [ ] The Pixel installs the app over HTTPS and shows "Azure key saved ✓"
 
 #### Testing Requirements
@@ -99,7 +99,7 @@ Vite + React + TypeScript app with a web manifest and a service worker (installa
 
 **Built (2026-09-25):** `wrangler.jsonc` serves `apps/pwa/dist` as assets (single-page-app fallback; `/api/*` runs the Worker first) with the D1 binding. `.github/workflows/deploy.yml` (manual): settings check → typecheck, lint, test, build, key scan → find or create D1 (Western Europe) and apply migrations → `wrangler deploy --secrets-file` (secrets file removed on exit) with the region as a variable → live `/api/health` check → address in the run summary. `tools/deploy` (18 tests) holds the pure helpers. The Worker's `build` is a Wrangler dry run, so CI checks the bundle and config. Local run of the real Worker (built app, local D1): health, `/` and app routes, manifest, pairing, unpairing and the speech-token config check all behaved as specified. Guide: `docs/deployment-guide.md` Part 3. ~~**Remaining:** the owner adds the GitHub secrets and runs the first deploy~~
 
-**Changed (2026-09-26, ADR 002):** `apps/worker`, `tools/deploy` (18 tests) and `deploy.yml` are removed. `.github/workflows/pages.yml` runs on every push to `master` (and by hand): type check, lint, tests, build with `PC_BASE_PATH` from `actions/configure-pages`, key scan, then publish `apps/pwa/dist`. The build sets the manifest scope, service worker and worklet path to `/Pronunciation-App/`, and adds a content security policy (meta tag; scripts only from the app; network only to the app and Azure Speech). CI no longer reads an `AZURE_SPEECH_KEY` secret. Guide rewritten: 3 parts, about 15 minutes, no Cloudflare. **Remaining:** the owner switches on Pages and merges the branch into `master`; then the install check on the Pixel.
+**Changed (2026-09-26, ADR 002):** `apps/worker`, `tools/deploy` (18 tests) and `deploy.yml` are removed. `.github/workflows/pages.yml` runs on every push to `master` (and by hand): type check, lint, tests, build with `PC_BASE_PATH` from `actions/configure-pages`, key scan, then publish `apps/pwa/dist`. The build sets the manifest scope, service worker and worklet path to `/Pronunciation-App/`, and adds a content security policy (meta tag; scripts only from the app; network only to the app and Azure Speech). CI no longer reads an `AZURE_SPEECH_KEY` secret. Guide rewritten: 3 parts, about 15 minutes, no Cloudflare. ~~**Remaining:** the owner switches on Pages and merges the branch into `master`~~ — done 2026-09-26. **Remaining:** the install check on the Pixel.
 
 ### R1-T07: Phone test spike (throwaway) 🔄 (built; waiting for the phone run)
 **Type:** spike | **Effort:** M | **Depends on:** R1-T06 | **Priority:** high
