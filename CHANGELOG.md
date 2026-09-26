@@ -11,6 +11,9 @@
 - R1: v2 workspace (npm 11, TypeScript 6, ESLint 10 strict type-checked), bundle key scan and CI, installable PWA shell, phone test page (`#/spike`) and `packages/dsp` (resampler, WAV encoder, level measures).
 - ADR 002: no server. The app deploys to GitHub Pages on every push to `master`. The owner types the Azure key and region once on the phone ("Connect to Azure" screen). A content security policy limits the page to itself and Azure Speech.
 
+### Fixed
+- Phone test: takes longer than 5 s (including the 60-second round) timed out, because the content security policy blocked the Speech SDK's timer worker. The SDK now uses the page's timers.
+
 ### Changed
 - Focus moves from accent-style pronunciation to articulation and elocution in both languages, aimed at mumbling.
 - v1 docs moved to `docs/archive/v1/`.

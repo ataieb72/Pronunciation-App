@@ -39,6 +39,10 @@ function pcmBuffer(pcm16: Int16Array): ArrayBuffer {
 
 function recognizerFor(sdk: Sdk, azure: AzureSettings, language: Language) {
   const config = sdk.SpeechConfig.fromSubscription(azure.key, azure.region);
+  // After the first 5 s of audio the SDK paces sending with timers from a web worker loaded
+  // from a data: URL. The content security policy blocks that worker, so long takes stalled.
+  // "off" makes the SDK use the page's own timers.
+  config.setProperty(sdk.PropertyId.WebWorkerLoadType, 'off');
   config.speechRecognitionLanguage = language;
   config.outputFormat = sdk.OutputFormat.Detailed;
   const push = sdk.AudioInputStream.createPushStream(sdk.AudioStreamFormat.getWaveFormatPCM(16_000, 16, 1));

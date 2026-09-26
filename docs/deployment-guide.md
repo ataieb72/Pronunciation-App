@@ -14,7 +14,7 @@ You need two accounts you already have: **Azure** and **GitHub**. The whole setu
 
 ## Part 1 — Azure Speech key (Free F0)
 
-> **Owner's status (2026-09-26):** pay-as-you-go subscription, £5 budget alert and the Free F0 Speech resource: done. Next: Part 2.
+> **Owner's status (2026-09-26):** Parts 1 and 2 done: Free F0 Speech resource created, Pages switched on, v2 merged into `master` ([ataieb72/Pronunciation-App#1](https://github.com/ataieb72/Pronunciation-App/pull/1)), first deploy green. Next: Part 3.
 
 1. Azure offers the free trial **only once per person**. If you had one before, sign up for **pay-as-you-go** directly: <https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account> → **Pay as you go**. Azure asks for a phone number and a card.
 2. On pay-as-you-go you pay only for paid resources. A **Free F0** Speech resource never bills (5 audio hours a month; one F0 Speech resource per subscription).

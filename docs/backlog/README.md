@@ -24,6 +24,6 @@ Status icons: `⬚` ready · `🔄` in progress · `✅` done · `🚫` blocked.
 - ~~Rotate the Azure key~~ — not needed: Microsoft deleted the old subscription on 2026-09-11, so the v1 key is dead.
 - Delete the v1 Render service (hygiene; `docs/deployment-guide.md` step 1b).
 - ~~Create a Free F0 Speech resource~~ — done (2026-09-26). Budget alert: done (2026-09-25).
-- Switch on GitHub Pages and merge v2 into `master` (`docs/deployment-guide.md` Part 2).
+- ~~Switch on GitHub Pages and merge v2 into `master`~~ — done (2026-09-26); first deploy green.
 - Install the app on the Pixel and paste the Azure key (`docs/deployment-guide.md` Part 3). Then run the phone test.
 - ~~Cloudflare account, API token, GitHub secrets~~ — not needed since ADR 002 (2026-09-26).
