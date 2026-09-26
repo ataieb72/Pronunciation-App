@@ -50,10 +50,10 @@ Written down before practice week 1 (`docs/redesign/design-options.md` §6.7, ad
 
 ## 7. Constraints
 
-- The Azure Speech key never reaches the phone. The phone uses 10-minute tokens from the Worker.
+- No server (`docs/adr/002-no-server.md`). The app is static files on GitHub Pages. The owner types the Azure key once on the phone; it stays there and goes only to Azure. The Azure resource stays on the free F0 tier, so a leaked key cannot cost money.
 - HTTPS only. Uncompressed 16 kHz audio. Mic auto-gain, noise suppression and echo cancellation off where the phone allows.
-- Data lives on the phone first. Encrypted backups later (R5).
-- Budget: start on free tiers (Azure F0, Cloudflare free). Ceiling about $10 a month.
+- Data lives on the phone. Encrypted backup files later (R5), saved where the owner chooses.
+- Budget: free tiers (Azure F0, GitHub Pages). Ceiling about $10 a month.
 
 ## 8. Health note
 

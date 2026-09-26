@@ -9,9 +9,7 @@ export default tseslint.config(
     ignores: [
       '**/dist/**',
       '**/dev-dist/**',
-      '**/.wrangler/**',
       '**/coverage/**',
-      '**/worker-configuration.d.ts',
       'docs/**',
     ],
   },
@@ -21,11 +19,7 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        projectService: {
-          // Config files run in Node, not in the Worker runtime, so they sit outside the Worker's tsconfig.
-          allowDefaultProject: ['apps/worker/vitest.config.ts'],
-          defaultProject: 'apps/worker/tsconfig.config.json',
-        },
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },

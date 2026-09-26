@@ -1,6 +1,6 @@
 # Pronunciation Coach v2 — Product Design
 
-**Version:** 2.0 · **Status:** approved (2026-09-25) · **Detail:** `docs/redesign/elocution-focus.md` §5–7 and `docs/redesign/design-options.md` §6.2–6.8.
+**Version:** 2.1 · **Status:** approved (2026-09-25); start screen changed by `docs/adr/002-no-server.md` (2026-09-26) · **Detail:** `docs/redesign/elocution-focus.md` §5–7 and `docs/redesign/design-options.md` §6.2–6.8.
 
 Phone-first. One-handed. Large tap targets. French and English alternate by day (50/50 by default).
 
@@ -8,7 +8,7 @@ Phone-first. One-handed. Large tap targets. French and English alternate by day 
 
 | Screen | Main elements | Epic |
 |---|---|---|
-| **Pair** ✅ | Pairing-code field (hidden input), "Pair this phone"; "Paired ✓" with "Unpair this phone"; plain error messages (wrong code, too many tries with minutes to wait, phone limit, pairing off, no connection); server health badge | R1 |
+| **Connect to Azure** ✅ | Azure key field (hidden input) and region field, "Save on this phone"; "Azure key saved ✓" with the last 4 characters and the region, "Run the phone test", "Remove the key from this phone" (asks first); plain error messages (not a key, bad region, storage blocked) | R1 |
 | **Today** | "Start · 10 min" (5 and 15 as options), language of the day, weekly dots (●●●○), next reminder | R3 |
 | **Session** | One stage at a time: Warm-up → Say → Listen → Use → Wrap. Big record button, level light, stage progress | R3–R6 |
 | **Pair compare** | Usual and clear takes, play each, "Which would your listener catch better?" | R3 |
@@ -17,7 +17,7 @@ Phone-first. One-handed. Large tap targets. French and English alternate by day 
 | **Talk summary** | Pace band, fade at phrase ends, start-vs-end change | R6 |
 | **Check** | Calm, no feedback, habitual part first | R5 |
 | **Progress** | Check results only, with ranges and plain wording | R9 |
-| **Settings** | Language split, weekly target, reminders, export, backup | R3, R5 |
+| **Settings** | Language split, weekly target, reminders, export, backup file, Azure key | R3, R5 |
 
 ## 2. Session (10 minutes, default)
 

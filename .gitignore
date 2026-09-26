@@ -7,12 +7,6 @@ build/
 *.tsbuildinfo
 dev-dist/
 
-# Cloudflare / Wrangler local state and secrets
-.wrangler/
-.dev.vars
-.dev.vars.*
-!.dev.vars.example
-
 # Environment
 .env
 .env.local

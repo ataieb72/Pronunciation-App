@@ -1,5 +1,7 @@
 # Pronunciation Coach v2: design options
 
+> **Update (2026-09-26):** hosting and security changed after this record. See `docs/adr/002-no-server.md` (no server; Azure key typed on the phone).
+
 **Date:** 24 September 2026
 **Status:** Ready for your decision. Nothing in this document has been built yet. A red-team review checked it on 24 September 2026.
 **What you decide:** which option to build, and the choices in section 8. After that, we build the app step by step with TDD (test-driven development: Red → Green → Refactor). Each code change updates the docs it affects.

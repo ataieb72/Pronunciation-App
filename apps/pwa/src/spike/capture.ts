@@ -43,7 +43,8 @@ export async function startRecording(maxSeconds: number): Promise<ActiveRecordin
   if (!track) throw new Error('No microphone track');
 
   const context = new AudioContext();
-  await context.audioWorklet.addModule('/worklets/capture-processor.js');
+  // BASE_URL keeps the path right when the app lives in a sub-folder (GitHub Pages).
+  await context.audioWorklet.addModule(`${import.meta.env.BASE_URL}worklets/capture-processor.js`);
   const source = context.createMediaStreamSource(stream);
   const node = new AudioWorkletNode(context, 'capture-processor');
 

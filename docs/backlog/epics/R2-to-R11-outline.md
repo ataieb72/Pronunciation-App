@@ -9,10 +9,10 @@ Each epic gets its own file with full tasks (What to Build, Acceptance Criteria,
 **Clarity core — Slice 1 (first real practice).** Baselines (habitual and clear) in English and French; warm-up and distance check; clear-speech pairs with compare player and self-judgement; block summaries with cue choice from unchanged features; everyday sentence banks with word-ending loads; 5- and 10-minute sessions; weekly target; ZIP export. No cloud scoring.
 
 ## R4
-**Machine listener in noise.** Babble generation and mixing on the phone; personal noise level calibrated so habitual speech gets 60–80% of keywords (V9); `SpeechScorer` interface with Azure SDK and fixture scorers; token cache; timeouts; eras; v1 bugs as named tests; "They heard…" and retry; unpredictable sentence banks in both languages.
+**Machine listener in noise.** Babble generation and mixing on the phone; personal noise level calibrated so habitual speech gets 60–80% of keywords (V9); `SpeechScorer` interface with Azure SDK and fixture scorers; the key from `azureSettings`; timeouts; eras; v1 bugs as named tests; "They heard…" and retry; unpredictable sentence banks in both languages.
 
 ## R5
-**Check recording and backup.** Check flow: habitual part first, then clear part, anchors twice, English support probes; no feedback; AES-GCM backup to R2 after each Check and weekly; restore test.
+**Check recording and backup.** Check flow: habitual part first, then clear part, anchors twice, English support probes; no feedback; AES-GCM backup file after each Check and weekly, saved where the owner chooses (for example Google Drive through the phone's share sheet); restore test (ADR 002: no server).
 
 ## R6
 **Short talk.** Everyday talk prompts; 2–3 rounds with round 1 habitual; start-vs-end clarity drop; fade and pace summaries; 15-minute session builder; comeback session.
@@ -27,7 +27,7 @@ Each epic gets its own file with full tasks (What to Build, Acceptance Criteria,
 **Check analysis and Progress.** Re-scoring all Check audio in the current era; RCI and NAP; plain-wording results; Progress screen; monthly anchor re-score.
 
 ## R10
-**Panel and habit tools.** Encrypted listener panel (intelligibility in noise on habitual speech); weekly unprompted voice note; if-then plans for everyday situations; reminders; weekly review.
+**Panel and habit tools.** Encrypted listener panel (intelligibility in noise on habitual speech; with no server, decide at the start of R10 how clips reach listeners); weekly unprompted voice note; if-then plans for everyday situations; reminders; weekly review.
 
 ## R11
 **Experiments (optional, each off by default).** Front-camera jaw and lip opening feedback; pitch line in semitones; optional noisy-room mode through wired earbuds; SpeechSuper pilot; Capacitor Android wrap if web audio fails.

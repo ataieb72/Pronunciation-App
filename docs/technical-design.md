@@ -1,44 +1,45 @@
 # Pronunciation Coach v2 — Technical Design
 
-**Version:** 2.0 · **Status:** approved (2026-09-25) · **Decision record:** `docs/adr/001-v2-rewrite.md` · **Detail:** `docs/redesign/design-options.md` §2.6–2.8, §6.9–6.13.
+**Version:** 2.1 · **Status:** approved (2026-09-25); hosting changed by `docs/adr/002-no-server.md` (2026-09-26) · **Decision record:** `docs/adr/001-v2-rewrite.md` · **Detail:** `docs/redesign/design-options.md` §2.6–2.8, §6.9–6.13.
 
 ## 1. Architecture
 
 ```
-PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker)
-+--------------------------------------------+   HTTPS   +------------------------------+
-| UI: Pair, Today, Session, Check, Progress   |---------->| Static assets: the PWA       |
-| packages/core: session builder, scheduler,  |           | /api/health                  |
-|   target model, statistics (pure TS)        |           | /api/pair        (D1)        |
-| packages/dsp: resampler, WAV, VAD, quality  |<----------| /api/speech/token (D1 + Azure)|
-|   gate, level, fade, pitch, pauses (pure TS)|  10-min   | /api/backup/*   (R2, from R5) |
-| Scorer: Azure JS SDK | Fixture scorer       |  token    +------------------------------+
-| IndexedDB (Dexie): sessions, takes, audio   |                       |
-+----------------------+---------------------+                        v
-                       | WebSocket + token                 Azure token service
-                       v                                   (key stays in the Worker)
-      Azure Speech: en-US / fr-FR speech-to-text and pronunciation assessment
+PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static files only)
++--------------------------------------------+  HTTPS   +------------------------------+
+| UI: Connect to Azure, Today, Session,       |<---------| index.html, JS, CSS, icons,  |
+|   Check, Progress                           |  once,   | service worker, manifest     |
+| packages/core: session builder, scheduler,  |  then    +------------------------------+
+|   target model, statistics (pure TS)        |  cached
+| packages/dsp: resampler, WAV, VAD, quality  |
+|   gate, level, fade, pitch, pauses (pure TS)|
+| Scorer: Azure JS SDK | Fixture scorer       |
+| localStorage: Azure key + region (pc.azure) |
+| IndexedDB (Dexie): sessions, takes, audio   |
++----------------------+---------------------+
+                       | WebSocket (WSS) with the key
+                       v
+      Azure Speech (Free F0): en-US / fr-FR speech-to-text and pronunciation assessment
 ```
 
-- **One Worker** serves the static PWA and the API from the same origin. There is no CORS to manage.
-- **The Azure key lives only in a Worker secret.** The phone gets a 10-minute token and calls Azure directly through the browser SDK.
+- **No server** (`docs/adr/002-no-server.md`). GitHub Pages serves static files over HTTPS. The service worker caches them, so the app opens offline.
+- **The owner types the Azure key and region once on the phone.** They stay in `localStorage` on that phone. The SDK sends the key only to Azure (`SpeechConfig.fromSubscription`).
 - **Phone-side measures** run in TypeScript, so they work offline and cost nothing.
+- **Pages use the URL hash** (`#/spike`), because GitHub Pages has no fallback for deep links.
 
 ## 2. Workspace
 
 | Path | What | Added in |
 |---|---|---|
-| `apps/worker` | Cloudflare Worker: API + static asset serving. D1 migrations. | R1 |
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
 | `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
-| `tools/deploy` | Deploy helpers: settings check, D1 id, secrets file | R1 |
 
 - **npm 11** workspaces (`packageManager` is pinned). npm 10.9 fails on Vitest 4 peer dependencies.
 - TypeScript 6.0 strict mode everywhere, with `noUncheckedIndexedAccess`. ESLint 10 with typescript-eslint `strictTypeChecked` (type-aware rules such as `await-thenable` and `no-floating-promises`); warnings are errors.
-- Vitest 4.1 in every workspace (`@cloudflare/vitest-pool-workers` 0.22 requires Vitest 4.1).
-- The Worker's `compatibility_date` must not be newer than the date the test runtime supports (2026-08-22 with pool-workers 0.22). Raise it when the pool package updates.
+- Vitest 4.1 in every workspace.
+- The build reads `PC_BASE_PATH` for the app's folder (`/Pronunciation-App/` on GitHub Pages; `/` by default). The manifest's `start_url` and `scope`, the service worker and the worklet path follow it.
 
 ## 3. Audio pipeline (R2; a throwaway version in the R1 spike)
 
@@ -64,15 +65,16 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 
 ## 5. Security
 
-- Pairing: `POST /api/pair` with a code held as a Worker secret returns a random 32-byte device token. D1 stores only its SHA-256 hash. The code is compared in constant time (both sides hashed, then `crypto.subtle.timingSafeEqual`). Pairing stays off while the code is shorter than 12 characters. After 10 failed attempts in a UTC hour, all pairing waits for the next hour. At most `MAX_DEVICES` (default 2) active devices.
-- `POST /api/speech/token` needs a device token. Limits: 30 an hour and 200 a day per device (fixed UTC windows in D1). The region must be a plain name (`^[a-z0-9]{2,32}$`), so a bad setting cannot send the key to another host. The Azure call has a 5-second timeout. Logs hold only error types and status codes, never the key.
-- The CI key scan (`tools/key-scan`) fails the build if a client file contains the key value or the name `AZURE_SPEECH_KEY`, or if app code calls `fromSubscription` or sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name.
+- **The key:** the owner pastes it on the "Connect to Azure" screen. The app checks its form (32–128 letters and digits) and the region (a plain name such as `uksouth`, so a typo cannot send the key to another host), then stores both in `localStorage` (`pc.azure`). The screen shows only the last 4 characters. "Remove the key from this phone" deletes it.
+- **Only Free F0.** F0 never bills and stops at 5 audio hours a month, so a leaked key cannot cost money. If the key leaks, regenerate it in the Azure portal.
+- **Content security policy** (a meta tag, added in builds only): scripts, styles and images only from the app itself; network only to the app and Azure Speech (`*.api.cognitive.microsoft.com`, `*.stt.speech.microsoft.com`); no plug-ins. This limits where injected code could send the key.
+- **Known limits** (ADR 002): code running in the app can read the key; the Speech SDK puts the key in its WebSocket address (encrypted by WSS); every GitHub Pages project of the same owner shares the origin `https://<owner>.github.io` and its storage.
+- **The key scan** (`tools/key-scan`) fails the build if a client file contains the key value (when `AZURE_SPEECH_KEY` is set in the shell) or the name `AZURE_SPEECH_KEY`, or if app code sets the subscription-key header. It skips the Azure SDK's own chunk (`azure-speech-sdk-*`, set by the PWA build), which contains that header name. App code may call `fromSubscription`: the key arrives at run time.
 
 ## 6. Testing (TDD)
 
 | Layer | How |
 |---|---|
-| Worker | Vitest with `@cloudflare/vitest-pool-workers` (real `workerd` runtime, local D1). Azure's token endpoint is mocked. |
 | PWA | Vitest + jsdom + React Testing Library |
 | `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests |
 | Key scan | Vitest over fixture bundles |
@@ -81,4 +83,4 @@ PIXEL (installed PWA: React + TypeScript)                 CLOUDFLARE (one Worker
 
 ## 7. Deployment
 
-`apps/worker/wrangler.jsonc` defines the Worker, its static assets (`apps/pwa/dist`, single-page-app fallback, `/api/*` to the Worker first) and the D1 binding (the committed id is a placeholder; the deploy writes the real id). Secrets: `AZURE_SPEECH_KEY`, `PAIRING_CODE` (uploaded with each deploy). Variable: `AZURE_SPEECH_REGION`. The manual GitHub Actions workflow `.github/workflows/deploy.yml` runs all checks, prepares D1, deploys, and checks `/api/health` live. Steps: `docs/deployment-guide.md`.
+`.github/workflows/pages.yml` runs on every push to `master` and by hand ("Run workflow"). It runs the type check, lint, tests, build (with `PC_BASE_PATH` from `actions/configure-pages`) and key scan, then publishes `apps/pwa/dist` to GitHub Pages. No secrets. Address: `https://<owner>.github.io/<repository>/`. Steps: `docs/deployment-guide.md`.

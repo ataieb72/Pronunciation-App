@@ -1,4 +1,6 @@
-# Pronunciation Coach v2 — API Reference
+# Pronunciation Coach v2 — API Reference (retired)
+
+> **Retired on 2026-09-26** by `docs/adr/002-no-server.md`. The app has no server now. This file records the Cloudflare Worker API as built in R1-T04; commit `8fd3a99` holds its code.
 
 **Base URL:** the Worker's HTTPS origin (the same origin that serves the app). Bodies are JSON. Every API response has `cache-control: no-store`.
 **Auth:** endpoints marked "device" need `Authorization: Bearer <deviceToken>`, where the token is the 43-character value from `POST /api/pair`.

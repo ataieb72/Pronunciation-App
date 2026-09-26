@@ -1,6 +1,6 @@
 import { clippedRatio, encodeWav, floatToPcm16, peakDbfs, resample, rmsDbfs } from '@pc/dsp';
 import { useRef, useState } from 'react';
-import { loadDeviceToken } from '../deviceToken';
+import { loadAzureSettings, redactKey } from '../azureSettings';
 import { assess, transcribeContinuous, type Language } from './azure';
 import { startRecording, type ActiveRecording, type MicInfo } from './capture';
 import { buildReport, latencyStats, networkLabel, type Attempt, type MicSource } from './report';
@@ -44,7 +44,7 @@ function download(name: string, data: BlobPart, type: string): void {
 const ms = (v: number | null) => (v === null ? '—' : `${String(Math.round(v))} ms`);
 
 export function SpikePage() {
-  const deviceToken = loadDeviceToken();
+  const [azure] = useState(loadAzureSettings);
   const [mic, setMic] = useState<MicInfo | null>(null);
   const [micSource, setMicSource] = useState<MicSource>('phone');
   const [language, setLanguage] = useState<Language>('en-US');
@@ -79,7 +79,7 @@ export function SpikePage() {
   }
 
   async function start(mode: Attempt['mode']) {
-    if (deviceToken === null) return;
+    if (azure === null) return;
     try {
       const recording = await startRecording(mode === 'assess' ? 15 : 60);
       setMic(recording.mic);
@@ -94,7 +94,7 @@ export function SpikePage() {
 
   async function stop() {
     const current = active.current;
-    if (current === null || deviceToken === null) return;
+    if (current === null || azure === null) return;
     active.current = null;
     setRecordingMode(null);
     setBusy('scoring');
@@ -124,28 +124,35 @@ export function SpikePage() {
 
     try {
       if (current.mode === 'assess') {
-        const result = await assess({ deviceToken, language, referenceText, pcm16 });
+        const result = await assess({ azure, language, referenceText, pcm16 });
         const summary = summarizeAzureJson(result.json);
         record({ ...base, latencyMs: result.latencyMs, reason: result.reason, summary, transcript: summary?.text ?? null, error: null, azureJson: keepJson ? result.json : null });
         setStatus(`Scored in ${ms(result.latencyMs)} (${result.reason}).`);
       } else {
-        const result = await transcribeContinuous({ deviceToken, language, pcm16 });
+        const result = await transcribeContinuous({ azure, language, pcm16 });
         record({ ...base, latencyMs: result.latencyMs, reason: 'Continuous', summary: null, transcript: result.texts.join(' '), error: null, azureJson: keepJson ? JSON.stringify(result.json) : null });
         setStatus(`Transcribed in ${ms(result.latencyMs)}.`);
       }
     } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
+      // The report goes to other people, so the key must never ride along in an error message.
+      const message = redactKey(e instanceof Error ? e.message : String(e), azure.key);
       record({ ...base, latencyMs: null, reason: null, summary: null, transcript: null, error: message, azureJson: null });
-      setStatus(`Error: ${message}`);
+      // A browser cannot see why a WebSocket was refused, so a wrong key also shows as ConnectionFailure.
+      const hint = /AuthenticationFailure|ConnectionFailure/.test(message)
+        ? ' Check your internet. If it works, check the key and region on the start page.'
+        : '';
+      setStatus(`Error: ${message}${hint}`);
     }
     setBusy('idle');
   }
 
-  if (deviceToken === null) {
+  if (azure === null) {
     return (
       <main className="app">
         <h1>Phone test</h1>
-        <p className="card">Pair this phone first. Go back to the start page and enter your pairing code.</p>
+        <p className="card">
+          Add your Azure key first. <a href="#/">Go to the start page</a>.
+        </p>
       </main>
     );
   }
@@ -155,6 +162,9 @@ export function SpikePage() {
 
   return (
     <main className="app spike">
+      <p>
+        <a href="#/">← Start page</a>
+      </p>
       <h1>Phone test</h1>
       <p>This page checks the microphone and Azure scoring on this phone. It is a test page, not practice.</p>
 

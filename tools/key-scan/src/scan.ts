@@ -3,7 +3,7 @@ export interface ScannedFile {
   readonly content: string;
 }
 
-export type Rule = 'key-value' | 'env-name' | 'subscription-header' | 'from-subscription';
+export type Rule = 'key-value' | 'env-name' | 'subscription-header';
 
 export interface Violation {
   readonly path: string;
@@ -17,8 +17,11 @@ export interface ScanOptions {
 
 /**
  * The Azure Speech SDK chunk legitimately contains the subscription header
- * name and a `fromSubscription` method. The PWA build names that chunk
- * `azure-speech-sdk-*`; only the header and method rules skip it.
+ * name. The PWA build names that chunk `azure-speech-sdk-*`; only the header
+ * rule skips it.
+ *
+ * App code may call `fromSubscription`: the owner types the key on the phone
+ * at run time (ADR 002). The key-value rule still proves it is not built in.
  */
 export const SDK_CHUNK_PATTERN = /(^|\/)azure-speech-sdk-[^/]*$/;
 
@@ -44,9 +47,6 @@ export function scanFiles(files: readonly ScannedFile[], opts: ScanOptions): Vio
     }
     if (!isSdkChunk && SUBSCRIPTION_HEADER.test(file.content)) {
       violations.push({ path, rule: 'subscription-header' });
-    }
-    if (!isSdkChunk && file.content.includes('fromSubscription')) {
-      violations.push({ path, rule: 'from-subscription' });
     }
   }
   return violations;

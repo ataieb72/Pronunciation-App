@@ -42,9 +42,7 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The key never goes to GitHub (ADR 002), so CI checks the name and header rules.
+      # To check the value too, run the scan locally with AZURE_SPEECH_KEY set in your shell.
       - name: Key scan
         run: npm run scan:keys
-        env:
-          # Optional: when this repository secret is set, the scan also checks
-          # that the real key value appears in no client file. It is never printed.
-          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}

@@ -1,9 +1,10 @@
 /**
  * Throwaway Azure calls for the R1 phone test. The SDK loads on demand into its own
- * chunk (named azure-speech-sdk-*, which the key scan expects). The key never reaches
- * the phone: the Worker issues a 10-minute token.
+ * chunk (named azure-speech-sdk-*, which the key scan expects). The key comes from the
+ * owner's settings on this phone (ADR 002); the app sends it only to Azure.
  */
 import type * as SpeechSdk from 'microsoft-cognitiveservices-speech-sdk';
+import type { AzureSettings } from '../azureSettings';
 
 type Sdk = typeof SpeechSdk;
 export type Language = 'en-US' | 'fr-FR';
@@ -12,23 +13,6 @@ let sdkPromise: Promise<Sdk> | null = null;
 function loadSdk(): Promise<Sdk> {
   sdkPromise ??= import('microsoft-cognitiveservices-speech-sdk');
   return sdkPromise;
-}
-
-interface SpeechToken {
-  readonly token: string;
-  readonly region: string;
-  readonly expiresAt: number;
-}
-
-let cachedToken: SpeechToken | null = null;
-
-async function speechToken(deviceToken: string): Promise<SpeechToken> {
-  if (cachedToken !== null && cachedToken.expiresAt - Date.now() > 60_000) return cachedToken;
-  const res = await fetch('/api/speech/token', { method: 'POST', headers: { authorization: `Bearer ${deviceToken}` } });
-  if (!res.ok) throw new Error(`Speech token request failed (HTTP ${String(res.status)})`);
-  const body = (await res.json()) as { token: string; region: string; expiresAt: string };
-  cachedToken = { token: body.token, region: body.region, expiresAt: Date.parse(body.expiresAt) };
-  return cachedToken;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, what: string): Promise<T> {
@@ -53,9 +37,8 @@ function pcmBuffer(pcm16: Int16Array): ArrayBuffer {
   return pcm16.buffer.slice(pcm16.byteOffset, pcm16.byteOffset + pcm16.byteLength) as ArrayBuffer;
 }
 
-async function recognizerFor(sdk: Sdk, deviceToken: string, language: Language) {
-  const { token, region } = await speechToken(deviceToken);
-  const config = sdk.SpeechConfig.fromAuthorizationToken(token, region);
+function recognizerFor(sdk: Sdk, azure: AzureSettings, language: Language) {
+  const config = sdk.SpeechConfig.fromSubscription(azure.key, azure.region);
   config.speechRecognitionLanguage = language;
   config.outputFormat = sdk.OutputFormat.Detailed;
   const push = sdk.AudioInputStream.createPushStream(sdk.AudioStreamFormat.getWaveFormatPCM(16_000, 16, 1));
@@ -71,14 +54,14 @@ export interface AssessResult {
 
 /** Scripted pronunciation assessment of one take. Latency runs from "audio sent" to "result". */
 export async function assess(opts: {
-  deviceToken: string;
+  azure: AzureSettings;
   language: Language;
   referenceText: string;
   pcm16: Int16Array;
   timeoutMs?: number;
 }): Promise<AssessResult> {
   const sdk = await loadSdk();
-  const { recognizer, push } = await recognizerFor(sdk, opts.deviceToken, opts.language);
+  const { recognizer, push } = recognizerFor(sdk, opts.azure, opts.language);
   const pa = new sdk.PronunciationAssessmentConfig(
     opts.referenceText,
     sdk.PronunciationAssessmentGradingSystem.HundredMark,
@@ -132,13 +115,13 @@ export interface ContinuousResult {
 
 /** Continuous speech-to-text over a long take (for the 60-second round). */
 export async function transcribeContinuous(opts: {
-  deviceToken: string;
+  azure: AzureSettings;
   language: Language;
   pcm16: Int16Array;
   timeoutMs?: number;
 }): Promise<ContinuousResult> {
   const sdk = await loadSdk();
-  const { recognizer, push } = await recognizerFor(sdk, opts.deviceToken, opts.language);
+  const { recognizer, push } = recognizerFor(sdk, opts.azure, opts.language);
   const texts: string[] = [];
   const json: string[] = [];
   let started = performance.now();

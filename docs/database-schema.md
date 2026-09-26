@@ -1,25 +1,15 @@
 # Pronunciation Coach v2 — Data Model
 
-Two stores: **D1** on Cloudflare (no learner content) and **IndexedDB** on the phone (all learner content).
+Everything lives on the phone (`docs/adr/002-no-server.md`). There is no server database. The Cloudflare D1 tables built in R1-T04 were removed with the Worker (commit `8fd3a99` holds them).
 
-## 1. D1 (Worker) — migrations in `apps/worker/migrations/`
+## 1. localStorage (phone) ✅
 
-### devices ✅ (R1, `0001_init.sql`)
-| Column | Type | Notes |
+| Key | Value | Written by |
 |---|---|---|
-| id | TEXT PK | random id |
-| token_hash | TEXT UNIQUE NOT NULL | SHA-256 of the device token, hex |
-| created_at | TEXT NOT NULL | ISO time |
-| revoked_at | TEXT | null while active |
+| `pc.azure` | `{"key": "<Azure key>", "region": "<region>"}`. Checked on read: key 32–128 letters and digits, region `^[a-z0-9]{2,32}$` | "Connect to Azure" screen (R1) |
+| `pc.spike.attempts` | Phone test attempts (throwaway, R1-T07) | Phone test page |
 
-### rate_counters ✅ (R1, `0001_init.sql`)
-| Column | Type | Notes |
-|---|---|---|
-| scope | TEXT | `token:<deviceId>` (speech tokens) or `pair-fail` (failed pairings, global) |
-| bucket | TEXT | fixed UTC window, for example `h:2026-09-25T10` or `d:2026-09-25` |
-| count | INTEGER NOT NULL | hits in the window |
-| expires_at | INTEGER NOT NULL | epoch seconds; rows past it are deleted on every write |
-| PRIMARY KEY | (scope, bucket) | |
+Clearing Chrome's site data for the app removes both.
 
 ## 2. IndexedDB (phone, through Dexie) — planned
 
@@ -34,6 +24,6 @@ Adapted from `docs/redesign/design-options.md` §6.11 for the elocution focus.
 | `summaries` | block summaries shown, features changed / not changed, cue chosen | R3 |
 | `checks` | id, week, parts done, audio ids, results per era | R5 |
 | `eras` | id, start, reason (model update / new phone / drift), SDK version | R4 |
-| `backups` | last snapshot, date, size, parts | R5 |
+| `backups` | last backup file made: date, size, parts | R5 |
 
 Retention: practice audio 30 days unless starred or disputed; baseline, Check and anchor audio kept for good.

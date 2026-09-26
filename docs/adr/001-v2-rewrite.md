@@ -1,6 +1,6 @@
 # ADR 001 — Rewrite as v2: an elocution-first phone app
 
-**Date:** 2026-09-25 · **Status:** accepted
+**Date:** 2026-09-25 · **Status:** accepted; the Worker parts are replaced by ADR 002 (2026-09-26: no server, GitHub Pages, key on the phone)
 
 ## Context
 

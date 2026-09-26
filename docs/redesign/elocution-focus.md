@@ -2,6 +2,8 @@
 
 **Date:** 25 September 2026 · **Status:** accepted by the owner (2026-09-25) · **Amends:** `design-options.md` · **Evidence:** `docs/research/` (brief, addendum, and `mumbling-note.md`)
 
+> **Update (2026-09-26):** the app no longer has a server. Where this record mentions the Worker, pairing, tokens or server backups, read `docs/adr/002-no-server.md`: static app on GitHub Pages, Azure key typed on the phone, backups as files.
+
 ## 1. The owner's decision
 
 On 25 September 2026 the owner confirmed:

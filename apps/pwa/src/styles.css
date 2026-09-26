@@ -206,17 +206,3 @@ label.inline input {
   font-weight: 600;
 }
 
-.badge {
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin: 0;
-}
-
-.badge-online {
-  color: var(--ok);
-}
-
-.badge-degraded,
-.badge-offline {
-  color: var(--danger);
-}

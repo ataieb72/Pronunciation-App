@@ -13,9 +13,11 @@ Progress comes from Progress Checks every 4 weeks, on habitual speech, compared 
 
 v2 rewrite in progress. Current epic: **R1 — Reset and phone test** (`docs/backlog/`). The v1 code was removed; git history keeps it at commit `20b075a`.
 
+To install it on your phone, follow `docs/deployment-guide.md`.
+
 ## Stack
 
-Installable web app (React, TypeScript, Vite) · one Cloudflare Worker (static assets + small API with D1) · Azure Speech through the browser SDK with 10-minute tokens · speech measures computed on the phone · IndexedDB storage. See `docs/technical-design.md`.
+Installable web app (React, TypeScript, Vite) on GitHub Pages, with no server · Azure Speech through the browser SDK, with a key you type once on the phone · speech measures computed on the phone · IndexedDB storage. See `docs/technical-design.md` and `docs/adr/002-no-server.md`.
 
 ## Start here
 

@@ -1,11 +1,11 @@
 # R1 phone test — web audio and Azure on the Pixel
 
 **Status:** ⬚ waiting for the phone run · **Device:** Pixel 10 Pro XL, Android, Chrome (installed app)
-**Page:** `https://<app-address>/spike` (link "Run the phone test" on the start page after pairing)
+**Page:** `https://ataieb72.github.io/Pronunciation-App/#/spike` (link "Run the phone test" on the start page after you save the Azure key)
 
 ## What to do (about 25 minutes)
 
-1. Install the app and pair it (`docs/deployment-guide.md`, Part 3f). Open **Run the phone test**.
+1. Install the app and paste the Azure key (`docs/deployment-guide.md`, Part 3). Open **Run the phone test**.
 2. **Microphone:** tap **Check microphone**. Allow the microphone. Note the table values.
 3. **Record and score, English:** choose English. For each sentence, tap **Record**, say it clearly, tap **Stop**. Repeat until about 25 attempts **on Wi-Fi**.
 4. Turn Wi-Fi off. Do about 25 more attempts **on mobile data**. Mix in 5 French attempts.
@@ -27,4 +27,4 @@
 
 **Decision:** ⬚ PWA confirmed · ⬚ fallback needed (Capacitor Android app). Fill in after the run.
 
-If latency fails, the fallback order is: keep the "still checking" flow and lean on instant phone measures, then a Capacitor app, then a server-side SDK relay (`docs/redesign/design-options.md` §6.9).
+If latency fails, the fallback order is: keep the "still checking" flow and lean on instant phone measures, then a Capacitor app, then a server-side SDK relay (which would bring a server back; ADR 002) (`docs/redesign/design-options.md` §6.9).

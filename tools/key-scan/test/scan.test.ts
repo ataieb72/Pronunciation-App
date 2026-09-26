@@ -33,9 +33,10 @@ describe('scanFiles', () => {
     expect(scanFiles([f], {})).toEqual([{ path: f.path, rule: 'subscription-header' }]);
   });
 
-  it('KeyScan_FromSubscriptionInAppChunk_Fails', () => {
-    const f = { path: 'assets/index-abc.js', content: 'SpeechConfig.fromSubscription(k,r)' };
-    expect(scanFiles([f], {})).toEqual([{ path: f.path, rule: 'from-subscription' }]);
+  it('KeyScan_FromSubscriptionInAppChunk_Passes', () => {
+    // ADR 002: the app passes the key the owner typed on the phone. The value rule still guards the bundle.
+    const f = { path: 'assets/spike-abc.js', content: 'SpeechConfig.fromSubscription(s.key,s.region)' };
+    expect(scanFiles([f], {})).toEqual([]);
   });
 
   it('KeyScan_SubscriptionHeaderInSdkChunk_Passes', () => {
