@@ -77,18 +77,20 @@ Pauses from the detector's silences (≥ 250 ms, inside the take). Syllable nucl
 
 **Completed (2026-09-26):** `packages/dsp/src/intensity.ts`: Praat's "To Intensity" rebuilt (Kaiser–Bessel window of 6.4/min-pitch s, Praat's frame grid, optional mean removal), with Praat's cubic value-at-time, minimum-between and quantile; frames match Praat within 0.05 dB on all 24 golden files. `packages/dsp/src/rhythm.ts`: Praat's "To TextGrid (silences)" and de Jong & Wempe's nuclei (threshold 25 dB below the 99th percentile; 2 dB dips; voiced and sounding; the last peak never counted, as published), pauses ≥ 250 ms and articulation rate. `trackPitch` now takes Praat's advanced settings (the nuclei voicing check uses the script's own), and `pitchValueAt` follows Praat's nearest-frame rule. Golden set: nuclei counts exact on 24 of 24; sounding and pause edges within 10 ms; nucleus times within 5 ms; slow < normal < fast in both languages. **Findings:** Praat's quantile extrapolates slightly past the top value (kept, as Praat does); when no frame is below the silence threshold (10 dB SNR files), Praat 6.1.38 labels the whole take as sounding (checked directly). Speed: 1.1 s for 71 s of audio in Node, mostly the 30 Hz voicing pitch; fine after a take, to be watched on the phone in R2-T06. 60 new tests (DSP: 235).
 
-### R2-T05: Speech level and fade at phrase ends ⬚
+### R2-T05: Speech level and fade at phrase ends ✅
 **Type:** dsp | **Effort:** S | **Depends on:** R2-T04
 
 #### What to Build
 Speech level over speech frames (dBFS). Fade at phrase ends as defined above, per phrase and as a median.
 
 #### Acceptance Criteria
-- [ ] Level within ±0.5 dB of Praat; the quiet fixtures read 20 dB lower than their originals (±0.5 dB)
-- [ ] The fading fixtures show more fade than their originals; values within ±1 dB of the Praat reference
+- [x] Level within ±0.5 dB of Praat; the quiet fixtures read 20 dB lower than their originals (±0.5 dB)
+- [x] The fading fixtures show more fade than their originals; values within ±1 dB of the Praat reference
 
 #### Testing Requirements (TDD)
 - Level_GainChange_ShiftsExactly · Level_GoldenFixtures_MatchPraat · Fade_RampedEnding_Negative · Fade_FlatEnding_NearZero · Fade_GoldenFixtures_MatchPraat
+
+**Completed (2026-09-26):** `packages/dsp/src/speechLevel.ts` (energy mean of the intensity over sounding frames, dBFS) and `packages/dsp/src/fade.ts` (last phrase peak minus the median of the other peaks; the final peak added back when voiced with a 2 dB dip; ≥ 3 peaks per phrase). Golden set: level within 0.054 dB of Praat; fade within 0.078 dB over 28 phrases; quiet versions exactly 20 dB lower; fading versions more negative. Synthetic phrases: a last syllable 8 dB softer reads −8 ± 1.5 dB; even syllables read 0 ± 1 dB. 57 new tests (DSP: 292). All five measures now run in `packages/dsp`; none is shown to the owner until R2-T07, and never as a score.
 
 ### R2-T06: Audio core in the app ⬚
 **Type:** frontend/audio | **Effort:** L | **Depends on:** R2-T02

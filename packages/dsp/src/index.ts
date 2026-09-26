@@ -1,3 +1,4 @@
+export { phraseEndFade, type FadeResult } from './fade';
 export { fft } from './fft';
 export { intensityQuantile, intensityTrack, intensityValueAt, minimumBetween, type IntensityOptions, type IntensityTrack } from './intensity';
 export { clippedRatio, peakDbfs, rmsDbfs } from './levels';
@@ -5,6 +6,7 @@ export { percentile, pitchValueAt, summarizePitch, trackPitch, type PitchOptions
 export { checkQuality, QUALITY_LIMITS, type QualityVerdict, type RetakeReason } from './quality';
 export { resample } from './resample';
 export { detectSilences, RHYTHM_SETTINGS, syllableNuclei, type IntensityPeak, type Interval, type RhythmResult } from './rhythm';
+export { speechLevelDbfs } from './speechLevel';
 export {
   createSpeechDetector,
   detectSpeech,
