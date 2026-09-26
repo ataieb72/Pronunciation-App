@@ -32,7 +32,8 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 | Path | What | Added in |
 |---|---|---|
 | `apps/pwa` | Vite + React + TypeScript PWA | R1 |
-| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
+| `packages/dsp` | Pure TypeScript audio code. Built: band-limited resampler, PCM16/WAV encoder and decoder, level measures. Next: VAD, quality gate, clarity measures | R1, R2 |
+| `packages/dsp/golden` | Praat reference: synthetic EN/FR test recordings (espeak-ng) and the values Praat measures on them (Parselmouth). Python, run by hand; outputs are committed | R2 |
 | `packages/core` | Pure TypeScript domain logic: sessions, scheduling, statistics | R3 |
 | `tools/key-scan` | Bundle key scan (`npm run scan:keys`) | R1 |
 
@@ -77,7 +78,7 @@ PIXEL (installed PWA: React + TypeScript)                GITHUB PAGES (static fi
 | Layer | How |
 |---|---|
 | PWA | Vitest + jsdom + React Testing Library |
-| `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests |
+| `packages/dsp`, `packages/core` | Vitest with synthetic signals, fake clocks, property tests; golden fixtures checked against Praat (`packages/dsp/golden/`) |
 | Key scan | Vitest over fixture bundles |
 | Live Azure | `npm run test:live`, by hand only, never in CI (from R4) |
 | On the phone | A manual checklist on the Pixel for every audio change |

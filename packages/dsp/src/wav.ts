@@ -37,3 +37,46 @@ export function encodeWav(samples: Float32Array, sampleRate: number): ArrayBuffe
   for (let i = 0; i < pcm.length; i++) view.setInt16(44 + 2 * i, pcm[i] ?? 0, true);
   return buffer;
 }
+
+export interface DecodedWav {
+  readonly samples: Float32Array;
+  readonly sampleRate: number;
+}
+
+function readAscii(view: DataView, offset: number, length: number): string {
+  let text = '';
+  for (let i = 0; i < length; i++) text += String.fromCharCode(view.getUint8(offset + i));
+  return text;
+}
+
+/** Reads a 16-bit mono PCM WAV file. It skips chunks it does not need, such as "LIST". */
+export function decodeWav(buffer: ArrayBuffer): DecodedWav {
+  const view = new DataView(buffer);
+  if (view.byteLength < 12 || readAscii(view, 0, 4) !== 'RIFF' || readAscii(view, 8, 4) !== 'WAVE') {
+    throw new Error('Not a WAV file');
+  }
+  let sampleRate = 0;
+  let offset = 12;
+  while (offset + 8 <= view.byteLength) {
+    const id = readAscii(view, offset, 4);
+    const size = view.getUint32(offset + 4, true);
+    const body = offset + 8;
+    if (id === 'fmt ') {
+      const format = view.getUint16(body, true);
+      const channels = view.getUint16(body + 2, true);
+      const bits = view.getUint16(body + 14, true);
+      if (format !== 1 || channels !== 1 || bits !== 16) {
+        throw new Error(`Unsupported WAV: format ${String(format)}, ${String(channels)} channels, ${String(bits)} bits (need 16-bit mono PCM)`);
+      }
+      sampleRate = view.getUint32(body + 4, true);
+    } else if (id === 'data') {
+      if (sampleRate === 0) throw new Error('WAV data before its format');
+      const count = Math.floor(Math.min(size, view.byteLength - body) / 2);
+      const samples = new Float32Array(count);
+      for (let i = 0; i < count; i++) samples[i] = view.getInt16(body + 2 * i, true) / 32768;
+      return { samples, sampleRate };
+    }
+    offset = body + size + (size % 2); // chunks are padded to an even size
+  }
+  throw new Error('WAV file has no data');
+}
